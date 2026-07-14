@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BDKF Brand Guidelines — Bund der Katzenfreunde</title>
+<link rel="stylesheet" href="https://use.typekit.net/fzx4lwp.css" />
+<style>
+  /* ==========================================================================
+     BDKF BRAND GUIDELINES — finale Version (Quelle: Figma „CfG — Bund der
+     Katzenfreunde", Seite „Slides" / Node 290-2, Stand 09.07.26 + Regelwerk
+     des Brand-Teams). Dieses Dokument ist zugleich Spezifikation und
+     Referenz-Implementierung: Die Tokens unten sind 1:1 für die Website
+     zu übernehmen.
+     ========================================================================== */
+  :root {
+    /* ---- Farben (Slide FARBEN) ---- */
+    --white: #ffffff;
+    --black: #000000;
+    --coral: #ff8a64;
+    --pink: #f697df;
+    --amber: #ffc964;
+    --purple: #9a77ea;
+    --blue: #91c4ed;
+    --green: #a7e177;
+
+    /* ---- Typografie (Slides SCHRIFTART / SCHRIFTGRÖSSE / ZEILENABSTAND) ----
+       Forma DJR Deck. Hierarchie strikt 1 : 3 : 9 (z. B. 12 → 36 → 108 pt).
+       Zeilenabstand von Überschriften = 0,75 × Schriftgröße. */
+    --font: "forma-djr-deck", "Forma DJR Deck", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --fs-text: 16px;                              /* Text Regular   = 1x */
+    --fs-sub: calc(var(--fs-text) * 3);           /* Unterüberschrift Regular = 3x */
+    --fs-head: calc(var(--fs-text) * 9);          /* Überschrift Bold = 9x */
+    --lh-display: 0.75;                           /* Zeilenabstand = 0,75 × Größe */
+
+    /* ---- Raster (Slides RASTER / RASTER MIT LOGO + Regelwerk) ----
+       8 Reihen (Abstand 0) × 6 Spalten (Abstand 5 mm), Hilfslinien randlos
+       („Fit to page"). Bezugsgröße für alle Form-Schritte: 1/8 der Höhe. */
+    --rows: 8;
+    --cols: 6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font);
+    font-size: var(--fs-text);
+    line-height: 1.5;
+    color: var(--black);
+    background: var(--white);
+  }
+
+  /* Dokument-Gerüst der Guidelines selbst */
+  .page { max-width: 1200px; margin-inline: auto; padding: 48px 32px 120px; }
+  section { margin-top: 120px; }
+  .kicker {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    border-bottom: 2px solid var(--black);
+    padding-bottom: 8px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .kicker small { font-weight: 400; text-transform: none; color: #666; }
+  h1 {
+    font-size: clamp(56px, 9vw, 144px);
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: var(--lh-display);
+    letter-spacing: -0.01em;
+    margin-top: 24px;
+  }
+  h2 {
+    font-size: clamp(28px, 3.4vw, 48px);
+    font-weight: 400;
+    text-transform: uppercase;
+    line-height: 1.05;
+    margin-bottom: 24px;
+  }
+  h3 { font-size: var(--fs-text); font-weight: 700; text-transform: uppercase; margin: 32px 0 8px; }
+  p, li { max-width: 72ch; }
+  ul { padding-left: 20px; margin-block: 8px; }
+  .rule {
+    border-left: 6px solid var(--black);
+    padding: 10px 16px;
+    background: #f5f5f5;
+    margin-block: 12px;
+    max-width: 72ch;
+  }
+  .rule strong { text-transform: uppercase; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; align-items: start; }
+  .caption { font-size: 13px; color: #666; margin-top: 8px; }
+  code { font-family: ui-monospace, Menlo, monospace; font-size: 0.9em; background: #f0f0f0; padding: 1px 5px; }
+  @media (max-width: 800px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+
+  /* ---- Demos ---- */
+  .swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+  .swatch { aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  .aa-demo { display: grid; grid-template-columns: repeat(6, 1fr); }
+  .aa { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 28px; }
+
+  .type-scale { display: grid; gap: 40px; }
+  .spec-head { font-size: clamp(48px, 7vw, 108px); font-weight: 700; text-transform: uppercase; line-height: 0.75; }
+  .spec-sub { font-size: clamp(22px, 2.6vw, 36px); font-weight: 400; text-transform: uppercase; line-height: 1.05; }
+  .spec-meta { font-size: 13px; color: #666; margin-top: 6px; }
+
+  /* Raster-Demo: 8×6, randlos */
+  .raster-demo {
+    position: relative;
+    aspect-ratio: 210/297; /* A4 hoch */
+    border: 2px solid var(--black);
+    background:
+      repeating-linear-gradient(to bottom, transparent 0 calc(12.5% - 1px), rgba(255,0,0,.35) calc(12.5% - 1px) 12.5%),
+      repeating-linear-gradient(to right, transparent 0 calc(16.667% - 1px), rgba(0,180,200,.45) calc(16.667% - 1px) 16.667%);
+  }
+  .raster-demo .m {
+    position: absolute; inset: 7.14% 5%; /* ≈15mm Dokument-Ränder */
+    border: 1px dashed rgba(150,0,150,.6);
+  }
+
+  /* Plakat-Rezepte als Mini-Mockups */
+  .mock {
+    position: relative;
+    aspect-ratio: 210/297;
+    border: 1px solid #ddd;
+    background: var(--white);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    container-type: inline-size;
+  }
+  .mock .form { position: relative; }
+  /* Plakativ: die Überschrift füllt die Breite der Textfläche (≈ 4 Zeichen
+     pro Zeile bei den Kampagnen-Wörtern) — nie zaghaft klein. */
+  .mock .txt { padding: 6%; font-weight: 700; text-transform: uppercase; line-height: 0.78; font-size: 14cqw; letter-spacing: -0.01em; }
+  .mock .body { padding: 0 7%; font-size: 8px; max-width: 70%; color: inherit; }
+  .mock .domain { position: absolute; bottom: 3%; right: 5%; font-size: 8px; font-weight: 700; }
+  .mock .logo { position: absolute; top: 4%; left: 5%; height: 9%; }
+  .mock img.cat { position: absolute; width: 26%; }
+
+  .logo-row { display: flex; gap: 64px; align-items: center; flex-wrap: wrap; }
+  .logo-row img { height: 96px; width: auto; }
+  .illu-row { display: flex; gap: 40px; align-items: flex-end; flex-wrap: wrap; }
+  .illu-row figure { text-align: center; }
+  .illu-row img { height: 90px; width: auto; display: block; margin-inline: auto; }
+  .illu-row figcaption { font-size: 12px; color: #666; margin-top: 8px; }
+
+  .dont { border-left-color: var(--coral); }
+  footer.doc { margin-top: 140px; border-top: 1px solid #ddd; padding-top: 16px; font-size: 13px; color: #666; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <p class="kicker">BDKF Brand Guidelines <small>Quelle: Figma-Slides (Node 290-2) · Stand 09.07.2026 · v1.0 final</small></p>
+    <h1>Bund der Katzen&shy;freunde</h1>
+    <p style="margin-top: 32px; font-size: 20px; max-width: 60ch;">
+      Das Erscheinungsbild lebt aus einem Gegensatz:
+      <strong>Illustration</strong> (süß, spielerisch) trifft <strong>Form</strong> (ernst, seriös).
+      Ergebnis: <em>Nahbar durch Katze, seriös durch Form.</em>
+    </p>
+  </header>
+
+  <!-- ============================================================ -->
+  <section id="konzept">
+    <p class="kicker">01 · Konzept</p>
+    <div class="grid3">
+      <div>
+        <h3>Illustration</h3>
+        <p>Schwarze Katzen mit weißen Detail­linien — süß, spielerisch, nahbar. Sie sind die einzige „weiche" Zutat des Systems.</p>
+      </div>
+      <div>
+        <h3>Form</h3>
+        <p>Rechteckige Farbflächen auf strengem Raster — ernst, seriös, aufgeräumt. Sie tragen Farbe und Struktur.</p>
+      </div>
+      <div>
+        <h3>= Haltung</h3>
+        <p><strong>Nahbar durch Katze, seriös durch Form.</strong> Beides gehört in jede Anwendung; keines dominiert das andere.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="logo">
+    <p class="kicker">02 · Logo</p>
+    <div class="logo-row">
+      <figure>
+        <img src="assets/logos/black/bdkf-wortmarke.svg" alt="Wortmarke: BUND DER KATZEN FREUNDE" />
+        <figcaption class="caption">Wortmarke</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/logos/black/bdkf-wortbildmarke.svg" alt="Wort-Bild-Marke: Katzenklammer + BUND DER KATZEN FREUNDE" />
+        <figcaption class="caption">Wort-Bild-Marke (Standard)</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/logos/black/bdkf-bildmarke.svg" alt="Bildmarke: Katzenohren über BDKF" />
+        <figcaption class="caption">Bildmarke</figcaption>
+      </figure>
+    </div>
+    <p class="caption">Dateien: <code>assets/logos/black/…</code> und <code>assets/logos/white/…</code> — je als Standard, <code>-up</code>, <code>-down</code> und <code>-flipped</code> (gedrehte Ecklagen).</p>
+    <h3>Varianten (Slide „Logo-Varianten")</h3>
+    <ul>
+      <li><strong>Wortmarke:</strong> BUND / DER / KATZEN / FREUNDE, vierzeilig, Bold, versal, linksbündig.</li>
+      <li><strong>Wort-Bild-Marke:</strong> Katzenohren-Klammer + Wortmarke — die Standardform.</li>
+      <li><strong>Bildmarke:</strong> Ohren-Silhouette über „BDKF" — für kleinste Größen (Favicon, App-Icon, Social-Avatar).</li>
+    </ul>
+    <h3>Anwendung (Slides „Logo Anwendung" / „Raster mit Logo")</h3>
+    <ul>
+      <li>Das Logo sitzt in einer <strong>Ecke</strong> des Formats und darf dafür um 90° gedreht werden (Klammer zeigt zur nächsten Kante — vier erlaubte Ecklagen).</li>
+      <li><strong>Logo-Höhe = 1/16 der Bezugsgröße</strong> (Bezugsgröße = Formathöhe, s. Raster).</li>
+    </ul>
+    <div class="rule"><strong>Regel:</strong> Das Logo ist ausschließlich <strong>Schwarz oder Weiß</strong> — auch auf Brandfarben. Es wird <strong>niemals in Brandfarben umgefärbt</strong>.</div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="farben">
+    <p class="kicker">03 · Farben</p>
+    <p>Leicht, spielerisch, einfach. Schwarz und Weiß tragen Schrift und Logo; die sechs Brandfarben tragen die Formen.</p>
+    <div class="swatches" style="margin-top: 32px;">
+      <div class="swatch" style="background:#ffffff; border:1px solid #ddd;">FFFFFF</div>
+      <div class="swatch" style="background:#000000; color:#fff;">000000</div>
+      <div class="swatch" style="background:#ff8a64;">FF8A64</div>
+      <div class="swatch" style="background:#f697df;">F697DF</div>
+      <div class="swatch" style="background:#ffc964;">FFC964</div>
+      <div class="swatch" style="background:#9a77ea;">9A77EA</div>
+      <div class="swatch" style="background:#91c4ed;">91C4ED</div>
+      <div class="swatch" style="background:#a7e177;">A7E177</div>
+    </div>
+    <h3>Anwendung (Slide „Farben Anwendung")</h3>
+    <div class="aa-demo">
+      <div class="aa" style="background:#ff8a64;">Aa</div>
+      <div class="aa" style="background:#f697df;">Aa</div>
+      <div class="aa" style="background:#ffc964;">Aa</div>
+      <div class="aa" style="background:#9a77ea; color:#fff;">Aa</div>
+      <div class="aa" style="background:#91c4ed; color:#fff;">Aa</div>
+      <div class="aa" style="background:#a7e177; color:#fff;">Aa</div>
+    </div>
+    <p class="caption">Auf jeder Brandfarbe ist Schwarz ODER Weiß erlaubt — nie eine andere Farbe.</p>
+    <div class="rule"><strong>Regel:</strong> Schrift ist immer <strong>Schwarz oder Weiß</strong>. Brandfarben sind Flächenfarben, keine Schriftfarben.</div>
+    <div class="rule"><strong>Hinweis Web (abgeleitet):</strong> Für Fließtext auf Farbflächen Schwarz bevorzugen (Kontrast/AA); Weiß nur für große Grade (Überschriften ab 3x).</div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="typografie">
+    <p class="kicker">04 · Typografie</p>
+    <div class="grid2">
+      <div>
+        <h3>Schriftart (Slide „Schriftart")</h3>
+        <p><strong>Forma DJR Deck</strong> — die einzige Schrift des Systems.</p>
+        <ul>
+          <li><strong>Regular</strong> — Text und Unterüberschriften</li>
+          <li><strong>Bold</strong> — Überschriften, Auszeichnungen, Logo</li>
+          <li><strong>Black</strong> — optional für Sondermomente (sparsam)</li>
+        </ul>
+        <p class="caption">Web-Einbindung: Adobe Fonts, Kit <code>https://use.typekit.net/fzx4lwp.css</code>, CSS-Familie <code>forma-djr-deck</code>.</p>
+      </div>
+      <div>
+        <h3>Größen — strikt 1 : 3 : 9 (Slide „Schriftgröße")</h3>
+        <ul>
+          <li><strong>Text</strong> = Basisgröße (Regular) — z. B. 12 pt Print / 16 px Web</li>
+          <li><strong>Unterüberschrift</strong> = 3 × Text (Regular, versal) — 36 pt / 48 px</li>
+          <li><strong>Überschrift</strong> = 3 × Unterüberschrift = 9 × Text (Bold, versal) — 108 pt / 144 px</li>
+        </ul>
+        <h3>Zeilenabstand (Slide „Zeilenabstand")</h3>
+        <p>Überschriften: <strong>Zeilenabstand = 0,75 × Schriftgröße</strong> (100 pt → 75 pt). Fließtext: normaler Leseabstand (~1,5).</p>
+      </div>
+    </div>
+    <div class="type-scale" style="margin-top: 48px;">
+      <div>
+        <div class="spec-head">Überschrift<br />Bold</div>
+        <p class="spec-meta">9x · Forma DJR Deck Bold · versal · Zeilenabstand 0,75x</p>
+      </div>
+      <div>
+        <div class="spec-sub">Unter überschrift Regular</div>
+        <p class="spec-meta">3x · Forma DJR Deck Regular · versal</p>
+      </div>
+      <div>
+        <p style="max-width: 52ch;">Text Regular — 1x. Der Bund der Katzenfreunde vermittelt Fundkatzen in gute Hände: ehrenamtlich, ohne eigenes Tierheim, mit Pflegefamilien.</p>
+        <p class="spec-meta">1x · Forma DJR Deck Regular</p>
+      </div>
+    </div>
+    <div class="rule"><strong>Plakativ:</strong> Überschriften sind immer <strong>maximal groß</strong> — sie füllen die Breite ihrer Textfläche (Referenz: Plakat-Slides, „WER WARTET AUF DICH?"). Der extreme Größenkontrast 9:1 zwischen Überschrift und Text ist gewollt und muss sichtbar bleiben; im Zweifel größer.</div>
+    <div class="rule"><strong>Abstände zu Formen:</strong> Text hält <strong>1/16 Abstand zur farbigen Kante</strong> (1/16 der Bezugsgröße). Abstand Überschrift → Text: <strong>ca. 1/8</strong>.</div>
+    <div class="rule dont"><strong>Nie:</strong> Zwischengrößen, andere Schnitte zur „Auflockerung", Schrift in Brandfarben, Form, die in Schrift hineinläuft.</div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="raster">
+    <p class="kicker">05 · Raster &amp; Form</p>
+    <div class="grid2">
+      <div>
+        <div class="raster-demo"><div class="m"></div></div>
+        <p class="caption">8 Reihen (rot, Abstand 0) × 6 Spalten (cyan, Spaltenabstand 5 mm), Hilfslinien randlos („Fit to page"). Gestrichelt: 15 mm Dokument-Ränder für Text/Logo.</p>
+      </div>
+      <div>
+        <h3>Raster</h3>
+        <ul>
+          <li><strong>8 Reihen</strong>, Zeilenabstand 0 mm — sie definieren die <strong>Bezugsgröße 1/8</strong> (= Formathöhe ÷ 8).</li>
+          <li><strong>6 Spalten</strong>, Spaltenabstand 5 mm.</li>
+          <li>Hilfslinien laufen <strong>bis an den Formatrand</strong> (ohne Ränder) — Formen dürfen randabfallend sitzen.</li>
+          <li><strong>Dokument-Ränder 15 mm:</strong> Innenrand für Text und Logo.</li>
+          <li>Mehr Weißraum wirkt besser; <strong>ungerade Aufteilungen bevorzugen</strong>.</li>
+        </ul>
+        <h3>Form (Farbbalken)</h3>
+        <ul>
+          <li>Formen wachsen in <strong>1/8-Schritten</strong> — immer rasterbündig.</li>
+          <li>Eine Form schließt an <strong>mindestens 3 Seiten an den Formatrand</strong> an (keine „dünnen" frei schwebenden Balken mitten im Bild).</li>
+          <li>Erlaubte Größe: <strong>2/8 bis 6/8</strong> der Höhe (darunter/darüber: Anschnitt-Konflikte mit dem Logo).</li>
+          <li>Balkenhöhe ist variabel — aber die <strong>Form darf nie in Schrift hineinlaufen</strong>.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="layout">
+    <p class="kicker">06 · Layout-Rezepte</p>
+    <div class="grid3">
+      <div>
+        <div class="mock">
+          <div class="form" style="background:#ffc964; flex: 0 0 50%;">
+            <img class="logo" src="assets/logos/black/bdkf-wortbildmarke.svg" alt="" />
+            <div class="txt" style="padding-top: 22%;">Wer wartet auf dich?</div>
+          </div>
+          <div style="position: relative; flex: 1;">
+            <img class="cat" src="assets/illustrations/flat-cat.svg" alt="" style="top: -9%; left: 12%;" />
+            <p class="body" style="position: absolute; bottom: 24%; left: 0; padding: 0 7%;">Hinter jeder unserer Katzen steckt eine Geschichte — und ein Sofa, das noch frei ist.</p>
+            <span class="domain">bdkf.de</span>
+          </div>
+        </div>
+        <p class="caption">Hoch, Form oben 4/8: Farbfläche trägt die plakative Überschrift, Katze lugt an der Kante.</p>
+      </div>
+      <div>
+        <div class="mock">
+          <div style="position: relative; flex: 0 0 50%;">
+            <img class="logo" src="assets/logos/black/bdkf-wortbildmarke.svg" alt="" />
+            <div class="txt" style="padding-top: 18%;">Dein perfektes Match wartet</div>
+            <img class="cat" src="assets/illustrations/fat-cat.svg" alt="" style="bottom: -8%; right: 10%;" />
+          </div>
+          <div class="form" style="background:#9a77ea; flex: 1; color:#fff;">
+            <p class="body" style="padding-top: 10%;">Kümmere dich um ein Leben, das dich zurückliebt — adoptiere eine unserer Katzen.</p>
+            <span class="domain" style="color:#fff;">bdkf.de</span>
+          </div>
+        </div>
+        <p class="caption">Hoch, Form unten 4/8: weiße Textfläche oben, Farbfläche unten, Katze auf der Kante.</p>
+      </div>
+      <div>
+        <h3>Proportionen</h3>
+        <p><strong>Hochformat mit Bild/Fläche:</strong></p>
+        <ul>
+          <li>Textfläche: 4/8, 5/8 oder 6/8</li>
+          <li>Bild-/Farbfläche: 4/8, 3/8 oder 2/8 (2/8 schon sehr schmal)</li>
+        </ul>
+        <p><strong>Querformat mit Bild/Fläche:</strong></p>
+        <ul>
+          <li>Textfläche: 4/8 oder 5/8</li>
+        </ul>
+        <h3>Feste Prinzipien</h3>
+        <ul>
+          <li>Balkenhöhe variabel, <strong>Text immer links</strong></li>
+          <li>Text läuft <strong>nie ins Bild</strong></li>
+          <li><strong>Domain (bdkf.de) immer unten am Rand</strong></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="illustration">
+    <p class="kicker">07 · Illustrationen</p>
+    <div class="illu-row">
+      <figure><img src="assets/illustrations/peeking-cat.svg" alt="" /><figcaption>peeking-cat<br />lugt über Kanten</figcaption></figure>
+      <figure><img src="assets/illustrations/fat-cat.svg" alt="" /><figcaption>fat-cat<br />Kopf + Schwanz</figcaption></figure>
+      <figure><img src="assets/illustrations/big-head-cat.svg" alt="" /><figcaption>big-head-cat<br />frontal</figcaption></figure>
+      <figure><img src="assets/illustrations/crazy-cat.svg" alt="" /><figcaption>crazy-cat<br />Zoomies</figcaption></figure>
+      <figure><img src="assets/illustrations/flat-cat.svg" alt="" /><figcaption>flat-cat<br />liegt auf Kanten</figcaption></figure>
+      <figure><img src="assets/illustrations/lying-cat.svg" alt="" /><figcaption>lying-cat<br />hängt über Kanten</figcaption></figure>
+      <figure><img src="assets/illustrations/hanging-cat.svg" alt="" /><figcaption>hanging-cat<br />klettert / kratzt</figcaption></figure>
+    </div>
+    <ul style="margin-top: 32px;">
+      <li>Katzen sind <strong>schwarz mit weißen Detail­linien</strong> — nie umgefärbt, nie mit Kontur, nie rotiert.</li>
+      <li>Jede Katze <strong>interagiert mit einer Formkante</strong> (lugt darüber, liegt darauf, hängt daran) — nie frei schwebend als Deko.</li>
+      <li>Katzen werden <strong>nie beschnitten</strong> außer bewusst an der Kante, mit der sie interagieren.</li>
+      <li>Sparsam einsetzen: <strong>eine Katze pro Fläche/Abschnitt</strong>.</li>
+    </ul>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="animation">
+    <p class="kicker">08 · Animation</p>
+    <p>Das Kernmotiv der Animation ist das <strong>Auftauchen an der Kante</strong>: Ohren bzw. Kopf schieben sich von hinten über eine Formkante (Peek-in), wie auf den Animations-Slides. Für die Website heißt das:</p>
+    <ul>
+      <li>Illustrationen erscheinen <strong>hinter Formkanten hervor</strong> (Slide-up hinter der Fläche), ausgelöst beim Scrollen in den Viewport.</li>
+      <li>Kurz und einmalig — keine Loops, kein Dauergewusel.</li>
+      <li><code>prefers-reduced-motion</code> wird respektiert: Animation entfällt, Endzustand steht sofort.</li>
+    </ul>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="web">
+    <p class="kicker">09 · Übersetzung fürs Web <small>(abgeleitet — nicht Teil der Figma-Slides)</small></p>
+    <h3>Raster → Sektion</h3>
+    <ul>
+      <li><strong>Bezugsgröße im Web = Höhe der jeweiligen Sektion</strong> (bei Vollbild-Hero: die Viewport-Höhe). Alle 1/8-, 1/16-Regeln beziehen sich darauf.</li>
+      <li>Farbflächen in 1/8-Schritten der Sektionshöhe, angeschlossen an mindestens 3 Kanten der Sektion (typisch: volle Breite + eine Kante oben oder unten), Range 2/8–6/8.</li>
+      <li>6 Spalten mit festem Gutter (5 mm ≈ <code>20px</code>) für Inhaltslayout; Dokument-Ränder 15 mm ≈ <code>clamp(24px, 4vw, 64px)</code> Innenabstand für Text und Logo.</li>
+    </ul>
+    <h3>Typo-Tokens</h3>
+    <ul>
+      <li><code>--fs-text: 16px</code> · <code>--fs-sub: 48px</code> · <code>--fs-head: 144px</code> (auf schmalen Viewports gemeinsam per <code>min()</code> gedeckelt, Verhältnis 1:3:9 bleibt bestehen, Text nie unter 16px).</li>
+      <li><strong>Plakativ:</strong> Überschriften werden auf die volle Breite ihrer Fläche skaliert (fluid, z. B. <code>min(9 × Text, 13vw)</code> so gewählt, dass die Zeile die Fläche füllt) — lieber Zeilenumbruch als kleinere Schrift.</li>
+      <li>Überschriften/Unterüberschriften versal, Zeilenabstand 0,75; Text 1,5.</li>
+      <li>Text-Abstand zur Farbkante: 1/16 der Sektionshöhe; Überschrift → Text: 1/8.</li>
+    </ul>
+    <h3>Feste Web-Prinzipien</h3>
+    <ul>
+      <li>Logo (Höhe 1/16 der Bezugsgröße) in einer Ecke, nur Schwarz/Weiß.</li>
+      <li>Text immer links, läuft nie in Bilder/Illustrationen.</li>
+      <li>Domain/Footer-Zeile immer an der Unterkante.</li>
+      <li>Schrift ausschließlich Schwarz/Weiß; Farben nur als Flächen.</li>
+    </ul>
+  </section>
+
+  <footer class="doc">
+    <p>BDKF Brand Guidelines v1.0 · erstellt aus den Figma-Slides (lAnMrtiJuJfD0ZKp4hDYFW, Node 290-2) und dem Regelwerk des Brand-Teams · Abschnitt 09 ist eine Web-Ableitung und bei Widerspruch den Slides untergeordnet.</p>
+  </footer>
+
+</div>
+</body>
+</html>

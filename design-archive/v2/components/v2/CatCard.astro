@@ -1,0 +1,88 @@
+---
+/**
+ * Katzen-Karte: Farbfeld (Foto-Platzhalter) mit Illustration, darunter
+ * Name, Kurzinfo, Link. Akzentfarbe = CSS-Farbwert (Token-Var).
+ */
+interface Props {
+  name: string;
+  meta?: string;
+  text?: string;
+  accent?: string;
+  illu?: string;
+  href?: string;
+  linkLabel?: string;
+}
+const {
+  name,
+  meta = '',
+  text = '',
+  accent = 'var(--c-vermittlung)',
+  illu = 'peaking-cat',
+  href,
+  linkLabel = 'Kennenlernen',
+} = Astro.props;
+---
+<article class="card">
+  <!-- TODO: Platzhalter — hier kommt das echte Katzenfoto hin -->
+  <div class="media" style={`background:${accent}`}>
+    <img
+      class="illu media-cat reveal"
+      src={`/assets/illustrations/${illu}-filled.svg`}
+      alt=""
+      loading="lazy"
+    />
+  </div>
+  <h3 class="v2-body name">{name}{meta && <span class="meta"> · {meta}</span>}</h3>
+  {text && <p class="v2-body text">{text}</p>}
+  {href && <a class="v2-body link" href={href}>{linkLabel} →</a>}
+</article>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+  .media-cat {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 62%;
+    max-height: 82%;
+  }
+  /* Reveal überschreibt transform — Zentrierung in die Ausgangslage einbauen */
+  :global(.js) .media-cat.reveal {
+    transform: translateX(-50%) translateY(24%);
+  }
+  :global(.js) .media-cat.reveal.in {
+    transform: translateX(-50%);
+  }
+  .name {
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .meta {
+    font-weight: 400;
+    text-transform: none;
+    color: var(--v2-navy);
+  }
+  .text {
+    color: var(--v2-navy);
+  }
+  .link {
+    font-weight: 700;
+    color: inherit;
+    text-decoration: none;
+    margin-top: auto;
+  }
+  .link:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+</style>

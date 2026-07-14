@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BDKF — a corner-letter identity system</title>
+<style>
+  :root{
+    --ink:#121212;
+    --paper:#ffffff;
+    --stage:#e7e6e1;      /* cool stone, not cream */
+    --panel:#f4f3ef;
+    --line:#c9c8c2;
+    --accent:#2b46f0;     /* cobalt — scaffolding only, never in the brand art */
+    --muted:#6b6b66;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    background:var(--stage);
+    color:var(--ink);
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding:28px 20px 48px;
+  }
+  .wrap{max-width:1080px;margin:0 auto;}
+  header.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 16px;margin-bottom:22px;}
+  header.top h1{font-size:15px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin:0;}
+  header.top p{font-size:13px;color:var(--muted);margin:0;max-width:52ch;line-height:1.45;}
+
+  .layout{display:grid;grid-template-columns:1fr 260px;gap:24px;align-items:start;}
+  @media (max-width:760px){.layout{grid-template-columns:1fr;}}
+
+  /* stage */
+  .stage{
+    background:var(--stage);
+    display:flex;align-items:center;justify-content:center;
+    min-height:420px;padding:10px;
+  }
+  svg.canvas{
+    height:min(62vh,600px);width:auto;max-width:100%;
+    background:var(--paper);
+    box-shadow:0 1px 0 rgba(0,0,0,.04),0 22px 50px -28px rgba(0,0,0,.5);
+    display:block;
+  }
+  .glyph{fill:var(--ink);}
+  .glyph g{transition:transform .55s cubic-bezier(.66,.02,.28,1);}
+  .content-txt{fill:var(--ink);}
+  .guide{stroke:var(--accent);fill:none;}
+  .guide-dot{fill:var(--accent);}
+  .guide-rect{stroke:var(--accent);stroke-dasharray:4 5;fill:none;opacity:.9;}
+  .track{stroke:var(--accent);stroke-width:1;opacity:.35;stroke-dasharray:2 4;}
+  .cat{fill:var(--ink);}
+  .cat .eye{fill:none;stroke:var(--paper);}
+
+  /* panel */
+  .panel{background:var(--panel);border:1px solid var(--line);padding:20px 18px;}
+  .panel h2{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 14px;font-weight:700;}
+  .field{margin-bottom:20px;}
+  .field > label{display:block;font-size:12px;font-weight:700;letter-spacing:.02em;margin-bottom:9px;}
+  .segmented{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .segmented button{
+    font:inherit;font-size:12px;font-weight:600;
+    padding:9px 6px;border:1px solid var(--line);background:#fff;color:var(--ink);
+    cursor:pointer;transition:.15s;letter-spacing:.02em;
+  }
+  .segmented button:hover{border-color:var(--ink);}
+  .segmented button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+  input[type=range]{width:100%;accent-color:var(--accent);margin:2px 0 4px;}
+  .rangelabels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;}
+  .rangelabels b{color:var(--ink);font-weight:700;}
+
+  .toggle-row{display:flex;flex-direction:column;gap:9px;}
+  .toggle{display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;user-select:none;}
+  .toggle input{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;}
+
+  .readout{font-size:11px;color:var(--muted);line-height:1.5;border-top:1px solid var(--line);padding-top:12px;margin-top:4px;}
+  .readout code{color:var(--ink);font-weight:700;}
+  footer.note{font-size:11.5px;color:var(--muted);margin-top:18px;line-height:1.5;max-width:60ch;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>BDKF · System</h1>
+    <p>One parameter drives everything. Drag <b>State</b> to move the four letters between the centered logo and the four-corner frame — then change the format and watch it hold.</p>
+  </header>
+
+  <div class="layout">
+    <div class="stage">
+      <svg class="canvas" id="cv" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-label="BDKF layout preview"></svg>
+    </div>
+
+    <aside class="panel">
+      <h2>Controls</h2>
+
+      <div class="field">
+        <label>Format</label>
+        <div class="segmented" id="fmt">
+          <button data-fmt="a4"    aria-pressed="true">A-series</button>
+          <button data-fmt="sq"    aria-pressed="false">Square</button>
+          <button data-fmt="land"  aria-pressed="false">Landscape</button>
+          <button data-fmt="story" aria-pressed="false">9:16</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="state">State</label>
+        <input type="range" id="state" min="0" max="100" value="100">
+        <div class="rangelabels"><b>Logo</b><span>Frame</span></div>
+      </div>
+
+      <div class="field">
+        <label>Show</label>
+        <div class="toggle-row">
+          <label class="toggle"><input type="checkbox" id="tGuides"> Grid &amp; travel tracks</label>
+          <label class="toggle"><input type="checkbox" id="tCat" checked> Cat in the held space</label>
+          <label class="toggle"><input type="checkbox" id="tContent" checked> Poster content</label>
+        </div>
+      </div>
+
+      <div class="readout" id="readout"></div>
+    </aside>
+  </div>
+
+  <footer class="note">
+    The invariant: <b>B is always the top-left letter, D top-right, K bottom-left, F bottom-right</b> — in every state and every format. The layout is just one rectangle scaling from the centre (logo) out to the page margin (frame). Guides are scaffolding and never appear in the finished brand art.
+  </footer>
+</div>
+
+<script>
+const FORMATS = {
+  a4:    {w:210, h:297, label:"A-series portrait 1:√2"},
+  sq:    {w:250, h:250, label:"Square 1:1"},
+  land:  {w:297, h:210, label:"Landscape √2:1"},
+  story: {w:168, h:297, label:"Vertical 9:16"}
+};
+const LETTERS = ["B","D","K","F"]; // reading order = quadrant order
+
+let state = {fmt:"a4", t:1, guides:false, cat:true, content:true};
+
+const cv = document.getElementById("cv");
+
+function lerp(a,b,t){return a+(b-a)*t;}
+
+function positions(f){
+  const {w,h}=f;
+  const short=Math.min(w,h);
+  const L=short*0.115;            // constant letter size in ALL states
+  const m=short*0.075;            // uniform safe margin
+  const cx=w/2, cy=h/2;
+  const inset=L*0.02;
+  // frame state: letter CENTRES tucked into each corner at the margin
+  const fx0=m+L*0.42, fx1=w-m-L*0.42;
+  const fy0=m+L*0.5,  fy1=h-m-L*0.5;
+  const frame={B:[fx0,fy0],D:[fx1,fy0],K:[fx0,fy1],F:[fx1,fy1]};
+  // logo state: centred 2x2 block
+  const gx=L*0.62, gy=L*0.58;
+  const logo={B:[cx-gx,cy-gy],D:[cx+gx,cy-gy],K:[cx-gx,cy+gy],F:[cx+gx,cy+gy]};
+  return {L,m,cx,cy,frame,logo};
+}
+
+function catPath(w,h){
+  // simple peeking cat head, centre-bottom, drawn in page coords
+  const cw=w*0.44, ch=h*0.17;
+  const x=w/2-cw/2, baseY=h;               // sits on bottom edge
+  const topY=baseY-ch;
+  const earH=ch*0.42;
+  // rounded head with two ears
+  const p=
+    `M ${x} ${baseY}`+
+    `L ${x} ${topY+ch*0.35}`+
+    `Q ${x} ${topY+ch*0.08} ${x+cw*0.14} ${topY+ch*0.02}`+
+    `L ${x+cw*0.30} ${topY-earH}`+          // left ear tip
+    `L ${x+cw*0.44} ${topY+ch*0.04}`+
+    `L ${x+cw*0.56} ${topY+ch*0.04}`+
+    `L ${x+cw*0.70} ${topY-earH}`+          // right ear tip
+    `L ${x+cw*0.86} ${topY+ch*0.02}`+
+    `Q ${x+cw} ${topY+ch*0.08} ${x+cw} ${topY+ch*0.35}`+
+    `L ${x+cw} ${baseY} Z`;
+  const eyeR=cw*0.055, eyeY=baseY-ch*0.30;
+  const eL=x+cw*0.34, eR=x+cw*0.66;
+  return {p,eyeR,eyeY,eL,eR};
+}
+
+function render(){
+  const f=FORMATS[state.fmt];
+  const {w,h}=f;
+  const {L,m,cx,cy,frame,logo}=positions(f);
+  const t=state.t;
+  cv.setAttribute("viewBox",`0 0 ${w} ${h}`);
+  let svg="";
+
+  // guides
+  if(state.guides){
+    svg+=`<rect class="guide-rect" x="${m}" y="${m}" width="${w-2*m}" height="${h-2*m}"/>`;
+    svg+=`<line class="guide" x1="${cx}" y1="${m}" x2="${cx}" y2="${h-m}" opacity=".4"/>`;
+    svg+=`<line class="guide" x1="${m}" y1="${cy}" x2="${w-m}" y2="${cy}" opacity=".4"/>`;
+    LETTERS.forEach(k=>{
+      const a=logo[k],b=frame[k];
+      svg+=`<line class="track" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"/>`;
+      svg+=`<circle class="guide-dot" cx="${a[0]}" cy="${a[1]}" r="1.3" opacity=".5"/>`;
+      svg+=`<circle class="guide-dot" cx="${b[0]}" cy="${b[1]}" r="1.3" opacity=".5"/>`;
+    });
+  }
+
+  // cat — lives in the space the letters hold; fades in as the frame opens
+  if(state.cat){
+    const catT=Math.max(0,(t-0.35)/0.65);
+    if(catT>0){
+      const c=catPath(w,h);
+      const rise=(1-catT)*h*0.12;
+      svg+=`<g class="cat" opacity="${catT.toFixed(3)}" transform="translate(0 ${rise.toFixed(1)})">`+
+           `<path d="${c.p}"/>`+
+           `<circle class="eye" cx="${c.eL}" cy="${c.eyeY}" r="${c.eyeR}" stroke-width="${L*0.09}"/>`+
+           `<circle class="eye" cx="${c.eR}" cy="${c.eyeY}" r="${c.eyeR}" stroke-width="${L*0.09}"/>`+
+           `</g>`;
+    }
+  }
+
+  // poster content — only meaningful once there is a frame (t high)
+  if(state.content && t>0.5){
+    const op=((t-0.5)/0.5).toFixed(3);
+    const hx=m, hy=m+L*1.9;
+    const hSize=L*1.02, hLine=hSize*1.02;
+    const head=["BUND","DER","KATZEN","FREUNDE"];
+    let heads="";
+    head.forEach((word,i)=>{
+      heads+=`<text class="content-txt" x="${hx}" y="${hy+i*hLine}" font-size="${hSize}" font-weight="800" letter-spacing="-0.01em">${word}</text>`;
+    });
+    const bodyY=hy+head.length*hLine+L*0.9;
+    const bSize=L*0.34, bLine=bSize*1.35;
+    const body=["Willkommen im Bund der","Katzenfreunde. Netzwerk,","Beratung und Vermittlung —","für Menschen und ihre Katzen."];
+    let bod="";
+    body.forEach((ln,i)=>{
+      bod+=`<text class="content-txt" x="${hx}" y="${bodyY+i*bLine}" font-size="${bSize}" font-weight="400">${ln}</text>`;
+    });
+    svg+=`<g opacity="${op}">${heads}${bod}</g>`;
+  }
+
+  // the four letters — constant size, only position moves
+  let glyphs=`<g class="glyph" font-weight="800" font-size="${L}" text-anchor="middle" dominant-baseline="central" style="font-family:Helvetica,Arial,sans-serif">`;
+  LETTERS.forEach(k=>{
+    const a=logo[k],b=frame[k];
+    const x=lerp(a[0],b[0],t), y=lerp(a[1],b[1],t);
+    glyphs+=`<g transform="translate(${x.toFixed(2)} ${y.toFixed(2)})"><text>${k}</text></g>`;
+  });
+  glyphs+=`</g>`;
+  svg+=glyphs;
+
+  cv.innerHTML=svg;
+
+  const stateName = t<0.04?"logo (converged 2×2 mark)" : t>0.96?"frame (four-corner layout)" : "in transit along the diagonals";
+  document.getElementById("readout").innerHTML =
+    `Format: <code>${f.label}</code><br>State: <code>${Math.round(t*100)}%</code> — ${stateName}<br>Letter size &amp; margin are locked; only the corner-rectangle scales.`;
+}
+
+// wiring
+document.getElementById("fmt").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  state.fmt=b.dataset.fmt;
+  [...e.currentTarget.children].forEach(c=>c.setAttribute("aria-pressed", c===b));
+  render();
+});
+document.getElementById("state").addEventListener("input",e=>{state.t=e.target.value/100;render();});
+document.getElementById("tGuides").addEventListener("change",e=>{state.guides=e.target.checked;render();});
+document.getElementById("tCat").addEventListener("change",e=>{state.cat=e.target.checked;render();});
+document.getElementById("tContent").addEventListener("change",e=>{state.content=e.target.checked;render();});
+
+render();
+</script>
+</body>
+</html>

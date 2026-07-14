@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "bdkf-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--", "--port", "4321"],
+      "port": 4321
+    },
+    {
+      "name": "static-guidelines",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "4400"],
+      "port": 4400
+    }
+  ]
+}

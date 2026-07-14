@@ -1,0 +1,412 @@
+---
+import BaseV2 from '../../../design-archive/v2/layouts/BaseV2.astro';
+import Nav from '../../../design-archive/v2/components/v2/Nav.astro';
+import Footer from '../../../design-archive/v2/components/v2/Footer.astro';
+import CatCard from '../../../design-archive/v2/components/v2/CatCard.astro';
+---
+<BaseV2 title="Bund der Katzenfreunde e. V. — Katzenschutz in München">
+  <Nav current="start" />
+
+  <!-- Hero: ruhige Form, eine Überschrift, ein Farbfeld, eine Katze -->
+  <section class="hero wrap">
+    <p class="v2-eyebrow hero-eyebrow">Katzenschutz in München &amp; Umgebung</p>
+    <h1 class="v2-head">Dein Sofa hat noch Platz&nbsp;frei</h1>
+    <p class="v2-sub hero-sub">
+      Wir nehmen Fundkatzen und Katzen in Not auf, päppeln sie auf und
+      vermitteln sie in gute Hände — ehrenamtlich, ohne eigenes Tierheim,
+      mit Pflegefamilien in München und Umgebung.
+    </p>
+    <div class="hero-ctas">
+      <a class="btn" href="/vermittlung/">Katze adoptieren</a>
+      <a class="btn btn-ghost" href="/helfen/">So kannst du helfen</a>
+    </div>
+  </section>
+  <div class="hero-band-zone">
+    <img
+      class="illu hero-cat reveal"
+      src="/assets/illustrations/peaking-cat-filled.svg"
+      alt=""
+      width="499"
+      height="315"
+    />
+    <div class="hero-band">
+      <p class="v2-sub band-line">Kaufen kann jeder. Adoptieren ist Liebe.</p>
+    </div>
+  </div>
+
+  <!-- Drei Wege zu helfen: Farbe als Wegweiser, Form bleibt ruhig -->
+  <section class="section wrap">
+    <h2 class="v2-sub section-h">So kannst du helfen</h2>
+    <div class="ways">
+      <a class="way" href="/vermittlung/" style="--way: var(--c-vermittlung)">
+        <h3 class="v2-body way-h">Adoptieren</h3>
+        <p class="v2-body way-p">
+          Gib einer Katze ein Zuhause. Unsere Schützlinge warten in
+          Pflegefamilien auf dich.
+        </p>
+        <span class="v2-body way-link">Zur Vermittlung →</span>
+      </a>
+      <a class="way" href="/helfen/#pflegeplatz" style="--way: var(--c-pflege)">
+        <h3 class="v2-body way-h">Pflegeplatz geben</h3>
+        <p class="v2-body way-p">
+          Nimm eine Katze auf Zeit bei dir auf — Tierarztkosten übernehmen
+          wir, Erfahrung hilft, ist aber kein Muss.
+        </p>
+        <span class="v2-body way-link">Pflegeplätze →</span>
+      </a>
+      <a class="way" href="/helfen/#pate" style="--way: var(--c-pate)">
+        <h3 class="v2-body way-h">Pate werden</h3>
+        <p class="v2-body way-p">
+          Unterstütze eine Katze, die (noch) nicht vermittelt werden kann,
+          mit einer Patenschaft.
+        </p>
+        <span class="v2-body way-link">Patenschaft →</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Vermittlungs-Teaser -->
+  <section class="section wrap">
+    <div class="section-head-row">
+      <h2 class="v2-sub section-h">Manche Katzen suchen noch</h2>
+      <a class="v2-body more" href="/vermittlung/">Alle Katzen ansehen →</a>
+    </div>
+    <div class="cards">
+      <CatCard
+        name="Melissa"
+        meta="geb. 2019"
+        text="Kam abgemagert zu uns, hat drei Kitten großgezogen und 16 Zähne beim Tierarzt gelassen — seitdem wie ausgewechselt. Sucht einen Einzelplatz mit vernetztem Balkon."
+        accent="var(--c-vermittlung)"
+        illu="big-head-cat"
+        href="/vermittlung/"
+      />
+      <CatCard
+        name="Tapsi"
+        text="Sanfter Kater, der erst auftaut, wenn er dir vertraut — dann aber richtig. Wartet zusammen mit Mietz auf seine Menschen."
+        accent="var(--c-vermittlung)"
+        illu="fat-cat"
+        href="/vermittlung/"
+      />
+      <CatCard
+        name="Mietz"
+        text="Neugierige Samtpfote aus schlechter Haltung, aufgepäppelt und bereit für ein ruhiges Zuhause mit Fensterplatz."
+        accent="var(--c-vermittlung)"
+        illu="peaking-cat"
+        href="/vermittlung/"
+      />
+    </div>
+  </section>
+
+  <!-- Termine: dunkles Band, die Katze liegt auf der Kante -->
+  <div class="dark-zone">
+    <img
+      class="illu flat-cat reveal"
+      src="/assets/illustrations/flat-cat-filled.svg"
+      alt=""
+      width="644"
+      height="534"
+      loading="lazy"
+    />
+    <section class="dark-band">
+      <div class="wrap">
+        <div class="section-head-row">
+          <h2 class="v2-sub section-h">Nächste Termine</h2>
+          <a class="v2-body more more-light" href="/aktuelles/#termine">Alle Termine →</a>
+        </div>
+        <ol class="events v2-body">
+          <li class="event">
+            <span class="event-date">05.07.2026</span>
+            <span class="event-name">Viecherlmesse bei Pfarrer Schießler</span>
+            <span class="event-place">10:30–12:00 · Nazareth-Kirche, Barbarossastr. 3, München</span>
+          </li>
+          <li class="event">
+            <span class="event-date">06.09.2026</span>
+            <span class="event-name">Herbst-Flohmarkt Fürstenried</span>
+            <span class="event-place">10:00–15:00 · ASZ Fürstenried-West, Züricher Str. 80, München</span>
+          </li>
+          <li class="event">
+            <span class="event-date">22.11.2026</span>
+            <span class="event-name">Großer Weihnachtsflohmarkt</span>
+            <span class="event-place">10:00–15:00 · Pfarrsaal St. Maximilian, Deutingerstr. 4, München</span>
+          </li>
+        </ol>
+      </div>
+    </section>
+  </div>
+
+  <!-- Aktuelles-Teaser -->
+  <section class="section wrap">
+    <div class="section-head-row">
+      <h2 class="v2-sub section-h">Aktuelles</h2>
+      <a class="v2-body more" href="/aktuelles/">Alle Neuigkeiten →</a>
+    </div>
+    <ul class="news v2-body">
+      <li><a href="/aktuelles/"><span class="news-date">28.05.2026</span> Tapsi + Mietz suchen gemeinsam ein Zuhause</a></li>
+      <li><a href="/aktuelles/"><span class="news-date">10.05.2026</span> Melissa — vom Notfall zur Schmusekatze</a></li>
+      <li><a href="/aktuelles/"><span class="news-date">24.02.2026</span> Pflege- bzw. Endplätze gesucht</a></li>
+    </ul>
+  </section>
+
+  <!-- Spenden: Farbfeld, die Katze hängt über der Kante -->
+  <div class="donate-zone">
+    <img
+      class="illu lying-cat reveal reveal-fade"
+      src="/assets/illustrations/lying-cat-filled.svg"
+      alt=""
+      width="543"
+      height="559"
+      loading="lazy"
+    />
+    <section class="donate">
+      <div class="wrap donate-grid">
+        <div>
+          <h2 class="v2-sub section-h">Wohnung leer? Herz auch? Spenden hilft.</h2>
+          <p class="v2-body donate-p">
+            Tierarzt, Futter, Medikamente — unsere Arbeit ist ehrenamtlich,
+            unsere Kosten sind es nicht. Jeder Betrag kommt direkt den Katzen
+            zugute. Spenden geht auch per PayPal oder beim Einkaufen über
+            Gooding.
+          </p>
+        </div>
+        <div class="v2-body donate-account">
+          <p class="v2-eyebrow">Spendenkonto</p>
+          <!-- TODO: Platzhalter — Bankverbindung vor Livegang bestätigen -->
+          <p>
+            VR Bank München Land<br />
+            <strong>IBAN DE35&nbsp;7016&nbsp;6486&nbsp;0000&nbsp;7907&nbsp;70</strong><br />
+            BIC GENODEF1OHC
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <Footer />
+</BaseV2>
+
+<style>
+  .hero {
+    padding-top: clamp(40px, 6vw, 90px);
+  }
+  .hero-eyebrow {
+    color: var(--v2-navy);
+    margin-bottom: 18px;
+  }
+  .hero-sub {
+    margin-top: 26px;
+    max-width: 44ch;
+    color: var(--v2-navy);
+  }
+  .hero-ctas {
+    display: flex;
+    gap: var(--v2-gap);
+    flex-wrap: wrap;
+    /* Abstand nach unten ≥ Katzenhöhe (0.632 × Breite) + Luft: die Katze
+       bekommt ihre eigene Bühne und überlappt nie die CTAs */
+    margin-block: 34px calc(clamp(170px, 22vw, 290px) * 0.632 + 28px);
+  }
+
+  .hero-band-zone {
+    position: relative;
+  }
+  .hero-cat {
+    position: absolute;
+    bottom: 100%;
+    right: clamp(24px, 14vw, 220px);
+    width: clamp(170px, 22vw, 290px);
+    margin-bottom: -2px;
+  }
+  .hero-band {
+    background: var(--c-vermittlung);
+    padding: clamp(36px, 5vw, 64px) var(--v2-margin);
+    /* Band ÜBER der Katze: die Reveal-Animation taucht hinter der Kante auf */
+    position: relative;
+    z-index: 1;
+  }
+  .band-line {
+    font-weight: 700;
+    text-transform: uppercase;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: var(--v2-margin);
+  }
+
+  .section-h {
+    margin-bottom: clamp(24px, 3vw, 40px);
+  }
+  .section-head-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .more {
+    font-weight: 700;
+    color: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .more:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .ways {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--v2-gap);
+  }
+  .way {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 24px 22px;
+    border-top: 10px solid var(--way);
+    background: color-mix(in srgb, var(--way) 18%, var(--v2-paper));
+    color: inherit;
+    text-decoration: none;
+  }
+  .way:hover {
+    background: color-mix(in srgb, var(--way) 36%, var(--v2-paper));
+  }
+  .way-h {
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .way-p {
+    color: var(--v2-navy);
+  }
+  .way-link {
+    font-weight: 700;
+    margin-top: auto;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: calc(var(--v2-gap) * 1.5);
+  }
+
+  .dark-zone {
+    position: relative;
+    /* Platz für die liegende Katze (Seitenverhältnis 534/644 ≈ 0.83) */
+    margin-top: calc(clamp(150px, 17vw, 230px) * 0.83 + 28px);
+  }
+  .flat-cat {
+    position: absolute;
+    bottom: 100%;
+    left: clamp(24px, 8vw, 140px);
+    width: clamp(150px, 17vw, 230px);
+    margin-bottom: -2px;
+  }
+  .dark-band {
+    background: var(--v2-navy);
+    color: var(--v2-paper);
+    padding-block: clamp(48px, 6vw, 84px);
+    /* Band ÜBER der Katze: Reveal taucht hinter der Kante auf */
+    position: relative;
+    z-index: 1;
+  }
+  .more-light {
+    color: var(--v2-paper);
+  }
+  .events {
+    list-style: none;
+    display: grid;
+    gap: 0;
+  }
+  .event {
+    display: grid;
+    grid-template-columns: 130px 1.2fr 1.6fr;
+    gap: 8px 24px;
+    padding-block: 18px;
+    border-top: 1px solid #4a4f63;
+    align-items: baseline;
+  }
+  .event:last-child {
+    border-bottom: 1px solid #4a4f63;
+  }
+  .event-date {
+    font-weight: 700;
+    color: var(--c-aktuell);
+  }
+  .event-name {
+    font-weight: 700;
+  }
+  .event-place {
+    color: #c8cbd8;
+  }
+
+  .news {
+    list-style: none;
+    display: grid;
+  }
+  .news a {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    padding-block: 16px;
+    border-top: 1px solid #e3e1da;
+  }
+  .news li:last-child a {
+    border-bottom: 1px solid #e3e1da;
+  }
+  .news a:hover {
+    background: color-mix(in srgb, var(--c-aktuell) 14%, var(--v2-paper));
+  }
+  .news-date {
+    display: inline-block;
+    min-width: 120px;
+    font-weight: 700;
+  }
+
+  .donate-zone {
+    position: relative;
+    /* Platz für die drapierte Katze (Ratio 559/543 ≈ 1.03, hängt 52px ins Band) */
+    margin-top: calc(clamp(140px, 16vw, 220px) * 1.03 - clamp(30px, 4vw, 52px) + 28px);
+  }
+  .lying-cat {
+    position: absolute;
+    bottom: calc(100% - clamp(30px, 4vw, 52px));
+    right: clamp(24px, 10vw, 170px);
+    width: clamp(140px, 16vw, 220px);
+    z-index: 2;
+  }
+  .donate {
+    background: var(--c-spenden);
+    padding-block: clamp(48px, 6vw, 84px);
+  }
+  .donate-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: calc(var(--v2-gap) * 2);
+    align-items: start;
+  }
+  .donate-p {
+    max-width: 52ch;
+  }
+  .donate-account {
+    background: var(--v2-paper);
+    padding: 24px;
+  }
+  .donate-account .v2-eyebrow {
+    margin-bottom: 10px;
+  }
+
+  @media (max-width: 900px) {
+    .ways,
+    .cards {
+      grid-template-columns: 1fr;
+    }
+    .event {
+      grid-template-columns: 110px 1fr;
+    }
+    .event-place {
+      grid-column: 2;
+    }
+    .donate-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

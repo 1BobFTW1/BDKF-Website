@@ -1,0 +1,200 @@
+---
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+---
+<Base title="BDKF — Bund der Katzenfreunde">
+  <Nav />
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="headline hero-h">Dein Sofa hat noch Platz frei.</h1>
+      <p class="body hero-p">
+        Wir kennen da jemanden. Der Bund der Katzenfreunde ist das Netzwerk für
+        Menschen und ihre Katzen in der Stadt — Beratung, Vermittlung und ein
+        Verein, der zusammenhält.
+      </p>
+      <a class="hero-cta" href="/vermittlung/">Katze adoptieren</a>
+    </div>
+    <img
+      class="hero-cat"
+      src="/assets/cats/katze-peek.png"
+      alt=""
+      width="960"
+      height="540"
+    />
+  </section>
+
+  <!-- TODO: Platzhalter-Sektionen — nur zum Testen des Scroll-Verhaltens,
+       werden in Schritt 1 durch die echten Homepage-Sektionen ersetzt. -->
+  <section class="ph">
+    <p class="label ph-label">Vermittlung</p>
+    <h2 class="headline ph-h">Kaufen kann jeder.<br />Adoptieren ist Liebe.</h2>
+    <p class="body ph-p">
+      Unsere Fundkatzen suchen ein Zuhause in der Stadt. Wir beraten, begleiten
+      und vermitteln — bis es passt. Für die Katze und für dich.
+    </p>
+  </section>
+
+  <section class="ph ph-dark">
+    <p class="label ph-label">Termine</p>
+    <h2 class="headline ph-h">Die Katzen lästern schon über dich.</h2>
+    <p class="body ph-p">
+      Komm zum Katzenstammtisch — jeden 1. Donnerstag. Menschen, Katzenfotos
+      und die Frage, wer hier eigentlich wen erzogen hat.
+    </p>
+  </section>
+
+  <section class="ph">
+    <p class="label ph-label">Mitglied werden</p>
+    <h2 class="headline ph-h">Werde Mitglied.<br />Schnurren inklusive.</h2>
+    <p class="body ph-p">
+      Der Bund der Katzenfreunde ist das Netzwerk für Menschen und ihre Katzen
+      in der Stadt — Beratung, Vermittlung und ein Verein, der zusammenhält.
+    </p>
+  </section>
+</Base>
+
+<style>
+  /* The Frame is now viewport-fixed (ViewportFrame in Base). The hero is a
+     plain full-height section whose content respects the viewport frame's
+     insets: 21svmin from the viewport edges (M + L + 0.5L in viewport-U),
+     so nothing ever sits in — or scrolls through — a letter's column. */
+  .hero {
+    position: relative;
+    container-type: size;
+    background: var(--paper);
+    overflow: hidden;
+    height: calc(100svh - var(--nav-h));
+  }
+  .hero-content {
+    position: absolute;
+    left: 21svmin;
+    right: 21svmin;
+    /* 21svmin measured from the VIEWPORT top; the hero starts --nav-h below it */
+    top: calc(21svmin - var(--nav-h));
+    bottom: 21svmin;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 4cqmin;
+  }
+  /* Sizes come from the global 1:3:9 scale (tokens.css) via the type roles.
+     ONE exception: the hero headline gets an extra viewport cap, because the
+     hero content must fit the fixed band between the corner letters' exclusion
+     zones — at 9× the headline alone (3 wrapped lines ≈ 419px at 1440×900)
+     exceeds the whole band (522px). Interior sections have no vertical cap
+     and use the pure scale. */
+  .hero-h {
+    font-size: min(var(--fs-headline), 6.8vw);
+  }
+  .hero-p {
+    line-height: 1.6;
+    color: var(--muted);
+    max-width: 52ch;
+  }
+  .hero-cta {
+    /* the ONE amber element in this view */
+    background: var(--amber);
+    color: var(--ink);
+    font-weight: 700;
+    font-size: var(--fs-body);
+    padding: 2.4cqmin 5cqmin;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+  }
+  .hero-cta:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  /* Cat peeks over the hero's bottom edge (= viewport bottom on load),
+     centred in the band between K's and F's columns. Width is capped so it
+     clears both 21svmin side bands at every viewport. */
+  .hero-cat {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: min(61cqmin, calc(100vw - 46svmin));
+    height: auto;
+    transform: translateX(-55%);
+    transition: transform 0.7s var(--ease-brand);
+  }
+  /* While the corner words are expanded (≥1260px, only at the top of the page)
+     KATZEN + FREUNDE own the bottom edge — no room for the cat between their
+     exclusion zones on common laptop ratios. The cat ducks below the edge and
+     pops back up when the words collapse: the peek-in moment, state-driven. */
+  @media (min-width: 1260px) {
+    :global(html[data-frame='expanded']) .hero-cat {
+      transform: translate(-55%, 102%);
+    }
+  }
+
+  /* TODO: Platzhalter — Interior-Sektionen: editorial, ≤3 Schriftgrößen,
+     kein Amber (das eine Amber-Element je View bleibt vorerst dem Hero-CTA
+     vorbehalten). Inline-Padding 21svmin: Inhalte bleiben zwischen den
+     Spalten der fixierten Lettern, egal wie weit gescrollt ist. */
+  .ph {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 22px;
+    padding: 96px 21svmin;
+  }
+  .ph-dark {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .ph-label {
+    color: var(--muted);
+  }
+  .ph-dark .ph-label {
+    color: var(--muted-on-ink);
+  }
+  .ph-h {
+    max-width: 18ch;
+  }
+  .ph-p {
+    color: var(--muted);
+    max-width: 52ch;
+  }
+  .ph-dark .ph-p {
+    color: var(--muted-on-ink);
+  }
+
+  /* Mobile (< 600px shorter viewport edge): no viewport frame (minimum-size
+     rule) — the nav Mark carries the brand, content flows normally. */
+  @media (max-width: 599px), (max-height: 599px) {
+    .hero {
+      /* a size-container ignores content height and would collapse to 0 */
+      container-type: normal;
+      height: auto;
+    }
+    .hero-content {
+      position: static;
+      padding: 48px 24px 36px;
+      gap: 20px;
+    }
+    .hero-h {
+      /* no frame on mobile → no band to fit; back to the pure scale */
+      font-size: var(--fs-headline);
+    }
+    .hero-p {
+      max-width: 34ch;
+    }
+    .hero-cta {
+      padding: 12px 24px;
+    }
+    .hero-cat {
+      position: static;
+      width: auto;
+      height: 96px;
+      margin: 0 auto;
+      transform: none;
+    }
+    .ph {
+      padding: 72px 24px;
+    }
+  }
+</style>

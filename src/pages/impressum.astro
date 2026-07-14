@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Impressum | Bund der Katzenfreunde e. V.">
+  <section class="legal pad-x sec">
+    <div class="sec-head">
+      <p class="eyebrow">Rechtliches</p>
+      <h1 class="display">Impressum</h1>
+    </div>
+    {/* TODO: Platzhalter — vollständiges Impressum vom Verein einholen (Vorstand, Registernummer, V.i.S.d.P.) */}
+    <p>
+      Bund der Katzenfreunde e.&nbsp;V.<br />
+      c/o Marius Zisselsberger<br />
+      Oberhachinger Str. 24a<br />
+      82031 Grünwald
+    </p>
+    <p>
+      Kontakt: <a href="mailto:norina.bernetti@bund-der-katzenfreunde.de">norina.bernetti@bund-der-katzenfreunde.de</a><br />
+      Telefon: <a href="tel:+491728552419">0172&nbsp;8552419</a>
+    </p>
+  </section>
+</Base>
+
+<style>
+  .legal { margin-top: clamp(40px, 6vw, 80px); }
+</style>

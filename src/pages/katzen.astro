@@ -1,0 +1,1053 @@
+---
+import Base from '../layouts/Base.astro';
+
+import katzenRaw from '../data/katzen.json';
+
+// Echte Daten von bund-der-katzenfreunde.de (WP REST API, siehe
+// scratchpad/scrape-bdkf.mjs). Abgeleitete Felder (Haltung, Charakter-Tags)
+// sind heuristisch aus den Beschreibungen gezogen.
+// TODO: Ableitungen (Haltung, Tags, Kurztexte) mit dem Verein abgleichen
+
+function shortText(t) {
+  const s = t.replace(/^update[^:]*:\s*/i, '');
+  const m = s.match(/^[\s\S]{60,220}?[.!?…](?=\s|$)/);
+  return m ? m[0].trim() : `${s.slice(0, 180).trim()}…`;
+}
+
+// Beschreibung lesbar gliedern: Update-Blöcke als eigene Absätze, den Rest
+// satzweise in Absätze von ~280 Zeichen gruppieren (die Original-Absätze
+// gingen beim Scraping verloren)
+function paras(t) {
+  const blocks = t.split(/\s*(?=UPDATE\s*\(|Update\s*\()/);
+  const out = [];
+  for (const block of blocks) {
+    const sentences = block.split(/(?<=[.!?…])\s+(?=[A-ZÄÖÜ„0-9(])/);
+    let cur = '';
+    for (const s of sentences) {
+      if (cur && cur.length + s.length > 280) {
+        out.push(cur);
+        cur = s;
+      } else {
+        cur = cur ? `${cur} ${s}` : s;
+      }
+    }
+    if (cur) out.push(cur);
+  }
+  return out;
+}
+
+// Kuratierte Kurzfassungen der Pflegestellen-Texte für die Detailansicht —
+// gestrafft und im Marken-Ton („professionell mit Augenzwinkern"), alle Fakten
+// (Gesundheit, Haltungsanforderungen) bleiben erhalten.
+// TODO: Formulierungen mit dem Verein abstimmen
+const KURZ = {
+  '9066-2': [
+    'Benji (4) und Lui (1) sind gutmütig, verspielt und verschmust — nur mit dem 8-jährigen Kater zu Hause klappt es nicht mehr. Deshalb suchen die beiden jetzt gemeinsam ein neues Zuhause.',
+    'Gesucht: Wohnungshaltung mit vernetztem Balkon bei katzenerprobten Menschen. Mit Hund aufgewachsen, Kinder kennen sie nicht. Beide kastriert und geimpft.',
+  ],
+  'bambi-trigger-naseweis': [
+    'Anfangs zurückhaltend, inzwischen mittendrin: Die Tigerbrüder schlafen gern im Bett, toben viel und sind ein unzertrennliches Duo.',
+    'Gesucht: Wohnungsplatz mit vernetztem Balkon bei katzenerprobten Menschen. Kleine Kinder kennen sie nicht.',
+  ],
+  'boncuk-pasha': [
+    'Boncuk (strahlend grüne Augen) ist der Freigeist: Er kommt, wenn es ihm passt — genau das macht seinen Charme aus. Pasha (ein blaues, ein bernsteinfarbenes Auge) ist Kuschelkater durch und durch und schläft am liebsten ganz nah bei seinem Menschen.',
+    'Ihre Menschen haben nicht mehr genug Zeit für sie. Gesucht: Wohnungshaltung mit vernetztem Balkon und gesicherten Fenstern.',
+  ],
+  'gustav-ehem-boncuk-vincent': [
+    'Auf der Pflegestelle kennengelernt, seitdem ein Dreamteam: Gustav ist der Ungestüme, Vincent die geduldige Seele. Zusammen wird getobt und geklettert — danach ausgiebig gekuschelt. Gustav schläft am liebsten unter der Decke.',
+    'Gesucht: Wohnungsplatz mit Platz zum Toben und Klettern und vernetztem Balkon — den lieben beide sehr.',
+  ],
+  'helga-dani': [
+    'Helga und Dani sind beste Freundinnen: viel gemeinsames Liegen, ausgiebige gegenseitige Fellpflege. Zwei ruhige, brave Mitbewohnerinnen — nur auf den Schoß springen sie (noch) nicht.',
+    'Seit knapp zwei Jahren warten die beiden auf ein eigenes Zuhause. Mit Zeit und Geduld werden sie sich schnell sicher fühlen. Gesucht: Wohnungsplatz mit vernetztem Balkon bei katzenerfahrenem Personal.',
+  ],
+  'jacky-belmondo': [
+    'Belmondo, der 9-jährige Birmamix, ist ein Charmeur und liebt es, gebürstet zu werden — die Fellpflege bei Jacky übernimmt er gleich mit. Jacky, lackschwarz, ist anfangs misstrauisch, streicht aber nach wenigen Tagen um die Beine.',
+    'Nach einem Unfall kann ihre Besitzerin nicht mehr für sie sorgen. Beide sind pflegeleicht, gesund, geimpft, gechipt und kastriert. Gesucht: Wohnungsplatz mit vernetztem Balkon bei katzenerfahrenen Menschen.',
+  ],
+  'melissa-2': [
+    'Melissa kam als Fundkatze in schlechtem Zustand zu uns. Hinter ihrer Wesensveränderung steckte eine massive FORL-Infektion — 16 Zähne mussten entfernt werden. Endlich schmerzfrei zeigt sie ihr wahres Wesen: absolut freundlich und lieb.',
+    'Gesucht: ein ruhiger Einzelplatz bei Katzenkennern, Wohnung mit vernetztem Balkon.',
+  ],
+  'mietz': [
+    'Mietz ist äußerst lieb und menschenbezogen: Er liegt gern bei seinen Menschen, schläft am liebsten mit im Bett und ist für sein Alter noch erstaunlich verspielt.',
+    'Und: Mietz hängt an Tapsi — er putzt sie hingebungsvoll, seit es ihr besser geht. Die beiden ziehen deshalb nur gemeinsam um. Gesucht: viel Platz, Zeit und eine Wohnung mit gesichertem Balkon.',
+  ],
+  'pumba-fussel': [
+    'Pumba (Heilige Birma) ist sanft und sensibel — wer ihm Zeit zum Ankommen gibt, gewinnt einen treuen Sofabegleiter. Fussel (Perser) ist der Ruhepol schlechthin: beobachtet am liebsten von erhöhten Plätzen und genießt Streicheleinheiten am Kopf.',
+    'Wegen eines Umzugs müssen die beiden ihr Zuhause verlassen. Sie sind seit Jahren ein eingespieltes Team und ziehen nur gemeinsam um. Beide kastriert, geimpft, gechipt und kerngesund.',
+    'Gesucht: ein ruhiger Wohnungsplatz mit vernetztem Balkon — ohne viel Trubel und kleine Kinder.',
+  ],
+  'susi-3': [
+    'Susi kam zurück, weil die vorhandene Katze im neuen Zuhause partout nicht mit ihr warm wurde. Auf der Pflegestelle hat sie dafür Poppy gefunden — jetzt suchen die beiden gemeinsam. Poppy hat nur noch ein Auge, was sie überhaupt nicht beeinträchtigt.',
+    'Gesucht: Wohnungsplatz mit vernetztem Balkon, genug Spiel- und Klettermöglichkeiten — und natürlich freundlichem Personal.',
+  ],
+  'tapsi-2': [
+    'Tapsi ist unser kleines Sorgenkind: eine chronische Darmentzündung, inzwischen gut eingestellt mit Kortison und Diätfutter. Solange sie beides bekommt, geht es ihr sehr gut.',
+    'Seit es ihr besser geht, interessiert sie sich wieder für ihren Kumpel Mietz — die beiden ziehen nur gemeinsam um. Gesucht: ein ruhiges Zuhause, Wohnung mit gesichertem Balkon.',
+  ],
+};
+
+const TAG_WORDS = [
+  ['verschmust', 'Verschmust'],
+  ['verspielt', 'Verspielt'],
+  ['menschenbezogen', 'Menschenbezogen'],
+  ['ruhig', 'Ruhig'],
+  ['schüchtern', 'Schüchtern'],
+  ['scheu', 'Schüchtern'],
+  ['neugierig', 'Neugierig'],
+  ['zutraulich', 'Zutraulich'],
+];
+
+const katzen = katzenRaw.map((k) => {
+  const g = (k.geschlecht || []).join(' ').toLowerCase();
+  const w = g.includes('weiblich') || g.includes('kätzin');
+  const m = g.includes('männlich') || g.includes('kater');
+  const text = k.beschreibung.toLowerCase();
+  const freigang = /freigang|freigäng/.test(text);
+  const tags = [...new Set(TAG_WORDS.filter(([word]) => text.includes(word)).map(([, label]) => label))].slice(0, 2);
+  return {
+    name: k.title.replace(/\s*\+\s*/g, ' & '),
+    ageText: k.age === 1 ? '1 Jahr' : k.age ? `${k.age} Jahre` : 'Alter unbekannt',
+    alter: k.age == null || k.age <= 2 ? 'jung' : k.age <= 7 ? 'erwachsen' : 'senior',
+    geschlecht: [m && 'm', w && 'w'].filter(Boolean).join(' ') || 'm w',
+    geschlechtText: m && w ? 'Männlich & Weiblich' : w ? 'Weiblich' : 'Männlich',
+    haltung: freigang ? 'freigang' : 'wohnung',
+    haltungText: freigang ? 'Freigänger' : 'Wohnungskatze',
+    doppel: k.title.includes('+'),
+    tags,
+    text: shortText(k.beschreibung),
+    beschreibung: k.beschreibung,
+    absaetze: KURZ[k.slug] ?? paras(k.beschreibung),
+    photo: k.images[0],
+    photos: k.images,
+    url: k.url,
+  };
+});
+
+// Farbkodierung der Filtergruppen (Markenfarben als Flächen; Typo bleibt Schwarz)
+const filterGroups = [
+  {
+    label: 'Alter',
+    group: 'alter',
+    c: 'var(--blue)',
+    options: [
+      { val: 'jung', label: 'Jung (bis 2)' },
+      { val: 'erwachsen', label: 'Erwachsen' },
+      { val: 'senior', label: 'Senior (8+)' },
+    ],
+  },
+  {
+    label: 'Geschlecht',
+    group: 'geschlecht',
+    c: 'var(--coral)',
+    options: [
+      { val: 'w', label: 'Weiblich' },
+      { val: 'm', label: 'Männlich' },
+    ],
+  },
+  {
+    label: 'Haltung',
+    group: 'haltung',
+    c: 'var(--amber)',
+    options: [
+      { val: 'wohnung', label: 'Wohnungskatze' },
+      { val: 'freigang', label: 'Freigänger' },
+    ],
+  },
+  {
+    label: 'Gesellschaft',
+    group: 'doppel',
+    c: 'var(--green)',
+    options: [
+      { val: 'ja', label: 'Doppelpack' },
+      { val: 'nein', label: 'Einzelkatze' },
+    ],
+  },
+  {
+    label: 'Charakter',
+    group: 'charakter',
+    c: 'var(--pink)',
+    // nur Eigenschaften anbieten, die im aktuellen Bestand vorkommen
+    options: [...new Set(katzen.flatMap((k) => k.tags))].map((t) => ({ val: t, label: t })),
+  },
+];
+
+// TODO: Platzhalter — Happy Ends von bund-der-katzenfreunde.de
+const happyEnds = [
+  { name: 'Willy & Leila', text: 'Gemeinsam eingezogen, gemeinsam glücklich.' },
+  { name: 'Oma Lisa', text: 'Mit 14 Jahren noch einmal angekommen.' },
+  { name: 'Karli', text: 'Vom Notfall zum Sofakönig.' },
+];
+---
+<Base title="Katzen — Zuhause gesucht | Bund der Katzenfreunde e. V." current="katzen">
+  <!-- Katzentinder: Headline plakativ, Deck links, Matches auf gelber
+       Teilfläche, die an die rechte Viewportkante andockt -->
+  <section id="zuhause-gesucht" class="tinder sec">
+    <div class="sec-head pad-x">
+      <p class="eyebrow">Katzentinder</p>
+      <h1 class="display"><span class="nb">Liebe auf den</span> <span class="nb">ersten Miau</span></h1>
+    </div>
+    <div class="tinder-grid">
+      <div class="deck-col">
+        <div class="deck" id="deck">
+          {katzen.map((k, i) => (
+            <article class="tcard" data-name={k.name} style={`z-index: ${100 - i}`}>
+              <div class="tc-media">
+                <img class="photo" src={k.photo} alt={k.name} draggable="false" loading={i > 2 ? 'lazy' : undefined} />
+                <span class="stamp stamp-ja" aria-hidden="true">Miau</span>
+                <span class="stamp stamp-nein" aria-hidden="true">Weiter</span>
+              </div>
+              <h3 class="tc-name">{k.name}</h3>
+              <ul class="tc-tags">
+                {/* Alter als erster Chip (immer sichtbar), dann max. 3 weitere —
+                    farbcodiert wie die Filtergruppen (Charakter = Pink) */}
+                <li class="tc-age-chip c-alter">{k.ageText}</li>
+                {[
+                  ...k.tags.map((t) => ({ t, c: 'charakter' })),
+                  { t: k.haltungText, c: 'haltung' },
+                  ...(k.doppel ? [{ t: 'Doppelpack', c: 'doppel' }] : []),
+                ].slice(0, 3).map(({ t, c }) => (
+                  <li class={`c-${c}`}>{t}</li>
+                ))}
+              </ul>
+              <p class="tc-text">{k.text}</p>
+            </article>
+          ))}
+          <div class="deck-empty" id="deck-empty" hidden>
+            <p class="deck-empty-line">Alle durchgeswiped.</p>
+            <p>Keine Sorge — die Katzen nehmen das nicht persönlich. Fast.</p>
+            <p class="gap-16"><button class="btn btn-ghost" id="btn-restart" type="button">Nochmal von vorn</button></p>
+          </div>
+        </div>
+        <div class="deck-actions" id="deck-actions">
+          <button class="btn btn-ghost" id="btn-nope" type="button">Weiter</button>
+          <button class="btn" id="btn-like" type="button">Miau</button>
+        </div>
+      </div>
+      <aside class="matches" aria-live="polite">
+        <h2 class="matches-head">Deine Matches</h2>
+        <p id="matches-empty">Noch keine Matches. Die Katzen warten.</p>
+        {/* Leerzustand: flat-cat wartet am unteren Rand der Fläche */}
+        <img
+          class="illu matches-cat"
+          id="matches-cat"
+          src="/assets/illustrations/flat-cat-tight.svg"
+          alt=""
+          width="857"
+          height="711"
+        />
+        <ul class="match-list" id="match-list"></ul>
+        <p class="gap-8" id="match-cta" hidden>
+          {/* TODO: Platzhalter — Link zum echten Fragebogen (PDF/Formular) einsetzen */}
+          <a class="btn" href="/verein/#kontakt">Fragebogen anfragen</a>
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Überblick: alle Katzen als Raster mit Filtern -->
+  <section id="alle-katzen" class="alle pad-x sec">
+    <div class="sec-head">
+      <p class="eyebrow">Lieber Überblick statt Swipen?</p>
+      <h2 class="display"><span class="nb">Alle Katzen</span> <span class="nb">im Blick.</span></h2>
+    </div>
+    <div class="filters" id="filters">
+      {filterGroups.map((g) => (
+        <div class="filter-group" style={`--gc: ${g.c}`}>
+          <span class="eyebrow filter-label">{g.label}</span>
+          <div class="filter-chips">
+            {g.options.map((o) => (
+              <button class="chip" type="button" data-group={g.group} data-val={o.val} aria-pressed="false">{o.label}</button>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+    <p class="filter-count" id="filter-count">{katzen.length} Katzen</p>
+    <div class="grid-split">
+      {/* Links: sticky Detailansicht der ausgewählten Katze — Eigenschaften
+          in denselben farbcodierten Filter-Boxen wie oben */}
+      <aside class="cat-detail" id="cat-detail" aria-live="polite">
+        <div class="cd-media">
+          <img class="photo" id="cd-photo" src={katzen[0].photo} alt={katzen[0].name} />
+          {/* Carousel: Pfeile nur sichtbar, wenn die Katze mehrere Fotos hat */}
+          <button class="cd-nav cd-prev" id="cd-prev" type="button" aria-label="Vorheriges Foto">←</button>
+          <button class="cd-nav cd-next" id="cd-next" type="button" aria-label="Nächstes Foto">→</button>
+          <span class="cd-count" id="cd-count" aria-hidden="true">1/{katzen[0].photos.length}</span>
+        </div>
+        <h3 class="cd-name" id="cd-name">{katzen[0].name}</h3>
+        {/* nur die farbcodierten Boxen — die Farbe sagt, welche Kategorie es ist */}
+        <div class="cd-attrs" id="cd-attrs">
+          <span class="cd-chip c-alter">{katzen[0].ageText}</span>
+          <span class="cd-chip c-geschlecht">{katzen[0].geschlechtText}</span>
+          <span class="cd-chip c-haltung">{katzen[0].haltungText}</span>
+          <span class="cd-chip c-doppel">{katzen[0].doppel ? 'Doppelpack' : 'Einzelkatze'}</span>
+          {katzen[0].tags.map((t) => <span class="cd-chip c-charakter">{t}</span>)}
+        </div>
+        {/* Storytelling der Pflegestelle — Originaltext, in Absätze gegliedert */}
+        <div class="cd-text" id="cd-text">
+          {katzen[0].absaetze.map((p) => <p>{p}</p>)}
+        </div>
+        <p class="gap-16 cd-actions">
+          {/* TODO: Platzhalter — Link zum echten Fragebogen (PDF/Formular) einsetzen */}
+          <a class="btn" href="/verein/#kontakt">Fragebogen anfragen</a>
+          <a class="btn btn-ghost" id="cd-source" href={katzen[0].url} target="_blank" rel="noopener">Original-Steckbrief</a>
+        </p>
+      </aside>
+
+      {/* Rechts: das Raster — Klick wählt die Katze links aus */}
+      <div>
+        <div class="cards grid-cards" id="cat-grid">
+          {katzen.map((k, i) => (
+            <article
+              class={`card gcard${i === 0 ? ' selected' : ''}`}
+              data-name={k.name}
+              data-alter={k.alter}
+              data-geschlecht={k.geschlecht}
+              data-haltung={k.haltung}
+              data-doppel={k.doppel ? 'ja' : 'nein'}
+              data-charakter={k.tags.join(' ')}
+            >
+              <button class="gcard-open" type="button" data-name={k.name}>
+                <div class="card-media">
+                  <img class="photo" src={k.photo} alt={k.name} loading="lazy" />
+                </div>
+                <h3 class="card-name">{k.name}</h3>
+              </button>
+            </article>
+          ))}
+        </div>
+        <p id="grid-empty" hidden>
+          Keine Katze passt zu diesen Filtern — zum Glück ändern sich Filter leichter als Katzen.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Katzen von privat -->
+  <section id="privat" class="privat pad-x sec">
+    <div class="sec-head">
+      <p class="eyebrow">Katzen von privat</p>
+      <h2 class="display"><span class="nb">Nicht bei</span> <span class="nb">uns, aber</span> <span class="nb">über uns.</span></h2>
+    </div>
+    <p>
+      Manchmal suchen Katzen direkt aus privaten Haushalten ein neues Zuhause — etwa wenn
+      sich die Lebensumstände ihrer Menschen ändern. Wir stellen den Kontakt her, die
+      Vermittlung läuft direkt zwischen Ihnen und den bisherigen Haltern.
+    </p>
+    {/* TODO: Platzhalter — aktuelle Privat-Vermittlungen ergänzen */}
+  </section>
+
+  <!-- Happy Ends: Teilfläche rechts, fat-cat lugt über die Kante -->
+  <section id="happy-ends" class="happy sec">
+    <div class="sec-head pad-x">
+      <p class="eyebrow">Happy Ends</p>
+      <h2 class="display"><span class="nb">Erst schnurrt</span> <span class="nb">sie. Dann</span> <span class="nb">regiert sie.</span></h2>
+    </div>
+    <div class="form-row" style="--c: var(--pink); --form-w: 62%; --cat-w: clamp(120px, 16vw, 220px); --cat-ar: 1.29">
+      <img
+        class="illu form-cat reveal"
+        src="/assets/illustrations/fat-cat-tight.svg"
+        alt=""
+        width="834"
+        height="645"
+      />
+      <div class="form-block">
+        <ul class="happy-list">
+          {happyEnds.map((h) => (
+            <li>
+              <span class="happy-name">{h.name}</span>
+              <span>{h.text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline type="application/json" id="cats-data" set:html={JSON.stringify(katzen)} />
+</Base>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  const CATS = JSON.parse(document.getElementById('cats-data').textContent);
+  const byName = Object.fromEntries(CATS.map((c) => [c.name, c]));
+
+  /* ---------- Deck ---------- */
+  const deck = document.getElementById('deck');
+  const cards = Array.from(deck.querySelectorAll('.tcard'));
+  const empty = document.getElementById('deck-empty');
+  const matchList = document.getElementById('match-list');
+  const matchesEmpty = document.getElementById('matches-empty');
+  const matchCta = document.getElementById('match-cta');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const THRESHOLD = 120;
+  let top = 0;
+  let drag = null;
+
+  const topCard = () => (top < cards.length ? cards[top] : null);
+
+  // Stapel: hintere Karten leicht nach rechts unten versetzt. Max. 7 px pro
+  // Ebene — so lugt nur der weiße Kartenrand (14 px Padding) hervor.
+  const TILTS = ['none', 'translate(7px, 7px)', 'translate(14px, 14px)'];
+
+  function setStack() {
+    cards.forEach((c, i) => {
+      if (i < top) return;
+      const d = i - top;
+      c.style.transform = TILTS[Math.min(d, 2)];
+      // nur Top-Karte + 2 Ebenen dahinter zeigen
+      c.style.visibility = d > 2 ? 'hidden' : '';
+    });
+  }
+
+  // Karten sind inhaltsabhängig unterschiedlich hoch — für einen sauberen
+  // Stapel (nur Ränder lugen rechts unten hervor) alle auf Maximalhöhe bringen
+  const maxH = Math.max(...cards.map((c) => c.offsetHeight));
+  cards.forEach((c) => { c.style.height = `${maxH}px`; });
+  deck.style.minHeight = `${maxH + 14}px`;
+
+  function stamps(card, dx) {
+    const p = Math.min(Math.abs(dx) / THRESHOLD, 1);
+    card.querySelector('.stamp-ja').style.opacity = dx > 0 ? String(p) : '0';
+    card.querySelector('.stamp-nein').style.opacity = dx < 0 ? String(p) : '0';
+  }
+
+  function addMatch(cat) {
+    const li = document.createElement('li');
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'match-row';
+    btn.addEventListener('click', () => openDetail(cat.name));
+    const swatch = document.createElement('span');
+    swatch.className = 'match-swatch';
+    const img = document.createElement('img');
+    img.className = 'photo';
+    img.src = cat.photo;
+    img.alt = '';
+    swatch.appendChild(img);
+    const name = document.createElement('span');
+    name.className = 'match-name';
+    name.textContent = cat.name;
+    const more = document.createElement('span');
+    more.className = 'match-more';
+    more.textContent = 'Details ansehen';
+    btn.append(swatch, name, more);
+    li.appendChild(btn);
+    matchList.appendChild(li);
+    matchesEmpty.hidden = true;
+    document.getElementById('matches-cat').hidden = true;
+    matchCta.hidden = false;
+  }
+
+  function swipe(liked) {
+    const card = topCard();
+    if (!card || drag) return;
+    top += 1;
+    stamps(card, liked ? THRESHOLD : -THRESHOLD);
+    card.style.transition = reduced
+      ? 'none'
+      : 'transform 0.5s cubic-bezier(0.19, 0.75, 0.27, 1), opacity 0.5s ease';
+    card.style.transform = `translate(${liked ? 90 : -90}vw, -6vh) rotate(${liked ? 16 : -16}deg)`;
+    card.style.opacity = '0';
+    card.style.pointerEvents = 'none';
+    if (liked) addMatch(byName[card.dataset.name]);
+    window.setTimeout(() => {
+      // nach Restart nicht mehr ausblenden
+      if (cards.indexOf(card) < top) card.style.visibility = 'hidden';
+    }, reduced ? 0 : 500);
+    setStack();
+    if (top >= cards.length) {
+      // alle durch: Buttons weichen dem "Nochmal von vorn"-Button
+      empty.hidden = false;
+      document.getElementById('deck-actions').hidden = true;
+    }
+  }
+
+  deck.addEventListener('pointerdown', (e) => {
+    const card = topCard();
+    if (!card || !card.contains(e.target)) return;
+    drag = { id: e.pointerId, x0: e.clientX, y0: e.clientY, dx: 0 };
+    card.setPointerCapture(e.pointerId);
+    card.style.transition = 'none';
+    card.classList.add('dragging');
+  });
+
+  deck.addEventListener('pointermove', (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const card = topCard();
+    drag.dx = e.clientX - drag.x0;
+    const dy = e.clientY - drag.y0;
+    card.style.transform = `translate(${drag.dx}px, ${dy * 0.25}px) rotate(${drag.dx * 0.04}deg)`;
+    stamps(card, drag.dx);
+  });
+
+  function release(e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    const card = topCard();
+    const dx = drag.dx;
+    drag = null;
+    card.classList.remove('dragging');
+    if (Math.abs(dx) > THRESHOLD) {
+      swipe(dx > 0);
+    } else {
+      card.style.transition = reduced ? 'none' : 'transform 0.3s ease';
+      card.style.transform = TILTS[0];
+      stamps(card, 0);
+      setStack();
+    }
+  }
+  deck.addEventListener('pointerup', release);
+  deck.addEventListener('pointercancel', release);
+
+  document.getElementById('btn-like').addEventListener('click', () => swipe(true));
+  document.getElementById('btn-nope').addEventListener('click', () => swipe(false));
+  document.getElementById('btn-restart').addEventListener('click', () => {
+    top = 0;
+    empty.hidden = true;
+    document.getElementById('deck-actions').hidden = false;
+    cards.forEach((c) => {
+      c.style.transition = 'none';
+      c.style.opacity = '';
+      c.style.visibility = '';
+      c.style.pointerEvents = '';
+      stamps(c, 0);
+    });
+    setStack();
+  });
+
+  setStack();
+
+  /* ---------- Detailansicht: sticky Panel links neben dem Raster ---------- */
+
+  /* Foto-Carousel im Detail-Panel */
+  let currentCat = null;
+  let photoIdx = 0;
+  const cdPrev = document.getElementById('cd-prev');
+  const cdNext = document.getElementById('cd-next');
+  const cdCount = document.getElementById('cd-count');
+
+  function updatePhoto() {
+    const photo = document.getElementById('cd-photo');
+    photo.src = currentCat.photos[photoIdx];
+    photo.alt = currentCat.name;
+    cdCount.textContent = `${photoIdx + 1}/${currentCat.photos.length}`;
+    const multi = currentCat.photos.length > 1;
+    cdPrev.hidden = !multi;
+    cdNext.hidden = !multi;
+    cdCount.hidden = !multi;
+  }
+
+  cdPrev.addEventListener('click', () => {
+    photoIdx = (photoIdx - 1 + currentCat.photos.length) % currentCat.photos.length;
+    updatePhoto();
+  });
+  cdNext.addEventListener('click', () => {
+    photoIdx = (photoIdx + 1) % currentCat.photos.length;
+    updatePhoto();
+  });
+
+  function selectCat(name, scroll = false) {
+    const cat = byName[name];
+    if (!cat) return;
+    currentCat = cat;
+    photoIdx = 0;
+    updatePhoto();
+    document.getElementById('cd-name').textContent = cat.name;
+    const text = document.getElementById('cd-text');
+    text.innerHTML = '';
+    cat.absaetze.forEach((t) => {
+      const p = document.createElement('p');
+      p.textContent = t;
+      text.appendChild(p);
+    });
+    document.getElementById('cd-source').href = cat.url;
+    const attrs = document.getElementById('cd-attrs');
+    attrs.innerHTML = '';
+    [
+      { t: cat.ageText, c: 'alter' },
+      { t: cat.geschlechtText, c: 'geschlecht' },
+      { t: cat.haltungText, c: 'haltung' },
+      { t: cat.doppel ? 'Doppelpack' : 'Einzelkatze', c: 'doppel' },
+      ...cat.tags.map((t) => ({ t, c: 'charakter' })),
+    ].forEach(({ t, c }) => {
+      const chip = document.createElement('span');
+      chip.className = `cd-chip c-${c}`;
+      chip.textContent = t;
+      attrs.appendChild(chip);
+    });
+    document.querySelectorAll('.gcard').forEach((c) => c.classList.toggle('selected', c.dataset.name === name));
+    if (scroll) {
+      document.getElementById('cat-detail').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+    }
+  }
+
+  // Match-Zeilen springen zur Detailansicht; openDetail-Alias für addMatch
+  const openDetail = (name) => selectCat(name, true);
+
+  document.querySelectorAll('.gcard-open').forEach((b) => {
+    b.addEventListener('click', () => selectCat(b.dataset.name));
+  });
+
+  // Initialauswahl: erste Katze (verdrahtet auch das Carousel)
+  selectCat(CATS[0].name);
+
+  /* ---------- Filter fürs Raster ---------- */
+  const chips = Array.from(document.querySelectorAll('.chip'));
+  const gcards = Array.from(document.querySelectorAll('.gcard'));
+  const countEl = document.getElementById('filter-count');
+  const gridEmpty = document.getElementById('grid-empty');
+  const active = {};
+
+  function applyFilters() {
+    let shown = 0;
+    gcards.forEach((card) => {
+      const ok = Object.entries(active).every(([group, vals]) => {
+        if (!vals.size) return true;
+        const tokens = (card.dataset[group] || '').split(' ');
+        return tokens.some((t) => vals.has(t));
+      });
+      card.style.display = ok ? '' : 'none';
+      if (ok) shown += 1;
+    });
+    countEl.textContent = shown === 1 ? '1 Katze' : `${shown} Katzen`;
+    gridEmpty.hidden = shown > 0;
+  }
+
+  chips.forEach((chip) => {
+    const { group, val } = chip.dataset;
+    active[group] = active[group] || new Set();
+    chip.addEventListener('click', () => {
+      const on = chip.getAttribute('aria-pressed') === 'true';
+      chip.setAttribute('aria-pressed', on ? 'false' : 'true');
+      if (on) active[group].delete(val);
+      else active[group].add(val);
+      applyFilters();
+    });
+  });
+
+  /* ---------- GSAP Scroll-Animationen ---------- */
+  if (!reduced) {
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Einstieg: Deck hebt sich, Matches-Fläche schiebt von rechts herein
+    gsap.from('.deck-col', { y: 48, opacity: 0, duration: 0.8, ease: 'power3.out', delay: 0.1 });
+    gsap.from('.matches', { x: 90, opacity: 0, duration: 0.9, ease: 'power3.out', delay: 0.2 });
+
+    // Sektionsköpfe steigen beim Hereinscrollen auf
+    document.querySelectorAll('.alle .sec-head, .privat .sec-head, .happy .sec-head').forEach((el) => {
+      gsap.from(el, {
+        y: 56,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 88%' },
+      });
+    });
+
+    // Filtergruppen staffeln sich ein
+    gsap.from('.filter-group', {
+      y: 28,
+      opacity: 0,
+      duration: 0.5,
+      stagger: 0.08,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '.filters', start: 'top 90%' },
+    });
+
+    // Raster-Karten tauchen gestaffelt auf, sobald sie sichtbar werden
+    ScrollTrigger.batch('.gcard', {
+      start: 'top 92%',
+      once: true,
+      onEnter: (batch) =>
+        gsap.fromTo(batch, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.07, ease: 'power2.out', overwrite: true }),
+    });
+  }
+</script>
+
+<style>
+  .tinder { padding-top: clamp(24px, 5svh, 64px); }
+  .alle { margin-top: clamp(96px, 15vw, 220px); }
+  .privat { margin-top: clamp(96px, 15vw, 220px); }
+  .happy { margin-top: clamp(96px, 15vw, 220px); }
+
+  /* Deck links, Matches als amberfarbene Teilfläche bis zur rechten
+     Viewportkante (Screenshot-Layout) */
+  .tinder-grid {
+    display: grid;
+    /* Matches-Fläche auf 4/8 — halbe Breite neben dem Deck */
+    grid-template-columns: minmax(0, 4fr) minmax(0, 4fr);
+    gap: calc(var(--gutter) * 2) clamp(48px, 6vw, 120px);
+    align-items: start;
+    padding-left: var(--margin);
+    /* großzügiger Abstand zur Headline — die Fläche darf atmen */
+    margin-top: clamp(72px, 9vw, 168px);
+  }
+
+  /* Deck-Ebene explizit über der Matches-Fläche: die GSAP-Transforms machen
+     beide Spalten zu Stacking-Contexts, DOM-Reihenfolge würde sonst die
+     fliegenden Karten HINTER der Amber-Fläche verschwinden lassen */
+  .tinder { z-index: 10; }
+  .deck-col {
+    --cardw: clamp(320px, 30vw, 440px);
+    justify-self: center;
+    width: var(--cardw);
+    position: relative;
+    z-index: 10;
+  }
+  .matches { position: relative; z-index: 1; }
+
+  /* ---------- Sammelkarten-Stapel ---------- */
+  .deck {
+    position: relative;
+    width: var(--cardw);
+    /* Höhe: Bild (quadratisch) + Kopfzeile + Chips + Kurztext + Stapelversatz */
+    min-height: calc(var(--cardw) + 270px);
+  }
+
+  .tcard {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--cardw);
+    background: var(--white);
+    border: 2px solid var(--black);
+    padding: 28px;
+    overflow: hidden; /* nichts ragt über die Kartenkante (Stapel dahinter) */
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: transform 0.4s cubic-bezier(0.19, 0.75, 0.27, 1);
+  }
+
+  .tcard.dragging { cursor: grabbing; transition: none; }
+
+  .tc-media {
+    position: relative;
+    aspect-ratio: 1;
+    background: var(--black);
+    overflow: hidden;
+  }
+
+  /* Fotos: immer im Quadrat, flächenfüllend (cover) — keine schwarzen Ränder */
+  :global(.photo) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .tc-name {
+    margin: 24px 0 0;
+    font-size: var(--fs-sub);
+    font-weight: var(--fw-text);
+    line-height: var(--lh-display);
+    text-transform: uppercase;
+  }
+
+  /* Chip-Farben = Filtergruppen (Alter Blau, Haltung Amber, Gesellschaft
+     Grün); Charakter bekommt Pink als eigene Kategorie. Flächen, Typo Schwarz. */
+  .tc-tags :global(.c-alter) { background: var(--blue); }
+  .tc-tags :global(.c-charakter) { background: var(--pink); }
+  .tc-tags :global(.c-haltung) { background: var(--amber); }
+  .tc-tags :global(.c-doppel) { background: var(--green); }
+
+  .tc-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 18px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tc-tags :global(li) {
+    padding: 0.15em 0.6em;
+    color: var(--black);
+    line-height: 1.2;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* Auf der Karte nur eine Chip-Zeile — umgebrochene Chips bleiben unsichtbar
+     (vollständige Liste in der Detailansicht) */
+  .tcard .tc-tags { max-height: 30px; overflow: hidden; }
+
+  .tc-text {
+    margin: 18px 0 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  /* Stempel: tauchen beim Ziehen über der Farbfläche auf */
+  .tcard .stamp {
+    position: absolute;
+    top: 16px;
+    padding: 0.35em 0.7em;
+    background: var(--white);
+    border: 2px solid var(--black);
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .tcard .stamp-ja { left: 16px; }
+  .tcard .stamp-nein { right: 16px; }
+
+  .deck-empty {
+    position: absolute;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: var(--white);
+  }
+
+  /* display:flex würde das hidden-Attribut sonst aushebeln */
+  .deck-empty[hidden] { display: none; }
+
+  .deck-empty-line {
+    font-size: var(--fs-sub);
+    line-height: var(--lh-display);
+    text-transform: uppercase;
+    margin-bottom: 0.5em;
+  }
+
+  .deck-actions {
+    display: flex;
+    gap: var(--gutter);
+    width: var(--cardw);
+    margin-top: 14px;
+  }
+  .deck-actions .btn { flex: 1 1 0; text-align: center; }
+  /* display:flex würde das hidden-Attribut sonst aushebeln */
+  .deck-actions[hidden] { display: none; }
+
+  /* ---------- Matches: gelbe Teilfläche bis zur rechten Kante ---------- */
+  .matches {
+    /* stretch ohne min-height: die Fläche folgt der Höhe des Decks
+       (Karte + Buttons + Hinweis) statt sie zu dominieren */
+    align-self: stretch;
+    background: var(--amber);
+    padding: clamp(40px, 5vw, 88px) var(--margin) clamp(40px, 5vw, 80px) clamp(32px, 4vw, 72px);
+  }
+
+  /* Leerzustand: flat-cat liegt vollständig sichtbar auf der UNTERKANTE
+     der Amber-Fläche (innen aufliegend, nichts wird beschnitten) */
+  .matches-cat {
+    position: absolute;
+    bottom: 0;
+    right: clamp(24px, 4vw, 72px);
+    width: clamp(180px, 18vw, 280px);
+    height: auto;
+  }
+  /* .illu setzt display:block — hidden-Attribut braucht Vorrang */
+  .matches-cat[hidden] { display: none; }
+
+  .matches-head {
+    margin: 0 0 clamp(12px, 1.5vw, 24px);
+    font-size: var(--fs-sub);
+    font-weight: var(--fw-text);
+    line-height: var(--lh-display);
+    text-transform: uppercase;
+  }
+
+  .match-list { margin: 0; padding: 0; list-style: none; }
+
+  /* :global — die Zeilen werden per JS erzeugt und tragen keinen Astro-Scope */
+  .match-list :global(li) { border-top: 2px solid var(--black); }
+
+  .match-list :global(.match-row) {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    gap: 2px var(--gutter);
+    align-items: center;
+    width: 100%;
+    padding: clamp(10px, 1.2vw, 16px) 0;
+    background: none;
+    border: 0;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .match-list :global(.match-swatch) {
+    position: relative;
+    display: block;
+    width: 64px;
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .match-list :global(.match-name) { font-weight: var(--fw-bold); text-transform: uppercase; }
+
+  .match-list :global(.match-more) { text-transform: uppercase; }
+
+  /* ---------- Filter + Raster ---------- */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(16px, 2vw, 32px) clamp(24px, 3vw, 56px);
+  }
+
+  .filter-label { display: block; margin-bottom: 8px; }
+
+  .filter-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  /* Chips tragen die Gruppenfarbe als Fläche, Schrift Schwarz, ohne Rahmen;
+     aktiv = Schwarz mit weißer Schrift (wie .btn) */
+  .chip {
+    padding: 0.4em 0.9em;
+    background: var(--gc, var(--white));
+    color: var(--black);
+    border: 0;
+    font: inherit;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .chip[aria-pressed='true'] { background: var(--black); color: var(--white); }
+
+  .filter-count {
+    margin: clamp(20px, 2.5vw, 36px) 0 clamp(16px, 2vw, 28px);
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+  }
+
+  /* Raster-Bilder quadratisch (global sind Karten-Medien 4:5, das gilt
+     weiter für die Illustrations-Karten der anderen Seiten) */
+  .gcard :global(.card-media) { aspect-ratio: 1; }
+
+  /* mehr Luft zwischen Rasterbild und Name */
+  .gcard :global(.card-name) { margin-top: 14px; }
+
+  .gcard-open {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  /* ---------- Happy Ends ---------- */
+  .happy-list { margin: 0; padding: 0; list-style: none; }
+
+  .happy-list li {
+    display: grid;
+    grid-template-columns: minmax(10em, 16em) 1fr;
+    gap: 2px var(--gutter);
+    padding: clamp(12px, 1.6vw, 20px) 0;
+    border-top: 2px solid var(--black);
+    max-width: 70ch;
+  }
+
+  .happy-name { font-weight: var(--fw-bold); text-transform: uppercase; }
+
+  /* ---------- Split: sticky Detail links (2/6), Raster rechts (4/6) ---------- */
+  .grid-split {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 4fr);
+    gap: calc(var(--gutter) * 2) clamp(32px, 4vw, 72px);
+    align-items: start;
+  }
+
+  .cat-detail {
+    position: sticky;
+    top: 24px;
+  }
+
+  /* Foto füllt die volle 2/6-Spaltenbreite */
+  .cd-media {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  /* Carousel-Pfeile + Zähler */
+  .cd-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    background: var(--white);
+    color: var(--black);
+    border: 2px solid var(--black);
+    font: inherit;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .cd-nav:hover, .cd-nav:focus-visible { background: var(--black); color: var(--white); }
+  .cd-prev { left: 10px; }
+  .cd-next { right: 10px; }
+
+  .cd-count {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    padding: 0.1em 0.5em;
+    background: var(--white);
+    border: 2px solid var(--black);
+    font-weight: var(--fw-bold);
+  }
+
+  .cd-name {
+    margin: clamp(18px, 2.2vw, 32px) 0 0;
+    font-size: var(--fs-sub);
+    font-weight: var(--fw-text);
+    line-height: var(--lh-display);
+    text-transform: uppercase;
+  }
+
+  /* Eigenschaften als farbcodierte Boxen (ohne Labels — die Farbe trägt
+     die Kategorie, analog zu den Filtern darüber) */
+  .cd-attrs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: clamp(20px, 2.4vw, 36px);
+  }
+
+  .cat-detail :global(.cd-chip) {
+    display: inline-block;
+    padding: 0.4em 0.9em;
+    color: var(--black);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .cat-detail :global(.c-alter) { background: var(--blue); }
+  .cat-detail :global(.c-geschlecht) { background: var(--coral); }
+  .cat-detail :global(.c-haltung) { background: var(--amber); }
+  .cat-detail :global(.c-doppel) { background: var(--green); }
+  .cat-detail :global(.c-charakter) { background: var(--pink); }
+
+  .cd-text { margin-top: clamp(24px, 3vw, 44px); max-width: 58ch; }
+  .cd-text :global(p) { margin-bottom: 0.9em; }
+  .cd-text :global(p:last-child) { margin-bottom: 0; }
+
+  .cd-actions { display: flex; flex-wrap: wrap; gap: 12px var(--gutter); }
+
+  /* Raster in der rechten Hälfte: zwei Spalten */
+  .grid-cards { grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr)); }
+
+  /* Ausgewählte Katze im Raster markieren */
+  .gcard.selected .card-media { outline: 4px solid var(--black); outline-offset: 0; }
+</style>

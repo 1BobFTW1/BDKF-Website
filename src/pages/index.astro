@@ -1,0 +1,339 @@
+---
+import Base from '../layouts/Base.astro';
+
+// TODO: Platzhalter — Katzen & Termine von bund-der-katzenfreunde.de, mit Verein abgleichen
+const katzen = [
+  {
+    name: 'Melissa',
+    text: 'Sanfte Seele mit Vergangenheit — sucht ein ruhiges Zuhause mit viel Geduld.',
+    illu: 'lying-cat',
+    c: 'var(--amber)',
+  },
+  {
+    name: 'Tapsi',
+    text: 'Neugierig, verschmust und immer da, wo du gerade bist.',
+    illu: 'big-head-cat',
+    c: 'var(--blue)',
+  },
+  {
+    name: 'Mietz',
+    text: 'Erst schüchtern, dann Schnurrmaschine. Gern zusammen mit Tapsi.',
+    illu: 'crazy-cat',
+    c: 'var(--pink)',
+  },
+];
+
+const termine = [
+  { datum: '05.07.2026', titel: 'Viecherlmesse', ort: 'Nazareth-Kirche, München' },
+  { datum: '06.09.2026', titel: 'Herbst-Flohmarkt', ort: 'ASZ Fürstenried-West' },
+  { datum: '22.11.2026', titel: 'Weihnachtsflohmarkt', ort: 'St. Maximilian' },
+];
+---
+<Base title="Bund der Katzenfreunde e. V. — Katzen adoptieren in München" current="start">
+  <!-- Hero nach Figma (306:80): viel Weißraum — Textspalte links,
+       Farbfläche nur rechte Hälfte unten (3/8 Höhe), lying-cat über deren
+       Kante, großer CTA mit Mini-Katze hinter der Buttonkante -->
+  <section class="hero sec">
+    <div class="hero-head pad-x">
+      <h1 class="display">Dein Sofa<br />hat noch<br />Platz frei</h1>
+    </div>
+    {/* Untere Zeile: links Intro + CTA auf Weiß, rechts die halbe Farbfläche
+        (wie Figma) — sie füllt die volle Resthöhe bis zum Fold, die Sektion
+        darunter erscheint erst beim Scrollen. Katze mittig auf der Oberkante. */}
+    <div class="hero-body">
+      <div class="hero-lower pad-x">
+        <p class="hero-intro">
+          Der Bund der Katzenfreunde e.&nbsp;V. vermittelt Katzen in München und Umgebung
+          in gute Hände — mit Beratung, Pflegeplätzen und einem Verein, der zusammenhält.
+        </p>
+        <div class="hero-cta">
+          <img
+            class="illu hero-cta-cat"
+            src="/assets/illustrations/peeking-cat-tight.svg"
+            alt=""
+            width="779"
+            height="491"
+          />
+          <a class="btn hero-btn" href="/katzen/">Katze adoptieren</a>
+        </div>
+      </div>
+      <div class="hero-form" style="--c: var(--amber)">
+        <img
+          class="illu hero-form-cat reveal-fade"
+          src="/assets/illustrations/lying-cat-tight.svg"
+          alt=""
+          width="794"
+          height="818"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Drei Wege zu helfen -->
+  <section class="wege pad-x sec">
+    <div class="sec-head">
+      <p class="eyebrow">Mehr als Adoption</p>
+      <h2 class="display"><span class="nb">Drei Wege</span> <span class="nb">zu helfen</span></h2>
+    </div>
+    <ul class="wege-list">
+      <li>
+        <a href="/katzen/">
+          <span class="wege-name">Adoptieren</span>
+          <span>Gib einer Katze ein Zuhause für immer.</span>
+        </a>
+      </li>
+      <li>
+        <a href="/helfen/#pflegeplatz">
+          <span class="wege-name">Pflegeplatz geben</span>
+          <span>Ein Sofa auf Zeit — wir übernehmen die Tierarztkosten.</span>
+        </a>
+      </li>
+      <li>
+        <a href="/helfen/#pate">
+          <span class="wege-name">Pate werden</span>
+          <span>Unterstütze eine Katze, die (noch) nicht vermittelt werden kann.</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Katzen-Teaser: Karten als Mini-Poster, Illustration = Foto-Platzhalter -->
+  <section class="teaser pad-x sec">
+    <div class="sec-head">
+      <p class="eyebrow">Zuhause gesucht</p>
+      <h2 class="display"><span class="nb">Wer wartet</span> <span class="nb">auf dich?</span></h2>
+    </div>
+    <div class="cards">
+      {katzen.map((k) => (
+        <article class="card">
+          <a href="/katzen/">
+            <div class="card-media" style={`--c: ${k.c}`}>
+              {/* TODO: Platzhalter — echtes Foto einsetzen */}
+              <img class="illu reveal-fade" src={`/assets/illustrations/${k.illu}-tight.svg`} alt="" loading="lazy" />
+            </div>
+            <h3 class="card-name">{k.name}</h3>
+          </a>
+          <p class="card-text">{k.text}</p>
+        </article>
+      ))}
+    </div>
+    <p class="gap-8"><a class="btn btn-ghost" href="/katzen/">Alle Katzen ansehen</a></p>
+  </section>
+
+  <!-- Termine: Teilfläche rechts, lying-cat hängt über der Kante -->
+  <section class="termine sec">
+    <div class="sec-head pad-x">
+      <p class="eyebrow">Termine</p>
+      <h2 class="display"><span class="nb">Die Katzen</span> <span class="nb">lästern schon</span> <span class="nb">über dich.</span></h2>
+    </div>
+    <div
+      class="form-row"
+      style="--c: var(--coral); --form-w: 62%; --cat-w: clamp(110px, 15vw, 210px); --cat-ar: 0.97; --cat-in: clamp(40px, 6vw, 90px)"
+    >
+      <img
+        class="illu form-cat front reveal-fade"
+        src="/assets/illustrations/lying-cat-tight.svg"
+        alt=""
+        width="794"
+        height="818"
+      />
+      <div class="form-block">
+        <ul class="termine-list">
+          {termine.map((t) => (
+            <li>
+              <span class="termine-datum">{t.datum}</span>
+              <span class="termine-titel">{t.titel}</span>
+              <span>{t.ort}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="gap-8"><a class="btn" href="/aktuelles/">Alle Termine</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Spenden / Mitglied: Teilfläche links -->
+  <section class="spenden sec">
+    <div class="sec-head pad-x">
+      <p class="eyebrow">Unterstützen</p>
+      <h2 class="display">Werde Mitglied. Schnurren inklusive.</h2>
+    </div>
+    <div class="form-row dock-left" style="--c: var(--green); --form-w: 58%; --cat-w: 0px; --cat-ar: 1">
+      <div class="form-block">
+        <p class="spenden-copy">
+          Jeder Beitrag hilft: Tierarztkosten, Futter, Kastrationen. Oder du machst es
+          offiziell und wirst Teil des Vereins.
+        </p>
+        <p class="gap-8 spenden-actions">
+          <a class="btn" href="/verein/#mitglied">Mitglied werden</a>
+          <a class="btn btn-ghost" href="/helfen/#spenden">Spenden</a>
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---------- Hero (Figma 306:80) ---------- */
+  .hero {
+    --catw: clamp(220px, 26vw, 340px);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100svh - var(--nav-h));
+  }
+
+  /* Weiße Kopfzone: nur die Headline, oben, volle Breite. Etwas mehr Luft
+     nach oben, damit der Titel näher an den Text darunter rückt. */
+  .hero-head {
+    padding-top: clamp(40px, 9svh, 110px);
+    padding-bottom: clamp(20px, 3svh, 36px);
+  }
+  .hero-head h1 { width: fit-content; max-width: 100%; }
+
+  /* Untere Zeile: Text links auf Weiß, direkt unter der Headline; die
+     Farbfläche ist absolut in der Sektion verankert (rechte Hälfte × 3/8) */
+  .hero-body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .hero-lower {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    padding-top: clamp(8px, 2svh, 24px);
+    padding-bottom: clamp(28px, 5svh, 64px);
+  }
+
+  .hero-intro { max-width: 40ch; }
+
+  /* CTA: schwarze Fläche, Mini-Katze lugt bei Hover/Fokus seitlich aus der
+     rechten Kante heraus (90° gedreht, schiebt sich horizontal raus) */
+  .hero-cta {
+    position: relative;
+    display: inline-block;
+    align-self: flex-start;
+    margin-top: clamp(20px, 3svh, 40px);
+  }
+
+  /* Basis-Transform zentriert die Katze auf der rechten Buttonkante
+     (50/50-Überhang) und dreht sie quer; das letzte translateY läuft nach
+     der Drehung entlang der Bildachse = horizontal auf dem Screen und
+     schiebt sie hinter den Button (Button hat z-index 1, Katze z 0). */
+  .hero-cta-cat {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    width: clamp(56px, 6vw, 80px);
+    height: auto;
+    transform: translate(-50%, -50%) rotate(90deg) translateY(55%);
+    transition: transform 0.4s cubic-bezier(0.19, 0.75, 0.27, 1);
+  }
+
+  /* ausgefahren: die Katze schaut komplett raus — nur die flache Schnitt-
+     kante des Bilds bleibt minimal hinter dem Button verankert (negatives
+     translateY schiebt nach der Drehung nach rechts aus der Kante) */
+  .hero-cta:hover .hero-cta-cat,
+  .hero-cta:focus-within .hero-cta-cat {
+    transform: translate(-50%, -50%) rotate(90deg) translateY(-45%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-cta-cat { transition: none; }
+  }
+
+  /* CTA-Text auf der Textstufe (16); große Klickfläche über Padding —
+     die schwarze Fläche bleibt plakativ, die Typo im rigiden Raster */
+  .hero-btn {
+    position: relative;
+    z-index: 1;
+    font-weight: var(--fw-text);
+    font-size: var(--fs-text);
+    padding: 1.75em 3.5em;
+  }
+
+  /* Farbfläche: rechte Hälfte × 3/8 der Sektionshöhe, an rechter und unterer
+     Kante der Sektion angedockt (Figma-Proportionen) */
+  .hero-form {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 50%;
+    height: 37.5%;
+    background: var(--c);
+  }
+
+  /* lying-cat mittig auf der Oberkante der Form — exakt halb drüber, halb
+     drauf (Figma: 50/50-Überhang). Zentrierung über left-calc statt
+     transform (kollidiert sonst mit reveal-fade). AR lying-cat ≈ 0.97. */
+  .hero-form-cat {
+    position: absolute;
+    z-index: 2;
+    left: calc(50% - var(--catw) / 2);
+    bottom: calc(100% - var(--catw) / 0.97 / 2);
+    width: var(--catw);
+    height: auto;
+  }
+
+  /* ---------- Drei Wege ---------- */
+  .wege { margin-top: clamp(96px, 15vw, 220px); }
+
+  .wege-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .wege-list li { border-top: 2px solid var(--black); }
+  .wege-list li:last-child { border-bottom: 2px solid var(--black); }
+
+  .wege-list a {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px var(--gutter);
+    padding: clamp(16px, 2.5vw, 32px) 0;
+    text-decoration: none;
+  }
+
+  .wege-name {
+    flex: 0 0 auto;
+    width: min(100%, 14em);
+    font-size: var(--fs-sub);
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
+
+  /* ---------- Teaser ---------- */
+  .teaser { margin-top: clamp(96px, 15vw, 220px); }
+
+  /* ---------- Termine ---------- */
+  .termine { margin-top: clamp(96px, 15vw, 220px); }
+
+  .termine-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .termine-list li {
+    display: grid;
+    grid-template-columns: 7em 1fr;
+    gap: 2px var(--gutter);
+    padding: clamp(12px, 1.6vw, 20px) 0;
+    border-top: 2px solid var(--black);
+    max-width: 62ch;
+  }
+
+  .termine-datum { font-weight: var(--fw-bold); grid-row: span 2; }
+  .termine-titel { font-weight: var(--fw-bold); text-transform: uppercase; }
+  .termine-list li > span:last-child { grid-column: 2; }
+
+  /* ---------- Spenden ---------- */
+  .spenden { margin-top: clamp(96px, 15vw, 220px); }
+  .spenden-copy { max-width: 46ch; margin: 0; }
+  .spenden-actions { display: flex; flex-wrap: wrap; gap: 12px var(--gutter); }
+</style>

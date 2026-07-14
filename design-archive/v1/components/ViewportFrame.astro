@@ -1,0 +1,138 @@
+---
+/**
+ * The viewport Frame — B/D/K/F pinned to the VIEWPORT corners, position: fixed,
+ * always visible while the page scrolls. At viewport level 1U = 1svmin
+ * (CLAUDE.md §1), so margin M = 6svmin and letter size = 14svmin.
+ *
+ * The letters are white with mix-blend-mode: difference, so they self-invert:
+ * ≈Ink over Paper sections, ≈Paper over Ink sections — the frame stays visible
+ * over every section without a second DOM state.
+ *
+ * Corner words: at the very top of the page the corners read BUND / DER /
+ * KATZEN / FREUNDE. The first scroll down collapses them to the bare letters
+ * (GSAP width tween; right-anchored D and F "settle" into their corners), and
+ * they stay collapsed until the reader returns to the top of the page.
+ * Words need width — below 1260px viewport width the frame always shows plain
+ * letters. Below the 600px Frame minimum (shorter viewport edge) the frame
+ * disappears entirely and the nav Mark carries the brand.
+ */
+const corners = ['tl', 'tr', 'bl', 'br'] as const;
+const letters = ['B', 'D', 'K', 'F'];
+const words = ['BUND', 'DER', 'KATZEN', 'FREUNDE'];
+---
+<div class="vframe" aria-hidden="true">
+  {corners.map((pos, i) => (
+    <span class={`cnr ${pos}`}>{letters[i]}<span class="rest">{words[i].slice(1)}</span></span>
+  ))}
+</div>
+
+<style>
+  .vframe {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 60;
+    /* The blend must live on the fixed layer itself: position:fixed + z-index
+       make .vframe a stacking context, so blending on the letters would only
+       see the frame's own transparent background, not the page. White letters
+       + difference ⇒ ≈Ink over Paper sections, ≈Paper over Ink sections. */
+    mix-blend-mode: difference;
+  }
+  .cnr {
+    position: absolute;
+    font-size: 14svmin;
+    font-weight: 800;
+    line-height: 0.76;
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+    user-select: none;
+    color: #fff;
+  }
+  .cnr.tl { top: 6svmin; left: 6svmin; }
+  .cnr.tr { top: 6svmin; right: 6svmin; }
+  .cnr.bl { bottom: 6svmin; left: 6svmin; }
+  .cnr.br { bottom: 6svmin; right: 6svmin; }
+
+  .rest {
+    display: inline-block;
+    white-space: nowrap;
+    /* Baseline-aligned (default vertical-align), same inherited font size —
+       the word continues the corner letter exactly. GSAP animates the width;
+       clip-path crops the overflowing text at the box's left/right edges only.
+       The negative vertical insets matter: line-height 0.76 makes the box
+       shorter than the glyphs, and a plain overflow:hidden would shave the
+       letters' bottoms (and force a bottom-edge baseline, misaligning them). */
+    clip-path: inset(-0.5em 0);
+  }
+  /* Words only where KATZEN + FREUNDE + zones fit along the bottom edge. */
+  @media (max-width: 1259px) {
+    .rest {
+      display: none;
+    }
+  }
+
+  /* Frame minimum: shorter viewport edge ≥ 600px — below that, no frame. */
+  @media (max-width: 599px), (max-height: 599px) {
+    .vframe {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+
+  // Words are visible ONLY at the top of the page: the first scroll down
+  // collapses them to B/D/K/F, and they re-expand only when the reader is
+  // back at the top — never on intermediate up-scrolls.
+  const frame = document.querySelector<HTMLElement>('.vframe');
+  if (frame) {
+    // Mirror the state on <html> so page elements (e.g. the hero cat, which
+    // must vacate the bottom edge while KATZEN/FREUNDE occupy it) can react.
+    const setState = (collapsed: boolean) => {
+      document.documentElement.dataset.frame = collapsed ? 'collapsed' : 'expanded';
+    };
+
+    const mm = gsap.matchMedia();
+    mm.add(
+      {
+        wide: '(min-width: 1260px) and (min-height: 600px)',
+        reduce: '(prefers-reduced-motion: reduce)',
+      },
+      (ctx) => {
+        const { wide, reduce } = ctx.conditions as { wide: boolean; reduce: boolean };
+        if (!wide) {
+          // No words at this size (CSS hides .rest) — bare letters only.
+          setState(true);
+          return;
+        }
+
+        const rests = gsap.utils.toArray<HTMLElement>('.rest', frame);
+        const dur = reduce ? 0 : 0.65;
+        const ease = 'power3.inOut';
+        const stagger = reduce ? 0 : 0.05;
+        const TOP = 24; // px — "back at the top" threshold
+
+        let expanded = window.scrollY <= TOP;
+        setState(!expanded);
+        if (!expanded) gsap.set(rests, { width: 0 });
+
+        const update = () => {
+          const atTop = window.scrollY <= TOP;
+          if (atTop === expanded) return;
+          expanded = atTop;
+          setState(!expanded);
+          gsap.to(rests, {
+            width: expanded ? 'auto' : 0,
+            duration: dur,
+            ease,
+            stagger,
+            overwrite: 'auto',
+          });
+        };
+        addEventListener('scroll', update, { passive: true });
+        return () => removeEventListener('scroll', update);
+      }
+    );
+  }
+</script>

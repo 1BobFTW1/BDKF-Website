@@ -1,0 +1,164 @@
+---
+import Base from '../layouts/Base.astro';
+
+// TODO: Platzhalter — Katzenwissen-Themen von bund-der-katzenfreunde.de
+const wissen = [
+  { titel: 'Warum Kastrieren so wichtig ist', text: 'Weniger Leid auf der Straße beginnt mit einem kleinen Eingriff.' },
+  { titel: 'Was Sie wissen sollten', text: 'Grundwissen für ein gutes Leben mit Katze — von Anfang an.' },
+  { titel: 'Gefahrenquellen für Katzen', text: 'Kippfenster, Giftpflanzen & Co. — die unterschätzten Risiken.' },
+  { titel: 'Die katzensichere Wohnung', text: 'So wird dein Zuhause sicher, bevor die Katze einzieht.' },
+  { titel: 'Unsauberkeit bei Katzen', text: 'Warum Katzen unsauber werden — und was wirklich hilft.' },
+];
+---
+<Base title="Verein — Über uns, Mitgliedschaft, Katzenwissen | Bund der Katzenfreunde e. V." current="verein">
+  <!-- Kopf: Text links auf Weiß, Teilfläche rechts mit flat-cat -->
+  <section class="kopf sec">
+    <div class="sec-head pad-x">
+      <p class="eyebrow">Der Verein</p>
+      <h1 class="display">Ein Verein, der zusammenhält.</h1>
+    </div>
+    <div class="form-row" style="--c: var(--blue); --form-w: 55%; --cat-w: clamp(130px, 17vw, 230px); --cat-ar: 1.21">
+      <img
+        class="illu form-cat reveal"
+        src="/assets/illustrations/flat-cat-tight.svg"
+        alt=""
+        width="857"
+        height="711"
+      />
+      <div class="form-block kopf-form"></div>
+    </div>
+  </section>
+
+  <!-- Über uns -->
+  <section id="ueber-uns" class="block pad-x sec">
+    <div class="sec-head">
+      <p class="eyebrow">Über uns</p>
+      <h2 class="display"><span class="nb">Wer wir</span> sind.</h2>
+    </div>
+    <p>
+      Der Bund der Katzenfreunde e.&nbsp;V. ist ein Katzenschutzverein aus München.
+      Wir nehmen Katzen in Not auf, versorgen sie auf privaten Pflegeplätzen und
+      vermitteln sie in gute Hände. Ein eigenes Tierheim haben wir nicht — dafür
+      viele Sofas und noch mehr Herz.
+    </p>
+    <p>Wir sind Mitglied im Deutschen Tierschutzbund e.&nbsp;V.</p>
+  </section>
+
+  <!-- Mitgliedschaft: Teilfläche rechts -->
+  <section id="mitglied" class="mitglied sec">
+    <div class="sec-head pad-x">
+      <p class="eyebrow">Mitgliedschaft</p>
+      <h2 class="display">Werde Mitglied. Schnurren inklusive.</h2>
+    </div>
+    <div class="form-row" style="--c: var(--blue); --form-w: 62%; --cat-w: 0px; --cat-ar: 1">
+      <div class="form-block">
+        <div class="mitglied-cols">
+          <p>
+            Mit deiner Mitgliedschaft machst du unsere Arbeit planbar: Kastrationen,
+            Tierarztkosten, Futterstellen. Einfach Beitrittserklärung und SEPA-Mandat
+            ausfüllen und per Post an uns senden.
+          </p>
+          {/* TODO: Platzhalter — echte Formular-PDFs verlinken, Adresse bestätigen */}
+          <p>
+            Bund der Katzenfreunde e.&nbsp;V.<br />
+            c/o Marius Zisselsberger<br />
+            Oberhachinger Str. 24a<br />
+            82031 Grünwald
+          </p>
+        </div>
+        <p class="mitglied-actions gap-8">
+          <a class="btn" href="#" aria-disabled="true">Beitrittserklärung (PDF)</a>
+          <a class="btn btn-ghost" href="#" aria-disabled="true">SEPA-Mandat (PDF)</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Satzung -->
+  <section id="satzung" class="block pad-x sec">
+    <div class="sec-head">
+      <p class="eyebrow">Satzung</p>
+      <h2 class="display">Schwarz <span class="nb">auf weiß.</span></h2>
+    </div>
+    <p>
+      Was wir tun und wie wir es tun, steht in unserer Vereinssatzung.
+      {/* TODO: Platzhalter — Satzungs-PDF verlinken */}
+    </p>
+    <p class="gap-16"><a class="btn btn-ghost" href="#" aria-disabled="true">Satzung lesen (PDF)</a></p>
+  </section>
+
+  <!-- Katzenwissen -->
+  <section id="katzenwissen" class="block pad-x sec">
+    <div class="sec-head">
+      <p class="eyebrow">Katzenwissen</p>
+      <h2 class="display">Wissen, <span class="nb">das schnurrt.</span></h2>
+    </div>
+    <ul class="wissen-list">
+      {wissen.map((w) => (
+        <li>
+          <span class="wissen-titel">{w.titel}</span>
+          <span>{w.text}</span>
+        </li>
+      ))}
+    </ul>
+    {/* TODO: Platzhalter — vollständige Ratgeber-Artikel ergänzen */}
+  </section>
+
+  <!-- Kontakt: Teilfläche links -->
+  <section id="kontakt" class="kontakt sec">
+    <div class="sec-head pad-x">
+      <p class="eyebrow">Kontakt</p>
+      <h2 class="display"><span class="nb">Sag einfach</span> Miau.</h2>
+    </div>
+    <div class="form-row dock-left" style="--c: var(--blue); --form-w: 58%; --cat-w: 0px; --cat-ar: 1">
+      <div class="form-block">
+        {/* TODO: Platzhalter — Ansprechpartner bestätigen */}
+        <div class="kontakt-cols">
+          <p>
+            <strong>Norina Bernetti</strong><br />
+            <a href="tel:+491728552419">0172&nbsp;8552419</a><br />
+            <a href="mailto:norina.bernetti@bund-der-katzenfreunde.de">norina.bernetti@<wbr />bund-der-katzenfreunde.de</a>
+          </p>
+          <p>
+            Für Fragen zu Vermittlung, Pflegeplätzen und Patenschaften —
+            wir melden uns so schnell wie möglich zurück.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .kopf { padding-top: clamp(24px, 6svh, 72px); }
+  .kopf-form { min-height: clamp(140px, 24svh, 240px); }
+
+  .block { margin-top: clamp(96px, 15vw, 220px); }
+
+  .mitglied { margin-top: clamp(96px, 15vw, 220px); }
+
+  .mitglied-cols, .kontakt-cols { display: flex; flex-wrap: wrap; gap: var(--gutter); }
+  .mitglied-cols p, .kontakt-cols p { max-width: 44ch; margin: 0; flex: 1 1 280px; }
+
+  .mitglied-actions { display: flex; flex-wrap: wrap; gap: 12px var(--gutter); }
+
+  .wissen-list { margin: 0; padding: 0; list-style: none; }
+
+  .wissen-list li {
+    display: grid;
+    grid-template-columns: minmax(12em, 20em) 1fr;
+    gap: 2px var(--gutter);
+    padding: clamp(12px, 1.6vw, 20px) 0;
+    border-top: 2px solid var(--black);
+    max-width: 80ch;
+  }
+  .wissen-list li:last-child { border-bottom: 2px solid var(--black); }
+
+  .wissen-titel { font-weight: var(--fw-bold); text-transform: uppercase; }
+
+  .kontakt { margin-top: clamp(96px, 15vw, 220px); }
+
+  @media (max-width: 560px) {
+    .wissen-list li { grid-template-columns: 1fr; }
+  }
+</style>

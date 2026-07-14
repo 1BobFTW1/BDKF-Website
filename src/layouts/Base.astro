@@ -1,0 +1,63 @@
+---
+import '../styles/main.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  current?: string;
+}
+
+const {
+  title,
+  description = 'Der Bund der Katzenfreunde e.V. München vermittelt Katzen in gute Hände — Adoption, Pflegeplätze, Patenschaften und Katzenwissen.',
+  current = '',
+} = Astro.props;
+---
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" id="favicon" />
+    <link rel="stylesheet" href="https://use.typekit.net/fzx4lwp.css" />
+  </head>
+  <body>
+    <Nav current={current} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Peek-in-Animation: einmalig beim Scrollen in den Viewport.
+      // prefers-reduced-motion: Endzustand steht sofort (keine .motion-Klasse).
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('motion');
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('in');
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.25 }
+        );
+        document.querySelectorAll('.reveal, .reveal-fade').forEach((el) => io.observe(el));
+      }
+
+      // Tab-Favicon: Katze duckt sich, wenn der Tab in den Hintergrund geht.
+      const favicon = document.getElementById('favicon');
+      document.addEventListener('visibilitychange', () => {
+        if (favicon instanceof HTMLLinkElement) {
+          favicon.href = document.hidden ? '/favicon-ears.svg' : '/favicon.svg';
+        }
+      });
+    </script>
+  </body>
+</html>

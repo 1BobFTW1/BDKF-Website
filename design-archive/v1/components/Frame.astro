@@ -1,0 +1,53 @@
+---
+/**
+ * The Frame — the Mark opened to the edges of a format. All four letters pinned
+ * to the section's corners: B top-left, D top-right, K bottom-left, F bottom-right.
+ * container-type: size makes 1cqmin = 1U (1% of the shorter edge).
+ *
+ * Hard laws enforced here: margin M = 6U on all four sides, letter size 14U
+ * (≈10U caps), one weight (800). Content goes in the slot; slotted content is
+ * responsible for staying out of the corner exclusion zones (inset 21U from
+ * top/bottom edges except the middle horizontal band).
+ *
+ * Frame minimum: shorter edge ≥ 600px. Below that the consumer must hide the
+ * Frame's letters and fall back to the Mark — see the hero's media queries.
+ */
+interface Props {
+  inverted?: boolean;
+  class?: string;
+}
+const { inverted = false, class: className = '' } = Astro.props;
+---
+<div class:list={['frame', { inverted }, className]}>
+  <span class="cnr tl" aria-hidden="true">B</span>
+  <span class="cnr tr" aria-hidden="true">D</span>
+  <span class="cnr bl" aria-hidden="true">K</span>
+  <span class="cnr br" aria-hidden="true">F</span>
+  <slot />
+</div>
+
+<style>
+  .frame {
+    position: relative;
+    container-type: size; /* 1cqmin = 1U from here down */
+    background: var(--paper);
+    color: var(--ink);
+    overflow: hidden;
+  }
+  .frame.inverted {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .cnr {
+    position: absolute;
+    font-size: var(--frame-letter);
+    font-weight: 800;
+    line-height: 0.76;
+    letter-spacing: -0.005em;
+    user-select: none;
+  }
+  .cnr.tl { top: var(--frame-margin); left: var(--frame-margin); }
+  .cnr.tr { top: var(--frame-margin); right: var(--frame-margin); }
+  .cnr.bl { bottom: var(--frame-margin); left: var(--frame-margin); }
+  .cnr.br { bottom: var(--frame-margin); right: var(--frame-margin); }
+</style>

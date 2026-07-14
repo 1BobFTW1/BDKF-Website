@@ -1,0 +1,141 @@
+---
+/**
+ * Footer: dunkles Band, davor lugt die Katze über die Kante (sie sitzt auf
+ * der weißen Fläche darüber, angedockt an die Navy-Kante — Kontrast bleibt).
+ */
+---
+<footer class="footer-zone">
+  <div class="peek-strip">
+    <img
+      class="illu peek-cat reveal"
+      src="/assets/illustrations/peaking-cat-filled.svg"
+      alt=""
+      width="499"
+      height="315"
+      loading="lazy"
+    />
+  </div>
+  <div class="footer">
+    <div class="wrap grid">
+      <div>
+        <img
+          class="footer-logo"
+          src="/assets/logos/cat-ears-logo.svg"
+          alt="Bund der Katzenfreunde"
+          width="480"
+          height="256"
+        />
+        <p class="v2-body muted">
+          Bund der Katzenfreunde e.&thinsp;V. — Katzenschutz in München und
+          Umgebung. Mitglied im Deutschen Tierschutzbund.
+        </p>
+      </div>
+      <nav aria-label="Footer-Navigation">
+        <ul class="v2-body cols">
+          <li><a href="/vermittlung/">Vermittlung</a></li>
+          <li><a href="/helfen/">Helfen</a></li>
+          <li><a href="/katzenwissen/">Katzenwissen</a></li>
+          <li><a href="/verein/">Verein</a></li>
+          <li><a href="/aktuelles/">Aktuelles</a></li>
+          <li><a href="/kontakt/">Kontakt</a></li>
+        </ul>
+      </nav>
+      <div class="v2-body">
+        <p class="v2-eyebrow">Spendenkonto</p>
+        <!-- TODO: Platzhalter — Bankverbindung von der bestehenden Website, vor Livegang bestätigen -->
+        <p class="muted">
+          VR Bank München Land<br />
+          IBAN DE35&nbsp;7016&nbsp;6486&nbsp;0000&nbsp;7907&nbsp;70<br />
+          BIC GENODEF1OHC
+        </p>
+      </div>
+    </div>
+    <div class="wrap legal v2-body">
+      <p class="muted">© 2018–2026 Bund der Katzenfreunde e.&thinsp;V.</p>
+      <ul class="legal-links muted">
+        <!-- TODO: Platzhalter — Impressum/Datenschutz-Seiten existieren noch nicht -->
+        <li><a href="#">Impressum</a></li>
+        <li><a href="#">Datenschutz</a></li>
+        <li><a href="/v1/">Design-Archiv (v1)</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .peek-strip {
+    position: relative;
+    /* Exakt so hoch wie die Katze (Seitenverhältnis 315/499 ≈ 0.632) —
+       die Illustration wird nie beschnitten */
+    height: calc(clamp(150px, 18vw, 240px) * 0.632);
+  }
+  .peek-cat {
+    position: absolute;
+    bottom: 0;
+    right: clamp(24px, 12vw, 180px);
+    width: clamp(150px, 18vw, 240px);
+    height: auto;
+  }
+  .footer {
+    background: var(--v2-navy);
+    color: var(--v2-paper);
+    padding-block: clamp(44px, 5vw, 72px) 24px;
+    /* Footer ÜBER der Katze: Reveal taucht hinter der Navy-Kante auf */
+    position: relative;
+    z-index: 1;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(240px, 1.2fr) 1fr 1fr;
+    gap: calc(var(--v2-gap) * 2);
+    align-items: start;
+  }
+  .footer-logo {
+    height: 64px;
+    width: auto;
+    margin-bottom: 14px;
+    /* schwarzes Logo auf Navy → in Paper umfärben */
+    filter: brightness(0) invert(1);
+  }
+  .muted {
+    color: #c8cbd8;
+  }
+  .cols {
+    list-style: none;
+    columns: 2;
+    column-gap: 32px;
+  }
+  .cols li {
+    margin-bottom: 8px;
+  }
+  .footer a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .footer a:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .v2-eyebrow {
+    margin-bottom: 8px;
+  }
+  .legal {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: clamp(32px, 4vw, 56px);
+    padding-top: 20px;
+    border-top: 1px solid #4a4f63;
+  }
+  .legal-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+  }
+  @media (max-width: 820px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

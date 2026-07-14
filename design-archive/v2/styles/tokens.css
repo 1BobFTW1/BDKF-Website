@@ -1,0 +1,36 @@
+/* BDKF design tokens — brand guidelines v1.0 (CLAUDE.md is the source of truth).
+   The U-system (1U = 1% of the shorter edge) is per-container: 1U = 1cqmin inside
+   any element with container-type: size. It therefore lives in Frame.astro,
+   not here. */
+:root {
+  /* Colour */
+  --ink: #171717;          /* letters, headlines, body on light, cat */
+  --paper: #fdfcfa;        /* warm off-white backgrounds */
+  --amber: #e8a020;        /* Katzenauge — at most ONE amber element per view */
+  --muted: #6e6d67;        /* secondary text on light only, never the letters */
+  --muted-on-ink: #b9b8b2; /* secondary text on dark backgrounds */
+  --hair: #d8d6d0;         /* hairline borders, dividers */
+
+  /* Type */
+  --brand: "forma-djr-deck", "Forma DJR Deck", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* Type scale — Text ×3 = Unterüberschrift, ×3 = Überschrift (1 : 3 : 9).
+     The 10vw cap only stops headlines from overflowing narrow viewports; it
+     shrinks headline and subhead together (headline = 3 × subhead holds at
+     every size), while body copy never shrinks below its base. */
+  --type-ratio: 3;
+  --fs-body: 16px;
+  --fs-subhead: min(calc(var(--fs-body) * var(--type-ratio)), calc(10vw / 3));
+  --fs-headline: min(calc(var(--fs-body) * var(--type-ratio) * var(--type-ratio)), 10vw);
+
+  /* Motion */
+  --ease-brand: cubic-bezier(0.66, 0.02, 0.28, 1);
+
+  /* Layout */
+  --nav-h: 56px; /* nav must stay above the viewport frame's B/D zones (top 6svmin) */
+
+  /* Frame constants (used wherever a Frame is composed) */
+  --frame-margin: 6cqmin;       /* M = 6U, identical on all four sides */
+  --frame-letter: 14cqmin;      /* font-size ≈ 14U → ~10U cap height (L) */
+  --frame-content-inset: 21cqmin; /* M + L + 0.5L exclusion padding */
+}

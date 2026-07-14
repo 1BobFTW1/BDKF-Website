@@ -1,0 +1,181 @@
+---
+// Footer: schwarze Fläche, Schrift/Logo weiß. Domain immer unten am Rand
+// (Guidelines: „Domain/Footer-Zeile immer an der Unterkante").
+// peeking-cat schaut über die Footer-Oberkante, sobald der Footer in den
+// Viewport scrollt, und versteckt sich beim Hochscrollen wieder (GSAP).
+---
+<footer class="footer sec">
+  <div class="footer-cat pad-x">
+    <div class="footer-peek">
+      <img
+        class="illu"
+        id="footer-peek-cat"
+        src="/assets/illustrations/peeking-cat-tight.svg"
+        alt=""
+        width="779"
+        height="491"
+      />
+    </div>
+  </div>
+
+  <div class="footer-band band">
+    <div class="footer-grid pad-x">
+      <div class="footer-brand">
+        <img
+          src="/assets/logos/white/bdkf-wortbildmarke-white-tight.svg"
+          alt="Bund der Katzenfreunde"
+          width="895"
+          height="465"
+        />
+      </div>
+
+      <div>
+        <h2 class="footer-head">Kontakt</h2>
+        {/* TODO: Platzhalter — Kontaktdaten von bund-der-katzenfreunde.de, mit Verein bestätigen */}
+        <p>
+          Norina Bernetti<br />
+          <a href="tel:+491728552419">0172&nbsp;8552419</a><br />
+          <a href="mailto:norina.bernetti@bund-der-katzenfreunde.de">norina.bernetti@<wbr />bund-der-katzenfreunde.de</a>
+        </p>
+      </div>
+
+      <div>
+        <h2 class="footer-head">Post &amp; Mitgliedschaft</h2>
+        {/* TODO: Platzhalter — Postadresse mit Verein bestätigen */}
+        <p>
+          Bund der Katzenfreunde e.&nbsp;V.<br />
+          c/o Marius Zisselsberger<br />
+          Oberhachinger Str. 24a<br />
+          82031 Grünwald
+        </p>
+      </div>
+
+      <div>
+        <h2 class="footer-head">Spendenkonto</h2>
+        {/* TODO: Platzhalter — Bankverbindung von bund-der-katzenfreunde.de, mit Verein bestätigen */}
+        <p>
+          VR Bank München Land eG<br />
+          IBAN DE35&nbsp;7016&nbsp;6486&nbsp;0000&nbsp;7907&nbsp;70<br />
+          BIC GENODEF1OHC
+        </p>
+      </div>
+    </div>
+
+    <p class="footer-note pad-x">Mitglied im Deutschen Tierschutzbund e.&nbsp;V.</p>
+
+    <div class="footer-bottom pad-x">
+      <span class="footer-domain">bdkf.de</span>
+      <ul class="footer-legal">
+        <li><a href="/impressum/">Impressum</a></li>
+        <li><a href="/datenschutz/">Datenschutz</a></li>
+        {/* Archiv früherer Design-Stände zum Vergleich */}
+        <li><a href="/v1/">Archiv v1</a></li>
+        <li><a href="/v2/">Archiv v2</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  const cat = document.getElementById('footer-peek-cat');
+  if (cat && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    gsap.registerPlugin(ScrollTrigger);
+    // Scrub: die Katze schaut erst kurz vor dem Seitenende langsam hinter dem
+    // Footer hoch — an den Scrollfortschritt gekoppelt, beim Hochscrollen
+    // versteckt sie sich also automatisch wieder
+    gsap.fromTo(
+      cat,
+      { yPercent: 102 },
+      {
+        yPercent: 0,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.footer-band',
+          start: 'top bottom',
+          end: 'bottom bottom',
+          scrub: 0.4,
+        },
+      }
+    );
+  }
+</script>
+
+<style>
+  .footer { margin-top: clamp(48px, 8vw, 120px); }
+
+  /* Peek-Slot auf der Footer-Oberkante: schneidet die Katze, solange sie
+     „hinter" dem Footer steckt (GSAP schiebt sie hoch/runter).
+     Groß und mittig (Screenshot-Layout). */
+  .footer-cat {
+    display: flex;
+    justify-content: center;
+    line-height: 0;
+  }
+  .footer-peek {
+    overflow: hidden;
+    line-height: 0;
+    /* 4 px in die Footer-Fläche eintauchen — kein Lichtspalt an der Kante
+       (die schwarze Band-Fläche liegt mit z-index 1 darüber) */
+    margin-bottom: -4px;
+  }
+  .footer-peek img {
+    width: clamp(210px, 22.5vw, 345px);
+    height: auto;
+  }
+
+  .footer-band {
+    --c: var(--black);
+    color: var(--white);
+    padding-top: clamp(32px, 5vw, 72px);
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: clamp(24px, 3vw, 48px) var(--gutter);
+    align-items: start;
+  }
+
+  .footer-brand img { width: clamp(160px, 16vw, 230px); height: auto; }
+
+  .footer-head {
+    margin: 0 0 0.6em;
+    font-size: var(--fs-text);
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  .footer a { color: var(--white); }
+
+  .footer-note {
+    margin: clamp(28px, 4vw, 56px) 0 0;
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px var(--gutter);
+    margin-top: clamp(20px, 3vw, 40px);
+    padding-bottom: 20px;
+    border-top: 1px solid rgb(255 255 255 / 35%);
+    padding-top: 16px;
+  }
+
+  .footer-domain { font-weight: var(--fw-bold); text-transform: uppercase; }
+
+  .footer-legal {
+    display: flex;
+    gap: var(--gutter);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

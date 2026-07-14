@@ -1,0 +1,82 @@
+---
+import Mark from './Mark.astro';
+
+interface Props {
+  current?: string;
+}
+const { current = '' } = Astro.props;
+
+const links = [
+  { href: '/', label: 'Start', key: 'start' },
+  { href: '/verein/', label: 'Verein', key: 'verein' },
+  { href: '/termine/', label: 'Termine', key: 'termine' },
+  { href: '/vermittlung/', label: 'Vermittlung', key: 'vermittlung' },
+  { href: '/mitglied-werden/', label: 'Mitglied werden', key: 'mitglied' },
+  { href: '/kontakt/', label: 'Kontakt', key: 'kontakt' },
+];
+---
+<header class="nav">
+  <a href="/" class="logo-link" aria-label="BDKF — Startseite">
+    <Mark size="17px" />
+  </a>
+  <nav aria-label="Hauptnavigation">
+    <ul class="links">
+      {links.map((l) => (
+        <li>
+          <a href={l.href} class:list={{ on: current === l.key }} aria-current={current === l.key ? 'page' : undefined}>
+            {l.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--nav-h);
+    padding: 0 28px;
+    background: var(--paper);
+  }
+  .logo-link {
+    text-decoration: none;
+  }
+  /* Where the viewport frame renders (≥600px shorter edge), the fixed B owns
+     the top-left corner — the nav Mark would sit inside the letter. The frame
+     IS the brand there; the Mark returns on mobile, where the frame drops. */
+  @media (min-width: 600px) and (min-height: 600px) {
+    .logo-link {
+      display: none;
+    }
+  }
+  .links {
+    display: flex;
+    gap: 22px;
+    list-style: none;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .links a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .links a:hover,
+  .links a.on {
+    color: var(--ink);
+  }
+  .links a.on {
+    font-weight: 700;
+  }
+  @media (max-width: 640px) {
+    .links {
+      gap: 14px;
+      font-size: 12.5px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+  }
+</style>

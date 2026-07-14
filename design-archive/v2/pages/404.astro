@@ -1,0 +1,65 @@
+---
+import BaseV2 from '../layouts/BaseV2.astro';
+import Nav from '../components/v2/Nav.astro';
+import Footer from '../components/v2/Footer.astro';
+---
+<BaseV2 title="404 — Bund der Katzenfreunde">
+  <Nav />
+  <section class="nf wrap">
+    <p class="v2-eyebrow">Fehler 404</p>
+    <h1 class="v2-head">Hier ist nichts. Nur eine&nbsp;Katze.</h1>
+    <p class="v2-sub nf-sub">
+      Die Seite, die du suchst, gibt es nicht (mehr). Die Katze bleibt
+      trotzdem liegen.
+    </p>
+    <a class="btn nf-btn" href="/">Zur Startseite</a>
+  </section>
+  <div class="nf-band-zone">
+    <img
+      class="illu nf-cat reveal"
+      src="/assets/illustrations/flat-cat-filled.svg"
+      alt=""
+      width="644"
+      height="534"
+    />
+    <div class="nf-band"></div>
+  </div>
+  <Footer />
+</BaseV2>
+
+<style>
+  .nf {
+    padding-top: clamp(40px, 6vw, 90px);
+  }
+  .nf .v2-eyebrow {
+    color: var(--v2-navy);
+    margin-bottom: 18px;
+  }
+  .nf-sub {
+    margin-top: 26px;
+    max-width: 44ch;
+    color: var(--v2-navy);
+  }
+  .nf-btn {
+    margin-top: 30px;
+  }
+  .nf-band-zone {
+    position: relative;
+    /* Platz für die Katze (Seitenverhältnis 534/644 ≈ 0.83) */
+    margin-top: calc(clamp(170px, 20vw, 270px) * 0.83 + 28px);
+  }
+  .nf-cat {
+    position: absolute;
+    bottom: 100%;
+    left: clamp(24px, 12vw, 200px);
+    width: clamp(170px, 20vw, 270px);
+    margin-bottom: -2px;
+  }
+  .nf-band {
+    background: var(--c-aktuell);
+    height: clamp(64px, 8vw, 110px);
+    /* Band ÜBER der Katze: Reveal taucht hinter der Kante auf */
+    position: relative;
+    z-index: 1;
+  }
+</style>

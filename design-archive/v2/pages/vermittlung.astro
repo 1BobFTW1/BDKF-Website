@@ -1,0 +1,143 @@
+---
+import BaseV2 from '../layouts/BaseV2.astro';
+import Nav from '../components/v2/Nav.astro';
+import Footer from '../components/v2/Footer.astro';
+import CatCard from '../components/v2/CatCard.astro';
+---
+<BaseV2 title="Vermittlung — Bund der Katzenfreunde" description="Katzen suchen ein Zuhause: unsere Schützlinge, glückliche Vermittlungen und Katzen von privat.">
+  <Nav current="vermittlung" />
+
+  <section class="page-intro wrap">
+    <p class="v2-eyebrow">Vermittlung</p>
+    <h1 class="v2-head">Liebe auf den ersten&nbsp;Miau</h1>
+    <p class="v2-sub">
+      Unsere Schützlinge leben in Pflegefamilien, bis sie ihre Menschen
+      gefunden haben. Wenn du dich für eine unserer Katzen interessierst,
+      schick uns bitte vorab den ausgefüllten Fragebogen — so finden wir
+      gemeinsam heraus, ob es passt.
+    </p>
+    <div class="intro-ctas">
+      <!-- TODO: Platzhalter — Link zum echten Fragebogen (PDF/Formular) ergänzen -->
+      <a class="btn" href="/kontakt/">Fragebogen anfordern</a>
+    </div>
+  </section>
+
+  <section class="section wrap" id="zuhause-gesucht">
+    <h2 class="v2-sub section-h">Zuhause gesucht</h2>
+    <div class="cards">
+      <CatCard
+        name="Melissa"
+        meta="geb. 2019"
+        text="Kam abgemagert und krank zu uns, zog drei Kitten groß und ließ 16 Zähne beim Tierarzt — seitdem wie ausgewechselt. Sucht einen ruhigen Einzelplatz mit vernetztem Balkon."
+        accent="var(--c-vermittlung)"
+        illu="big-head-cat"
+        href="/kontakt/"
+      />
+      <CatCard
+        name="Benji + Lui"
+        text="Zwei beste Freunde, die nur im Doppelpack umziehen. Verspielt, verschmust und bestens sozialisiert."
+        accent="var(--c-vermittlung)"
+        illu="crazy-cat"
+        href="/kontakt/"
+      />
+      <CatCard
+        name="Pumba + Fussel"
+        text="Ein gemütliches Duo für Menschen mit Geduld — Pumba bringt das Gewicht mit, Fussel das Chaos."
+        accent="var(--c-vermittlung)"
+        illu="lying-cat"
+        href="/kontakt/"
+      />
+      <CatCard
+        name="Tapsi"
+        text="Sanfter Kater, der erst auftaut, wenn er dir vertraut — dann aber richtig."
+        accent="var(--c-vermittlung)"
+        illu="fat-cat"
+        href="/kontakt/"
+      />
+      <CatCard
+        name="Mietz"
+        text="Neugierige Samtpfote aus schlechter Haltung, aufgepäppelt und bereit für ein ruhiges Zuhause."
+        accent="var(--c-vermittlung)"
+        illu="peaking-cat"
+        href="/kontakt/"
+      />
+      <CatCard
+        name="Willi"
+        meta="Notfallkater"
+        text="Unser Notfellchen: braucht Menschen mit Herz und einem Platz ohne Trubel. Wir beraten dich ehrlich, ob ihr zusammenpasst."
+        accent="var(--c-vermittlung)"
+        illu="flat-cat"
+        href="/kontakt/"
+      />
+    </div>
+  </section>
+
+  <section class="happy-zone">
+    <div class="wrap section">
+      <h2 class="v2-sub section-h">Glücklich im neuen Zuhause</h2>
+      <ul class="happy v2-body">
+        <li>
+          <strong>Willy + Leila</strong> — nach Monaten auf der Pflegestelle
+          gemeinsam ausgezogen. Ihre Menschen berichten: Das Sofa ist besetzt.
+        </li>
+        <li>
+          <strong>Oma Lisa</strong> — mit 14 Jahren noch einmal umgezogen und
+          angekommen. Beweis: Für ein Zuhause ist es nie zu spät.
+        </li>
+        <li>
+          <strong>Karli</strong> — vom scheuen Fundkater zum Wohnungstiger mit
+          festem Fensterplatz.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section wrap" id="privat">
+    <h2 class="v2-sub section-h">Katzen von privat</h2>
+    <p class="v2-body privat-p">
+      Du kannst deine Katze nicht behalten oder kennst eine Katze, die ein
+      neues Zuhause braucht? Wir unterstützen private Vermittlungen mit
+      Beratung und veröffentlichen geprüfte Gesuche — damit kein Tier über
+      dubiose Kanäle den Besitzer wechselt.
+    </p>
+    <a class="btn btn-ghost privat-btn" href="/kontakt/">Privates Gesuch melden</a>
+  </section>
+
+  <Footer />
+</BaseV2>
+
+<style>
+  .intro-ctas {
+    margin-top: 34px;
+  }
+  .section-h {
+    margin-bottom: clamp(24px, 3vw, 40px);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: calc(var(--v2-gap) * 1.5);
+    row-gap: calc(var(--v2-gap) * 2.5);
+  }
+  .happy-zone {
+    background: color-mix(in srgb, var(--c-vermittlung) 22%, var(--v2-paper));
+  }
+  .happy {
+    list-style: none;
+    display: grid;
+    gap: 14px;
+    max-width: 62ch;
+  }
+  .privat-p {
+    max-width: 62ch;
+    color: var(--v2-navy);
+  }
+  .privat-btn {
+    margin-top: 22px;
+  }
+  @media (max-width: 900px) {
+    .cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

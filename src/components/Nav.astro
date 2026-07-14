@@ -1,0 +1,86 @@
+---
+interface Props { current?: string }
+const { current = '' } = Astro.props;
+
+const items = [
+  { href: '/', label: 'Start', key: 'start' },
+  { href: '/katzen/', label: 'Katzen', key: 'katzen' },
+  { href: '/helfen/', label: 'Helfen', key: 'helfen' },
+  { href: '/aktuelles/', label: 'Aktuelles', key: 'aktuelles' },
+  { href: '/verein/', label: 'Verein', key: 'verein' },
+];
+---
+<header class="nav">
+  <a class="nav-logo" href="/" aria-label="Bund der Katzenfreunde — zur Startseite">
+    {/* Wort-Bild-Marke, Höhe ≈ 1/16 der Bezugsgröße (Viewporthöhe) */}
+    <img src="/assets/logos/black/bdkf-wortbildmarke-tight.svg" alt="" width="895" height="465" />
+  </a>
+  <nav aria-label="Hauptnavigation">
+    <ul>
+      {items.map((i) => (
+        <li>
+          <a href={i.href} data-label={i.label} aria-current={current === i.key ? 'page' : undefined}>{i.label}</a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .nav {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--gutter);
+    padding: clamp(20px, 4svh, 52px) var(--margin) 8px;
+    background: var(--white);
+  }
+
+  .nav-logo { display: block; line-height: 0; }
+  .nav-logo img { height: clamp(40px, 6.25svh, 56px); width: auto; }
+
+  /* Links: versal, rechtsbündig über die rechte Hälfte verteilt */
+  nav { flex: 1 1 auto; max-width: 50%; margin-left: auto; }
+
+  nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px clamp(16px, 2.5vw, 40px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  nav a {
+    display: inline-block;
+    text-align: center;
+    font-weight: var(--fw-text);
+    text-transform: uppercase;
+    text-decoration: none;
+    font-size: var(--fs-text);
+    line-height: 1.2;
+  }
+
+  /* Breite auf Bold-Maß reservieren, damit beim Fett-Werden nichts springt */
+  nav a::after {
+    content: attr(data-label);
+    display: block;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    font-weight: var(--fw-bold);
+  }
+
+  nav a:hover,
+  nav a:focus-visible,
+  nav a[aria-current='page'] {
+    font-weight: var(--fw-bold);
+  }
+
+  @media (max-width: 720px) {
+    .nav { flex-direction: column; align-items: flex-start; gap: 14px; }
+    nav { max-width: none; margin-left: 0; width: 100%; }
+    nav ul { justify-content: flex-start; }
+  }
+</style>

@@ -1,0 +1,46 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="404 — Seite nicht gefunden | Bund der Katzenfreunde e. V.">
+  <section class="nf sec">
+    <div class="nf-text pad-x">
+      <p class="eyebrow">Fehler 404</p>
+      <h1 class="display">Hier ist nichts. Nur eine Katze.</h1>
+      <p class="gap-8"><a class="btn" href="/">Zurück zur Startseite</a></p>
+    </div>
+    <div class="form-row" style="--c: var(--purple); --form-w: 62%; --cat-w: clamp(140px, 18vw, 260px); --cat-ar: 1.21">
+      <img
+        class="illu form-cat reveal"
+        src="/assets/illustrations/flat-cat-tight.svg"
+        alt=""
+        width="857"
+        height="711"
+      />
+      <div class="form-block nf-band"></div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100svh - var(--nav-h));
+  }
+
+  /* Freiraum über der Kante = sichtbare Katzenhöhe (AR flat-cat ≈ 1.21) */
+  .nf { --cat-w: clamp(140px, 18vw, 260px); }
+
+  .nf-text {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: clamp(24px, 4svh, 56px);
+    padding-bottom: calc(var(--cat-w) / 1.21 + 16px);
+  }
+  .nf-text .eyebrow { margin-bottom: clamp(12px, 1.5vw, 24px); }
+
+  .nf-band { min-height: clamp(120px, 25svh, 240px); }
+</style>

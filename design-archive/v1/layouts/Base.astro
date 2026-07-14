@@ -1,0 +1,42 @@
+---
+import '../styles/global.css';
+import ViewportFrame from '../components/ViewportFrame.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const {
+  title,
+  description = 'Bund der Katzenfreunde — das Netzwerk für Menschen und ihre Katzen in der Stadt.',
+} = Astro.props;
+---
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" id="favicon" />
+    <link rel="stylesheet" href="https://use.typekit.net/fzx4lwp.css" />
+    <script>
+      // Tab-aware favicon: the cat peeks while the tab is active and ducks to
+      // just its ears when the reader leaves (Chrome/Firefox/Edge; Safari
+      // ignores runtime favicon swaps and SVG favicons altogether). One swap
+      // per visibility event — deliberately not a loop.
+      const favicon = document.getElementById('favicon') as HTMLLinkElement;
+      // Fetch the ears frame up front so the first duck doesn't wait on the network.
+      new Image().src = '/favicon-ears.svg';
+      const duck = () => {
+        favicon.href = document.visibilityState === 'hidden' ? '/favicon-ears.svg' : '/favicon.svg';
+      };
+      duck(); // pages can load in an already-hidden tab
+      document.addEventListener('visibilitychange', duck);
+    </script>
+  </head>
+  <body>
+    <ViewportFrame />
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,111 @@
+---
+import BaseV2 from '../layouts/BaseV2.astro';
+import Nav from '../components/v2/Nav.astro';
+import Footer from '../components/v2/Footer.astro';
+---
+<BaseV2 title="Kontakt — Bund der Katzenfreunde" description="Ansprechpartner, Postadresse und Spendenkonto des Bund der Katzenfreunde e. V.">
+  <Nav current="kontakt" />
+
+  <section class="page-intro wrap">
+    <p class="v2-eyebrow">Kontakt</p>
+    <h1 class="v2-head">Sag&nbsp;Miau</h1>
+    <p class="v2-sub">
+      Ob Adoption, Pflegeplatz, Fundkatze oder Frage — schreib uns oder ruf
+      an. Wir sind ehrenamtlich unterwegs, melden uns aber so schnell wir
+      können.
+    </p>
+  </section>
+
+  <section class="section wrap">
+    <div class="contact-zone">
+      <img
+        class="illu contact-cat reveal"
+        src="/assets/illustrations/fat-cat-filled.svg"
+        alt=""
+        width="570"
+        height="441"
+        loading="lazy"
+      />
+      <div class="cards">
+        <div class="card v2-body">
+          <p class="v2-eyebrow">Ansprechpartnerin</p>
+          <!-- TODO: Platzhalter — Kontaktdaten von der bestehenden Website, vor Livegang bestätigen; weitere Ansprechpartner ergänzen -->
+          <p>
+            <strong>Norina Bernetti</strong><br />
+            Pflegeplätze &amp; Vermittlung<br />
+            0172&nbsp;8552419<br />
+            norina.bernetti@bund-der-katzenfreunde.de
+          </p>
+        </div>
+        <div class="card v2-body">
+          <p class="v2-eyebrow">Post</p>
+          <!-- TODO: Platzhalter — Postadresse vor Livegang bestätigen -->
+          <p>
+            Bund der Katzenfreunde e.&thinsp;V.<br />
+            c/o Marius Zisselsberger<br />
+            Oberhachinger Str. 24&thinsp;a<br />
+            82031 Grünwald
+          </p>
+        </div>
+        <div class="card v2-body">
+          <p class="v2-eyebrow">Spendenkonto</p>
+          <!-- TODO: Platzhalter — Bankverbindung vor Livegang bestätigen -->
+          <p>
+            VR Bank München Land<br />
+            <strong>IBAN DE35&nbsp;7016&nbsp;6486&nbsp;0000&nbsp;7907&nbsp;70</strong><br />
+            BIC GENODEF1OHC
+          </p>
+        </div>
+      </div>
+    </div>
+    <p class="v2-body found-note">
+      <strong>Fundkatze entdeckt?</strong> Bitte zuerst prüfen, ob das Tier
+      nur Freigänger ist — dann gern direkt anrufen. In akuten Notfällen
+      wende dich zusätzlich an die Münchner Tierrettung.
+    </p>
+  </section>
+
+  <Footer />
+</BaseV2>
+
+<style>
+  .contact-zone {
+    position: relative;
+    /* Platz für die Katze (Seitenverhältnis 441/570 ≈ 0.78) */
+    margin-top: calc(clamp(140px, 16vw, 210px) * 0.78 + 20px);
+  }
+  /* Die Katze lugt über die Kartenreihe */
+  .contact-cat {
+    position: absolute;
+    bottom: 100%;
+    right: clamp(24px, 12vw, 190px);
+    width: clamp(140px, 16vw, 210px);
+    margin-bottom: -2px;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--v2-gap);
+    /* Kartenreihe ÜBER der Katze: Reveal taucht hinter der Kante auf */
+    position: relative;
+    z-index: 1;
+  }
+  .card {
+    background: color-mix(in srgb, var(--c-kontakt) 22%, var(--v2-paper));
+    border-top: 10px solid var(--c-kontakt);
+    padding: 24px 22px;
+  }
+  .card .v2-eyebrow {
+    margin-bottom: 10px;
+  }
+  .found-note {
+    margin-top: clamp(28px, 4vw, 48px);
+    max-width: 62ch;
+    color: var(--v2-navy);
+  }
+  @media (max-width: 900px) {
+    .cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

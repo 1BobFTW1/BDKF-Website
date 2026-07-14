@@ -1,0 +1,161 @@
+/* BDKF Brand-System v2 — nach den neuen Guidelines (Figma, Stand 06.07.26).
+   Konzept: Illustration (süß/spielerisch) + Form (ernst/seriös)
+   = nahbar durch Katze, seriös durch Form.
+   Gilt NUR für die /v2/-Seiten; das alte System (tokens.css) bleibt unberührt. */
+:root {
+  /* Farben — aus den Guideline-Slides gesampelt */
+  --v2-ink: #000000;    /* Text, Headlines, Katzen auf Weiß */
+  --v2-paper: #ffffff;  /* Grundfläche ist reines Weiß */
+  --v2-navy: #2d3142;   /* dunkle Fläche + Logo-Variante auf Farbe */
+  --v2-lime: #e4fc97;
+  --v2-pink: #ffacf9;
+  --v2-lilac: #edb1f1;
+  --v2-blue: #88c2fe;
+  --v2-cyan: #64e3ff;
+  --v2-mint: #acffe6;
+  --v2-amber: #ffc964;
+  --v2-coral: #ff8a64;
+  --v2-purple: #957aff;
+
+  /* Typo-Skala: Text ×3 = Unterüberschrift ×3 = Überschrift (12/36/108,
+     Faktor 3). Web-Basis 16px; der vw-Deckel verhindert Overflow auf
+     schmalen Viewports und hält Überschrift = 3 × Unterüberschrift. */
+  --v2-fs-body: 16px;
+  /* Floor 18px: die Unterüberschrift darf beim vw-Deckeln nie unter die
+     Textgröße rutschen (invertierte Hierarchie auf schmalen Screens) */
+  --v2-fs-sub: max(18px, min(calc(var(--v2-fs-body) * 3), calc(10vw / 3)));
+  --v2-fs-head: min(calc(var(--v2-fs-body) * 9), 10vw);
+
+  /* Raster: Rand & Abstände immer in quadratischer Anordnung */
+  --v2-margin: clamp(20px, 3vw, 44px);
+  --v2-gap: clamp(12px, 1.6vw, 22px);
+}
+
+/* Semantische Akzente: eine Farbe je Thema, überall wiedererkennbar
+   („seriös durch Form" = Farbe als Wegweiser, nicht als Deko) */
+:root {
+  --c-vermittlung: var(--v2-amber);
+  --c-pflege: var(--v2-mint);
+  --c-pate: var(--v2-blue);
+  --c-ehrenamt: var(--v2-lime);
+  --c-spenden: var(--v2-coral);
+  --c-wissen: var(--v2-lilac);
+  --c-aktuell: var(--v2-cyan);
+  --c-verein: var(--v2-purple);
+  --c-kontakt: var(--v2-pink);
+}
+
+/* ---- Typo-Rollen (Forma DJR Deck; Überschrift Bold, 75% Zeilenabstand) ---- */
+.v2-head {
+  font-size: var(--v2-fs-head);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 0.75; /* „Abstand 75% des Defaults" */
+  letter-spacing: -0.01em;
+}
+.v2-sub {
+  font-size: var(--v2-fs-sub);
+  font-weight: 400;
+  line-height: 1.1;
+}
+.v2-body {
+  font-size: var(--v2-fs-body);
+  font-weight: 400;
+  line-height: 1.5;
+}
+/* Eyebrow/Label: KEINE vierte Stufe — Textgröße, nur fett + versal */
+.v2-eyebrow {
+  font-size: var(--v2-fs-body);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ---- Layout-Primitive ---- */
+.wrap {
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: var(--v2-margin);
+}
+.section {
+  padding-block: clamp(56px, 7vw, 104px);
+}
+.section-tight {
+  padding-block: clamp(32px, 4vw, 56px);
+}
+
+/* Seiten-Intro: Eyebrow + Überschrift + Unterüberschrift, auf jeder Seite gleich */
+.page-intro {
+  padding-top: clamp(40px, 6vw, 90px);
+}
+.page-intro .v2-eyebrow {
+  color: var(--v2-navy);
+  margin-bottom: 18px;
+}
+.page-intro .v2-sub {
+  margin-top: 26px;
+  max-width: 46ch;
+  color: var(--v2-navy);
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  background: var(--v2-navy);
+  color: var(--v2-paper);
+  font-size: var(--v2-fs-body);
+  font-weight: 700;
+  text-decoration: none;
+  padding: 16px 32px;
+  border: 2px solid var(--v2-navy);
+}
+.btn:hover {
+  background: var(--v2-ink);
+  border-color: var(--v2-ink);
+}
+.btn-ghost {
+  background: transparent;
+  color: inherit;
+  border-color: currentColor;
+}
+.btn-ghost:hover {
+  background: var(--v2-navy);
+  color: var(--v2-paper);
+  border-color: var(--v2-navy);
+}
+/* Auf dunklen Bändern */
+.btn-light {
+  background: var(--v2-paper);
+  color: var(--v2-navy);
+  border-color: var(--v2-paper);
+}
+.btn-light:hover {
+  background: transparent;
+  color: var(--v2-paper);
+}
+
+/* Illustrationen docken an Formkanten an: der Dock-Container schneidet die
+   Katze unten bündig ab bzw. lässt sie exakt auf der Kante sitzen. */
+.illu {
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Scroll-Reveal: Katzen tauchen hinter Kanten auf. Ohne JS (html ohne .js)
+   bleibt alles sichtbar; reduced motion killt die Transition global. */
+.js .reveal {
+  transform: translateY(24%);
+  opacity: 0.001;
+  transition: transform 0.7s var(--ease-brand), opacity 0.5s var(--ease-brand);
+}
+.js .reveal.in {
+  transform: none;
+  opacity: 1;
+}
+/* Für Illustrationen, die VOR ihrer Fläche liegen (z. B. drapierte Katze):
+   nur einblenden, nicht schieben — sonst „poppt" sie sichtbar übers Feld. */
+.js .reveal.reveal-fade,
+.js .reveal.reveal-fade.in {
+  transform: none;
+}

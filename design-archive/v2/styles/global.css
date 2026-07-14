@@ -1,0 +1,77 @@
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--brand);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+}
+
+/* ---- Type roles (max three sizes per view) ----
+   Sizes come from the 1:3:9 scale in tokens.css: body/label 1×,
+   subhead 3×, headline 9×. Components don't set their own sizes. */
+
+/* Bold, uppercase, −2% tracking headlines. Never letterspace beyond this. */
+.headline {
+  font-size: var(--fs-headline);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.97;
+}
+
+/* Medium — subheads and UI elements */
+.subhead {
+  font-size: var(--fs-subhead);
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+/* Bold, uppercase, +14% tracking — labels / eyebrows / captions.
+   Body-sized: labels are not a fourth step in the scale. */
+.label {
+  font-size: var(--fs-body);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+/* Regular body copy */
+.body {
+  font-size: var(--fs-body);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

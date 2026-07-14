@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BDKF — Brand Guidelines v1.0</title>
+<style>
+  /* Forma DJR Deck is licensed via Adobe Fonts (typekit). Activate your kit and it loads;
+     otherwise the stack falls back to a close grotesque. */
+  :root{
+    --ink:#171717;
+    --paper:#fdfcfa;
+    --board:#eceae5;
+    --panel:#f5f4f0;
+    --hair:#d8d6d0;
+    --muted:#6e6d67;
+    --amber:#e8a020;
+    --ok:#1f7a3d;
+    --no:#b23b2e;
+    --brand:"forma-djr-deck","Forma DJR Deck","Helvetica Neue",Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    background:var(--board);
+    color:var(--ink);
+    font-family:var(--brand);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.45;
+  }
+  .doc{max-width:1060px;margin:0 auto;padding:52px 28px 110px;}
+
+  /* ============ COVER ============ */
+  .cover{
+    background:var(--paper);
+    border:1px solid var(--hair);
+    padding:0;position:relative;
+    aspect-ratio:1.9/1;
+    box-shadow:0 24px 48px -32px rgba(0,0,0,.5);
+    margin-bottom:64px;overflow:hidden;
+  }
+  .cover .cl{position:absolute;font-weight:800;font-size:clamp(22px,4vw,42px);line-height:.8;}
+  .cover .cl.tl{top:5%;left:3.4%;} .cover .cl.tr{top:5%;right:3.4%;}
+  .cover .cl.bl{bottom:5%;left:3.4%;} .cover .cl.br{bottom:5%;right:3.4%;}
+  .cover .mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+  .cover .mid .t1{font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);font-weight:700;}
+  .cover .mid h1{margin:12px 0 6px;font-size:clamp(24px,4.4vw,46px);font-weight:800;letter-spacing:-.02em;line-height:1;}
+  .cover .mid .t2{font-size:13px;color:var(--muted);}
+
+  /* ============ SECTIONS ============ */
+  section{margin-bottom:76px;}
+  .shead{display:flex;align-items:baseline;gap:14px;border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:8px;}
+  .shead .n{font-weight:800;font-size:14px;color:var(--amber);letter-spacing:.04em;}
+  .shead h2{margin:0;font-size:clamp(19px,2.6vw,26px);font-weight:800;letter-spacing:-.01em;}
+  .slede{font-size:14.5px;color:var(--muted);max-width:72ch;margin:14px 0 28px;}
+  .slede b{color:var(--ink);}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
+  @media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+  .card{background:var(--paper);border:1px solid var(--hair);padding:24px;}
+  .card h3{margin:0 0 10px;font-size:14px;font-weight:800;letter-spacing:.02em;}
+  .card p{margin:0;font-size:13px;color:var(--muted);}
+  .card p b{color:var(--ink);}
+  .cap{font-size:11px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-top:10px;}
+
+  /* the mark */
+  .mark{display:inline-grid;grid-template-columns:auto auto;gap:.10em .16em;font-weight:800;line-height:.82;letter-spacing:-.005em;}
+  .mark span{display:block;}
+
+  /* rule callout */
+  .law{
+    background:var(--ink);color:var(--paper);
+    padding:26px 28px;margin:26px 0;
+    font-size:clamp(15px,2.2vw,19px);font-weight:700;letter-spacing:-.005em;line-height:1.5;
+  }
+  .law em{color:var(--amber);font-style:normal;}
+
+  /* diagrams */
+  svg text{font-family:var(--brand);}
+  .dg{background:var(--paper);border:1px solid var(--hair);padding:18px;}
+  .dg svg{display:block;width:100%;height:auto;}
+  .dim{stroke:var(--amber);stroke-width:1;}
+  .dimtxt{fill:var(--amber);font-size:9px;font-weight:700;letter-spacing:.04em;}
+  .lbl{fill:var(--muted);font-size:8.5px;letter-spacing:.04em;}
+  .zone{fill:var(--amber);opacity:.12;}
+  .zoneln{stroke:var(--amber);stroke-dasharray:3 3;fill:none;stroke-width:1;}
+  .safe{fill:#1f7a3d;opacity:.07;}
+  .pg{fill:var(--paper);stroke:var(--hair);}
+  .glyph{font-weight:800;fill:var(--ink);}
+
+  /* spec table */
+  table{width:100%;border-collapse:collapse;font-size:13px;background:var(--paper);border:1px solid var(--hair);}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--hair);vertical-align:top;}
+  th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;background:var(--panel);}
+  td b{font-weight:800;}
+  td code{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(--panel);padding:1px 6px;border:1px solid var(--hair);}
+  tr:last-child td{border-bottom:none;}
+
+  /* typography specimens */
+  .spec .row{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:baseline;padding:16px 0;border-bottom:1px solid var(--hair);}
+  .spec .row:last-child{border-bottom:none;}
+  .spec .meta{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;line-height:1.6;}
+  .spec .sample{overflow:hidden;}
+  @media(max-width:700px){.spec .row{grid-template-columns:1fr;gap:6px;}}
+
+  /* color chips */
+  .chips{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  @media(max-width:700px){.chips{grid-template-columns:1fr 1fr;}}
+  .chip{border:1px solid var(--hair);background:var(--paper);}
+  .chip .sw{height:86px;}
+  .chip .in{padding:12px 14px;font-size:12px;}
+  .chip .in b{display:block;font-size:13px;margin-bottom:3px;}
+  .chip .in span{color:var(--muted);display:block;line-height:1.6;}
+
+  /* do / dont tiles */
+  .ddgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  @media(max-width:820px){.ddgrid{grid-template-columns:1fr 1fr;}}
+  @media(max-width:560px){.ddgrid{grid-template-columns:1fr;}}
+  .dd{background:var(--paper);border:1px solid var(--hair);}
+  .dd .art{aspect-ratio:1/1.25;position:relative;overflow:hidden;border-bottom:1px solid var(--hair);margin:14px;background:#fff;box-shadow:inset 0 0 0 1px var(--hair);}
+  .dd .cl{position:absolute;font-weight:800;font-size:15px;line-height:.8;}
+  .dd .cl.tl{top:7%;left:8%;} .dd .cl.tr{top:7%;right:8%;}
+  .dd .cl.bl{bottom:7%;left:8%;} .dd .cl.br{bottom:7%;right:8%;}
+  .dd .verdict{display:flex;gap:8px;align-items:flex-start;padding:0 16px 16px;font-size:12.5px;color:var(--muted);line-height:1.5;}
+  .dd .verdict .vb{flex:none;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:800;margin-top:1px;}
+  .dd.good .vb{background:var(--ok);} .dd.bad .vb{background:var(--no);}
+  .dd .verdict b{color:var(--ink);display:block;margin-bottom:2px;}
+  .strike{position:absolute;inset:0;pointer-events:none;}
+  .strike line{stroke:var(--no);stroke-width:2.5;opacity:.85;}
+
+  .cat-s{position:absolute;}
+  .cat-s .head{fill:var(--ink);} .cat-s .eye{fill:var(--amber);} .cat-s .pupil{fill:var(--ink);}
+
+  /* format matrix */
+  .matrix td:first-child{font-weight:800;}
+  .pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border:1.5px solid var(--ink);}
+  .pill.mk{background:var(--ink);color:#fff;}
+
+  footer{font-size:12px;color:var(--muted);border-top:1px solid var(--hair);padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <!-- ================= COVER ================= -->
+  <div class="cover">
+    <span class="cl tl">B</span><span class="cl tr">D</span>
+    <span class="cl bl">K</span><span class="cl br">F</span>
+    <div class="mid">
+      <div class="t1">Bund der Katzenfreunde</div>
+      <h1>Brand Guidelines</h1>
+      <div class="t2">Version 1.0 · The corner-letter system</div>
+    </div>
+  </div>
+
+  <!-- ================= 01 THE SYSTEM ================= -->
+  <section>
+    <div class="shead"><span class="n">01</span><h2>The system in one sentence</h2></div>
+    <p class="slede">Everything in this identity is generated by a single geometric rule. If you remember nothing else from this document, remember this:</p>
+    <div class="law">
+      The letters B, D, K, F sit on the four corners of one rectangle. On small formats the rectangle collapses into the <em>Mark</em>. On large formats it opens to the page margins and becomes the <em>Frame</em>. <em>All four letters are always present and always fully visible. No exceptions.</em>
+    </div>
+    <div class="grid3">
+      <div class="card">
+        <h3>Quadrant identity</h3>
+        <p><b>B</b> is only ever top-left. <b>D</b> top-right. <b>K</b> bottom-left. <b>F</b> bottom-right. This holds in the Mark and in the Frame, so both states spell BDKF in natural reading order (Z-pattern). Letters never trade places.</p>
+      </div>
+      <div class="card">
+        <h3>Two states, one object</h3>
+        <p>The Mark and the Frame are <b>not two logos</b> — they are the same rectangle at two sizes. Never design a third lockup (no horizontal "BDKF" wordmark, no stacked variant). If a space can't hold the Frame, use the Mark.</p>
+      </div>
+      <div class="card">
+        <h3>Full visibility</h3>
+        <p>A letter may never be cropped, covered, replaced by an image, or absorbed into another element. If a layout hides even one letter, the identity is broken — a passer-by must always be able to read all four.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 02 THE MARK ================= -->
+  <section>
+    <div class="shead"><span class="n">02</span><h2>The Mark (collapsed state)</h2></div>
+    <p class="slede">The Mark is the 2×2 letter block. It is the logo for small applications: business cards, favicons, app icons, stamps, social avatars, and as a compact sign-off on dense layouts (e.g. brochure interiors).</p>
+    <div class="grid2">
+      <div class="dg">
+        <svg viewBox="0 0 400 300" role="img" aria-label="Mark construction">
+          <rect class="pg" x="0" y="0" width="400" height="300"/>
+          <!-- clearspace zone -->
+          <rect class="zone" x="106" y="56" width="188" height="188"/>
+          <rect class="zoneln" x="106" y="56" width="188" height="188"/>
+          <!-- mark -->
+          <text class="glyph" x="152" y="140" font-size="64">B</text>
+          <text class="glyph" x="210" y="140" font-size="64">D</text>
+          <text class="glyph" x="152" y="212" font-size="64">K</text>
+          <text class="glyph" x="210" y="212" font-size="64">F</text>
+          <!-- dims -->
+          <line class="dim" x1="152" y1="230" x2="196" y2="230"/>
+          <text class="dimtxt" x="155" y="243">X = cap height</text>
+          <line class="dim" x1="300" y1="56" x2="300" y2="244"/>
+          <text class="dimtxt" x="306" y="152">clear&nbsp;space ≥ 1X</text>
+          <line class="dim" x1="199" y1="90" x2="208" y2="90"/>
+          <text class="dimtxt" x="176" y="82">gap = 0.16X</text>
+        </svg>
+        <div class="cap">Construction &amp; clear space</div>
+      </div>
+      <div>
+        <table>
+          <tr><th>Property</th><th>Specification</th></tr>
+          <tr><td>Base unit</td><td><b>X</b> = cap height of one letter</td></tr>
+          <tr><td>Column gap</td><td><code>0.16X</code></td></tr>
+          <tr><td>Row gap</td><td><code>0.10X</code> (optical — rows sit tighter than columns)</td></tr>
+          <tr><td>Weight</td><td>Forma DJR Deck <b>Extra Bold</b>, always</td></tr>
+          <tr><td>Clear space</td><td>≥ <code>1X</code> on all sides — nothing enters this zone</td></tr>
+          <tr><td>Minimum size</td><td>Print <code>8&nbsp;mm</code> wide · Screen <code>24&nbsp;px</code> wide</td></tr>
+          <tr><td>Colour</td><td>Ink on Paper, or Paper on Ink. Never amber, never tinted</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 03 THE FRAME ================= -->
+  <section>
+    <div class="shead"><span class="n">03</span><h2>The Frame (opened state)</h2></div>
+    <p class="slede">The Frame is the four letters at the corners of the format. All measurements derive from one base unit so the system scales to any size and proportion without judgement calls: <b>U = 1% of the format's shorter edge.</b></p>
+    <div class="grid2">
+      <div class="dg">
+        <svg viewBox="0 0 420 560" role="img" aria-label="Frame construction with measurements">
+          <rect class="pg" x="30" y="20" width="360" height="520"/>
+          <!-- margin guides -->
+          <rect class="zoneln" x="52" y="42" width="316" height="476"/>
+          <!-- exclusion zones -->
+          <rect class="zone" x="52" y="42" width="72" height="66"/>
+          <rect class="zone" x="296" y="42" width="72" height="66"/>
+          <rect class="zone" x="52" y="452" width="72" height="66"/>
+          <rect class="zone" x="296" y="452" width="72" height="66"/>
+          <!-- letters -->
+          <text class="glyph" x="58" y="88" font-size="40">B</text>
+          <text class="glyph" x="330" y="88" font-size="40">D</text>
+          <text class="glyph" x="58" y="500" font-size="40">K</text>
+          <text class="glyph" x="330" y="500" font-size="40">F</text>
+          <!-- safe content area -->
+          <rect class="safe" x="132" y="42" width="156" height="476"/>
+          <rect class="safe" x="52" y="116" width="316" height="328"/>
+          <!-- dims -->
+          <line class="dim" x1="30" y1="30" x2="52" y2="30"/>
+          <text class="dimtxt" x="34" y="16">margin M = 6U</text>
+          <line class="dim" x1="58" y1="96" x2="92" y2="96"/>
+          <text class="dimtxt" x="130" y="99">letter cap height L = 10U</text>
+          <text class="dimtxt" x="132" y="60">exclusion zone = letter + 0.5L</text>
+          <text class="lbl" x="165" y="285">CONTENT AREA</text>
+          <text class="lbl" x="151" y="298">(green) — text, images, cat</text>
+          <text class="lbl" x="160" y="311">may only live here</text>
+        </svg>
+        <div class="cap">Portrait example — the same formulas apply to square, landscape, and 9:16</div>
+      </div>
+      <div>
+        <table>
+          <tr><th>Property</th><th>Specification</th></tr>
+          <tr><td>Base unit</td><td><b>U</b> = shorter edge ÷ 100</td></tr>
+          <tr><td>Margin</td><td><b>M</b> = <code>6U</code> — identical on all four sides, measured, never eyeballed</td></tr>
+          <tr><td>Letter size</td><td><b>L</b> = <code>10U</code> cap height. All four letters identical size &amp; weight</td></tr>
+          <tr><td>Weight</td><td>Forma DJR Deck <b>Extra Bold</b> — same cut as the Mark</td></tr>
+          <tr><td>Exclusion zone</td><td>Each letter's bounding box + <code>0.5L</code> padding on all sides. <b>Nothing enters it</b> — not text, not the cat, not photography</td></tr>
+          <tr><td>Content area</td><td>Everything inside the margins minus the four exclusion zones</td></tr>
+          <tr><td>Minimum format</td><td>Shorter edge ≥ <code>100&nbsp;mm</code> print / <code>600&nbsp;px</code> screen. Below that, use the Mark instead</td></tr>
+        </table>
+        <div class="card" style="margin-top:18px;">
+          <h3>Why the exclusion zone exists</h3>
+          <p>Earlier drafts let the cat and headlines drift into the corners, which crowded or covered letters. The <code>0.5L</code> zone makes the rule mechanical: if anything touches the amber area, move or shrink the content — <b>never</b> the letters.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 04 TYPOGRAPHY ================= -->
+  <section>
+    <div class="shead"><span class="n">04</span><h2>Typography — Forma DJR Deck</h2></div>
+    <p class="slede">One family for everything: <b>Forma DJR Deck</b> (David Jonathan Ross, via Adobe Fonts). Its rational grotesque skeleton reads as professional; the warm, slightly rounded details carry the playfulness — so the type never has to "act funny" to be friendly. <b>No second typeface is permitted.</b></p>
+    <div class="card spec" style="padding:8px 24px;">
+      <div class="row">
+        <div class="meta">Extra Bold<br>System letters</div>
+        <div class="sample" style="font-weight:800;font-size:clamp(30px,5vw,52px);line-height:.85;letter-spacing:-.005em;">B D K F</div>
+      </div>
+      <div class="row">
+        <div class="meta">Bold · uppercase<br>Headlines<br>−2% tracking</div>
+        <div class="sample" style="font-weight:700;font-size:clamp(22px,3.6vw,36px);line-height:.98;letter-spacing:-.02em;text-transform:uppercase;">Stadt. Katze. Zuhause.</div>
+      </div>
+      <div class="row">
+        <div class="meta">Medium<br>Subheads &amp; UI<br>0 tracking</div>
+        <div class="sample" style="font-weight:500;font-size:clamp(15px,2.2vw,20px);">Beratung, Vermittlung und ein Verein, der zusammenhält.</div>
+      </div>
+      <div class="row">
+        <div class="meta">Regular<br>Body · 1.5 leading</div>
+        <div class="sample" style="font-weight:400;font-size:14.5px;max-width:56ch;line-height:1.55;">Der Bund der Katzenfreunde ist das Netzwerk für Menschen und ihre Katzen in der Stadt. Wir beraten, vermitteln und bringen Katzenmenschen zusammen — seit 1998.</div>
+      </div>
+      <div class="row">
+        <div class="meta">Bold · uppercase<br>Labels &amp; captions<br>+14% tracking</div>
+        <div class="sample" style="font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);">Netzwerk · Beratung · Vermittlung</div>
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:20px;">
+      <div class="card"><h3>Scale discipline</h3><p>Max <b>three</b> type sizes per piece: one headline, one body, one label. More sizes = visual noise.</p></div>
+      <div class="card"><h3>Case logic</h3><p>Headlines and labels are <b>uppercase</b>; body copy is sentence case. Never letterspace the headline — only labels get tracking.</p></div>
+      <div class="card"><h3>Fallback</h3><p>Where Forma DJR Deck can't load (e.g. plain-text email), fall back to <code>Helvetica / Arial</code>. Never substitute a decorative or rounded font to "add fun".</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 05 COLOUR ================= -->
+  <section>
+    <div class="shead"><span class="n">05</span><h2>Colour</h2></div>
+    <p class="slede">The identity is black-and-white. Amber exists for exactly one job: <b>it is the colour of the cat's eyes</b>, and by extension the single highlight per piece (one date, one CTA, one word). If amber appears twice in a layout, it appears once too often.</p>
+    <div class="chips">
+      <div class="chip"><div class="sw" style="background:#171717;"></div><div class="in"><b>Ink</b><span>HEX #171717<br>CMYK 0/0/0/95<br>Letters, headlines, cat</span></div></div>
+      <div class="chip"><div class="sw" style="background:#fdfcfa;border-bottom:1px solid var(--hair);"></div><div class="in"><b>Paper</b><span>HEX #FDFCFA<br>Unbleached stock look<br>Backgrounds</span></div></div>
+      <div class="chip"><div class="sw" style="background:#e8a020;"></div><div class="in"><b>Katzenauge</b><span>HEX #E8A020<br>CMYK 6/38/100/0<br>Cat's eyes + one accent max</span></div></div>
+      <div class="chip"><div class="sw" style="background:#6e6d67;"></div><div class="in"><b>Grau</b><span>HEX #6E6D67<br>Secondary text only<br>Never for the letters</span></div></div>
+    </div>
+    <div class="card" style="margin-top:18px;"><h3>Inversion</h3><p>Any layout may run inverted (Paper letters on Ink ground) — the measurements don't change. The cat's eyes stay amber in both. <b>The four letters are only ever Ink or Paper</b> — never amber, never grey, never in a photo texture.</p></div>
+  </section>
+
+  <!-- ================= 06 THE CAT ================= -->
+  <section>
+    <div class="shead"><span class="n">06</span><h2>The cat</h2></div>
+    <p class="slede">The story of the geometry: the letters are the <b>Freunde</b> standing at the corners; the cat is the <b>Katze</b>, safe in the space they hold. The cat therefore always lives <b>inside the content area</b> — it peeks in from an edge, but it never touches, covers, or replaces a letter.</p>
+    <div class="grid3">
+      <div class="card"><h3>Placement</h3><p>Enters from the <b>bottom or a side edge</b> of the content area, between the exclusion zones. Width on posters/flyers: <code>36–46U</code>. Only one cat per piece.</p></div>
+      <div class="card"><h3>Clearance</h3><p>Minimum <code>0.5L</code> between the cat's silhouette and any exclusion zone — the same padding rule as everything else. If it's tight, shrink the cat.</p></div>
+      <div class="card"><h3>Colour</h3><p>Solid Ink silhouette, amber eyes with Ink pupils. On Ink backgrounds: Paper silhouette, eyes stay amber. The cat is never outlined, patterned, or photographic.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 07 FORMAT MATRIX ================= -->
+  <section>
+    <div class="shead"><span class="n">07</span><h2>Which state, where</h2></div>
+    <p class="slede">The decision is mechanical, not aesthetic — it follows from the minimum-size rule in section 03.</p>
+    <table class="matrix">
+      <tr><th>Application</th><th>State</th><th>Notes</th></tr>
+      <tr><td>Poster (A3–A0)</td><td><span class="pill">Frame</span></td><td>Full rule: M = 6U, L = 10U. Headline + cat inside content area.</td></tr>
+      <tr><td>Flyer (A5/A6)</td><td><span class="pill">Frame</span></td><td>A6 is the smallest Frame format. Denser content, identical frame.</td></tr>
+      <tr><td>Instagram post 1080²</td><td><span class="pill">Frame</span></td><td>U = 10.8&nbsp;px → L ≈ 108&nbsp;px letters. Keep centre composition.</td></tr>
+      <tr><td>Instagram story 1080×1920</td><td><span class="pill">Frame</span></td><td>U from the short edge (1080). Leave the OS-UI zones (top/bottom ~250&nbsp;px) free of critical content — the corner letters may sit there since stories are also viewed as stills, but CTAs may not.</td></tr>
+      <tr><td>Brochure cover</td><td><span class="pill">Frame</span></td><td>Frame spans the <b>cover panel</b>, not the full sheet — each panel is its own format.</td></tr>
+      <tr><td>Brochure interior</td><td><span class="pill mk">Mark</span></td><td>Small Mark, top-left of the grid. Interior pages are working pages; the Frame stays on covers.</td></tr>
+      <tr><td>Website</td><td><span class="pill mk">Mark</span> + <span class="pill">Frame</span></td><td>Mark in the nav (top-left) <b>plus a complete Frame</b> — all four letters — pinned to the hero's corners. The nav Mark never substitutes for a corner letter; see §08.</td></tr>
+      <tr><td>Business card 85×55</td><td><span class="pill mk">Mark</span></td><td>Below minimum Frame size. Mark centred on front, small on back.</td></tr>
+      <tr><td>Favicon / avatar</td><td><span class="pill mk">Mark</span></td><td>Mark only. At 16&nbsp;px, the Mark alone is legible; the Frame never is.</td></tr>
+      <tr><td>Letterhead A4</td><td><span class="pill">Frame</span></td><td>Frame in 40% Ink? No — full Ink, but L may reduce to <code>6U</code> so it recedes behind correspondence. The only permitted L exception.</td></tr>
+    </table>
+  </section>
+
+  <!-- ================= 08 DO / DON'T ================= -->
+  <section>
+    <div class="shead"><span class="n">08</span><h2>Correct &amp; incorrect use</h2></div>
+    <p class="slede">The six most likely mistakes — including the two that appeared in our own early drafts.</p>
+    <div class="ddgrid">
+
+      <!-- GOOD -->
+      <div class="dd good">
+        <div class="art">
+          <span class="cl tl">B</span><span class="cl tr">D</span><span class="cl bl">K</span><span class="cl br">F</span>
+          <div style="position:absolute;left:12%;top:26%;font-weight:700;font-size:14px;line-height:1;text-transform:uppercase;letter-spacing:-.02em;">Stadt.<br>Katze.<br>Zuhause.</div>
+          <svg class="cat-s" style="left:26%;bottom:0;width:44%;" viewBox="0 0 220 140"><path class="head" d="M10 140 L10 70 Q10 46 30 40 L54 6 L82 42 L138 42 L166 6 L190 40 Q210 46 210 70 L210 140 Z"/><ellipse class="eye" cx="80" cy="96" rx="13" ry="15"/><ellipse class="eye" cx="140" cy="96" rx="13" ry="15"/><ellipse class="pupil" cx="80" cy="96" rx="3" ry="11"/><ellipse class="pupil" cx="140" cy="96" rx="3" ry="11"/></svg>
+        </div>
+        <div class="verdict"><span class="vb">✓</span><span><b>Correct</b>All four letters visible, equal size, equal margins. Cat centred in the content area, clear of both bottom corners.</span></div>
+      </div>
+
+      <!-- BAD: covered letter -->
+      <div class="dd bad">
+        <div class="art">
+          <span class="cl tl">B</span><span class="cl tr">D</span><span class="cl br">F</span>
+          <svg class="cat-s" style="left:0;bottom:0;width:58%;" viewBox="0 0 220 140"><path class="head" d="M10 140 L10 70 Q10 46 30 40 L54 6 L82 42 L138 42 L166 6 L190 40 Q210 46 210 70 L210 140 Z"/><ellipse class="eye" cx="80" cy="96" rx="13" ry="15"/><ellipse class="eye" cx="140" cy="96" rx="13" ry="15"/><ellipse class="pupil" cx="80" cy="96" rx="3" ry="11"/><ellipse class="pupil" cx="140" cy="96" rx="3" ry="11"/></svg>
+          <svg class="strike" viewBox="0 0 100 125" preserveAspectRatio="none"><line x1="4" y1="4" x2="96" y2="121"/><line x1="96" y1="4" x2="4" y2="121"/></svg>
+        </div>
+        <div class="verdict"><span class="vb">✕</span><span><b>Never cover a letter</b>The cat sits on the K. Three letters read as "BDF" — the acronym is destroyed. Shrink or move the cat instead.</span></div>
+      </div>
+
+      <!-- BAD: element replaces letter -->
+      <div class="dd bad">
+        <div class="art">
+          <span class="cl tl">B</span><span class="cl tr">D</span><span class="cl br">F</span>
+          <svg class="cat-s" style="left:8%;bottom:7%;width:22%;" viewBox="0 0 220 140"><path class="head" d="M10 140 L10 70 Q10 46 30 40 L54 6 L82 42 L138 42 L166 6 L190 40 Q210 46 210 70 L210 140 Z"/><ellipse class="eye" cx="80" cy="96" rx="13" ry="15"/><ellipse class="eye" cx="140" cy="96" rx="13" ry="15"/><ellipse class="pupil" cx="80" cy="96" rx="3" ry="11"/><ellipse class="pupil" cx="140" cy="96" rx="3" ry="11"/></svg>
+          <svg class="strike" viewBox="0 0 100 125" preserveAspectRatio="none"><line x1="4" y1="4" x2="96" y2="121"/><line x1="96" y1="4" x2="4" y2="121"/></svg>
+        </div>
+        <div class="verdict"><span class="vb">✕</span><span><b>Never substitute a letter</b>Cute idea, broken system: the cat standing in for the K means new viewers can't decode BDKF. The cat lives <i>inside</i> the frame, never <i>in</i> it.</span></div>
+      </div>
+
+      <!-- BAD: unequal sizes -->
+      <div class="dd bad">
+        <div class="art">
+          <span class="cl tl" style="font-size:26px;">B</span><span class="cl tr">D</span><span class="cl bl" style="font-size:11px;">K</span><span class="cl br">F</span>
+          <svg class="strike" viewBox="0 0 100 125" preserveAspectRatio="none"><line x1="4" y1="4" x2="96" y2="121"/><line x1="96" y1="4" x2="4" y2="121"/></svg>
+        </div>
+        <div class="verdict"><span class="vb">✕</span><span><b>Never mix letter sizes</b>All four letters share one cap height (L). Emphasis comes from content, not from inflating a corner.</span></div>
+      </div>
+
+      <!-- BAD: swapped quadrants -->
+      <div class="dd bad">
+        <div class="art">
+          <span class="cl tl">K</span><span class="cl tr">B</span><span class="cl bl">F</span><span class="cl br">D</span>
+          <svg class="strike" viewBox="0 0 100 125" preserveAspectRatio="none"><line x1="4" y1="4" x2="96" y2="121"/><line x1="96" y1="4" x2="4" y2="121"/></svg>
+        </div>
+        <div class="verdict"><span class="vb">✕</span><span><b>Never reorder the letters</b>Quadrants are fixed: B·D over K·F. Any other arrangement spells a different acronym and breaks recognition across the family.</span></div>
+      </div>
+
+      <!-- BAD: content in exclusion zone -->
+      <div class="dd bad">
+        <div class="art">
+          <span class="cl tl">B</span><span class="cl tr">D</span><span class="cl bl">K</span><span class="cl br">F</span>
+          <div style="position:absolute;left:8%;top:5.5%;font-weight:700;font-size:12.5px;line-height:1.05;text-transform:uppercase;letter-spacing:-.02em;">Katzen-<br>stammtisch<br>№ 12</div>
+          <svg class="strike" viewBox="0 0 100 125" preserveAspectRatio="none"><line x1="4" y1="4" x2="96" y2="121"/><line x1="96" y1="4" x2="4" y2="121"/></svg>
+        </div>
+        <div class="verdict"><span class="vb">✕</span><span><b>Never enter the exclusion zone</b>The headline collides with the B. Content starts below/inside the zones (§03) — the letters must sit in calm space to read as a frame.</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= 09 CHECKLIST ================= -->
+  <section>
+    <div class="shead"><span class="n">09</span><h2>Pre-flight checklist</h2></div>
+    <p class="slede">Before anything ships, every piece answers <b>yes</b> to all seven:</p>
+    <table>
+      <tr><td><b>1</b></td><td>Are all four letters present, uncovered, and fully inside the format?</td></tr>
+      <tr><td><b>2</b></td><td>Is B top-left, D top-right, K bottom-left, F bottom-right?</td></tr>
+      <tr><td><b>3</b></td><td>Do all four letters share one size (L) and one weight (Extra Bold)?</td></tr>
+      <tr><td><b>4</b></td><td>Is the margin M identical on all four sides — measured, not eyeballed?</td></tr>
+      <tr><td><b>5</b></td><td>Is every exclusion zone empty — no text, cat, or imagery inside?</td></tr>
+      <tr><td><b>6</b></td><td>Is everything set in Forma DJR Deck, in at most three sizes?</td></tr>
+      <tr><td><b>7</b></td><td>Does amber appear at most once outside the cat's eyes?</td></tr>
+    </table>
+  </section>
+
+  <footer>
+    <span><b>BDKF Brand Guidelines</b> · v1.0</span>
+    <span>Type: Forma DJR Deck (Adobe Fonts / DJR) · System: corner-letter frame</span>
+  </footer>
+
+</div>
+</body>
+</html>

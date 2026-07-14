@@ -1,0 +1,64 @@
+/* ============================================================
+   BDKF — THEME-TOKENS
+   Zentrale Stellschrauben: Hier alle wichtigen Variablen manuell
+   ändern — Farben, Schrift, Gewichte, Größen, Abstände.
+   Alles andere (main.css, Komponenten) liest nur aus diesen Tokens.
+   ============================================================ */
+
+/* ---------- Schriftdateien ----------
+   Medium (500) self-hosted — das Typekit-Kit (fzx4lwp) liefert nur 400/700.
+   Gleicher Familienname wie das Kit, damit font-weight: 500 echtes Medium
+   trifft statt auf Regular zurückzufallen.
+   Achtung: font-weight hier ist ein Deskriptor (welches Gewicht die DATEI
+   abdeckt), kein Token — Zahl muss zum Schnitt der Datei passen.
+   TODO: Testing-Lizenz (0 Web-Besucher) — vor Launch Medium im
+   Adobe-Fonts-Kit aktivieren und diese Deklaration entfernen */
+@font-face {
+  font-family: 'forma-djr-deck';
+  src: url('/assets/fonts/FormaDJRDeck-Medium-Testing.woff2') format('woff2'),
+       url('/assets/fonts/FormaDJRDeck-Medium-Testing.woff') format('woff');
+  font-style: normal;
+  /* NICHT ändern: beschreibt die Datei (Medium-Schnitt = 500).
+     Das Gewicht der Website stellst du unten bei --fw-text ein. */
+  font-weight: 500;
+  font-display: swap;
+}
+
+:root {
+  /* ---------- Farben — nur als Flächen ----------
+     Schrift & Logo ausschließlich Schwarz/Weiß. */
+  --white:  #ffffff;
+  --black:  #000000;
+  --coral:  #ff8a64;
+  --pink:   #f697df;
+  --amber:  #ffc964;
+  --purple: #9a77ea;
+  --blue:   #91c4ed;
+  --green:  #a7e177;
+
+  /* ---------- Schrift ---------- */
+  --font: "forma-djr-deck", "Forma DJR Deck", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* Schriftgewichte — die beiden Rollen des Systems:
+     --fw-text  = Fließtext, Nav, Buttons, Chips, Unterüberschriften
+                  (400 = Regular · 500 = Medium, braucht die @font-face oben)
+     --fw-bold  = Headlines (144er), Eyebrows, Labels, Namen in Listen */
+  --fw-text: 400;
+  --fw-bold: 700;
+
+  /* Typo strikt 1:3:9, keine Zwischengrößen: 16 → 48 → 144.
+     Ist eine Stufe für eine Situation zu groß, wird die nächstkleinere
+     genutzt (Überschrift → Unterüberschrift → Text), nie skaliert. */
+  --fs-text: 16px;
+  --fs-sub:  calc(var(--fs-text) * 3);
+  --fs-head: calc(var(--fs-text) * 9);
+  --lh-display: 0.75;
+  --lh-text: 1.5;
+
+  /* ---------- Raster & Abstände ----------
+     15 mm Dokument-Rand, 5 mm Gutter (Näherung) */
+  --margin: clamp(24px, 4vw, 64px);
+  --gutter: 20px;
+
+  --nav-h: clamp(56px, 8svh, 80px);
+}

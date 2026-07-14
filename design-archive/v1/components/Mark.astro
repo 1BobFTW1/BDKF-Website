@@ -1,0 +1,42 @@
+---
+/**
+ * The Mark — BDKF collapsed to its minimum: a 2×2 letter block.
+ * B D / K F, quadrant order is law. Ink on Paper or Paper on Ink only.
+ * Size via the `size` prop (any CSS font-size value); min 24px wide on screen.
+ */
+interface Props {
+  size?: string;
+  inverted?: boolean;
+  class?: string;
+}
+const { size = '17px', inverted = false, class: className = '' } = Astro.props;
+---
+<span
+  class:list={['mark', { inverted }, className]}
+  style={`font-size:${size}`}
+  aria-label="BDKF — Bund der Katzenfreunde"
+>
+  <span aria-hidden="true">B</span><span aria-hidden="true">D</span><span aria-hidden="true">K</span><span aria-hidden="true">F</span>
+</span>
+
+<style>
+  .mark {
+    display: inline-grid;
+    grid-template-columns: auto auto;
+    /* row gap 0.10× cap height, column gap 0.16× — rows sit optically tighter */
+    gap: 0.1em 0.16em;
+    font-weight: 800;
+    line-height: 0.82;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+    /* clear space ≥ 1× cap height on all sides */
+    padding: 0.72em;
+    user-select: none;
+  }
+  .mark.inverted {
+    color: var(--paper);
+  }
+  .mark span {
+    display: block;
+  }
+</style>

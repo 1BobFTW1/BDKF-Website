@@ -1,0 +1,207 @@
+---
+import BaseV2 from '../layouts/BaseV2.astro';
+import Nav from '../components/v2/Nav.astro';
+import Footer from '../components/v2/Footer.astro';
+---
+<BaseV2 title="Helfen — Bund der Katzenfreunde" description="Pflegeplatz geben, Pate werden, mitanpacken oder spenden: So unterstützt du die Katzen.">
+  <Nav current="helfen" />
+
+  <section class="page-intro wrap">
+    <p class="v2-eyebrow">Helfen</p>
+    <h1 class="v2-head">Helfen kann&nbsp;jeder</h1>
+    <p class="v2-sub">
+      Wir haben kein eigenes Tierheim — alles, was wir tun, tragen
+      Pflegefamilien, Paten, Helferinnen und Spender. Such dir aus, was zu
+      dir passt.
+    </p>
+  </section>
+
+  <section class="section wrap" id="pflegeplatz">
+    <div class="split">
+      <div>
+        <h2 class="v2-sub section-h accent-line" style="--acc: var(--c-pflege)">Pflegeplatz geben</h2>
+        <p class="v2-body">
+          Nimm eine Katze auf Zeit bei dir auf, bis sie vermittelt ist.
+          Katzenerfahrung hilft, ist aber kein Muss — wichtiger sind Geduld
+          und Aufmerksamkeit, gerade bei Tieren, die Schlimmes erlebt haben.
+          <strong>Tierarztkosten übernehmen wir</strong>, und wir begleiten
+          dich fachlich durch die ganze Pflegezeit. Auch ein befristeter
+          Pflegeplatz hilft enorm.
+        </p>
+        <p class="v2-body contact-line">
+          <!-- TODO: Platzhalter — Kontaktdaten von der bestehenden Website, vor Livegang bestätigen -->
+          Ansprechpartnerin: <strong>Norina Bernetti</strong> ·
+          0172&nbsp;8552419 · norina.bernetti@bund-der-katzenfreunde.de
+        </p>
+      </div>
+      <div class="field" style="background: var(--c-pflege)"></div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="pate">
+    <div class="split split-rev">
+      <div>
+        <h2 class="v2-sub section-h accent-line" style="--acc: var(--c-pate)">Pate werden</h2>
+        <p class="v2-body">
+          Manche unserer Katzen können nicht oder noch nicht vermittelt
+          werden — zu alt, zu krank, zu scheu. Mit einer Patenschaft
+          übernimmst du einen festen monatlichen Beitrag für Futter und
+          Tierarzt „deiner" Patenkatze und bekommst regelmäßig Neuigkeiten
+          von ihr.
+        </p>
+        <a class="btn pate-btn" href="/kontakt/">Pate werden</a>
+      </div>
+      <div class="field" style="background: var(--c-pate)"></div>
+    </div>
+  </section>
+
+  <div class="ehrenamt-zone" id="ehrenamt">
+    <section class="ehrenamt">
+      <div class="wrap">
+        <h2 class="v2-sub section-h">Homeoffice ist besser mit Aufsicht — Ehrenamt auch</h2>
+        <div class="jobs">
+          <div class="job">
+            <h3 class="v2-body job-h">Flohmarkt-Team</h3>
+            <p class="v2-body">
+              Hilf beim Auf- und Abbau oder am Stand unserer Flohmärkte —
+              die wichtigste Einnahmequelle des Vereins.
+            </p>
+          </div>
+          <div class="job">
+            <h3 class="v2-body job-h">Futterplätze</h3>
+            <p class="v2-body">
+              Betreue eine unserer Futterstellen für verwilderte Katzen —
+              regelmäßig, zuverlässig, wettersicher.
+            </p>
+          </div>
+          <div class="job">
+            <h3 class="v2-body job-h">Sachspenden</h3>
+            <p class="v2-body">
+              Gut erhaltene Bücher, Kratzbäume, Decken oder Flohmarktware
+              nehmen wir jederzeit gern.
+            </p>
+          </div>
+        </div>
+      </div>
+      <img
+        class="illu hang-cat reveal"
+        src="/assets/illustrations/hanging-cat-filled.svg"
+        alt=""
+        width="341"
+        height="677"
+        loading="lazy"
+      />
+    </section>
+  </div>
+
+  <section class="section wrap" id="spenden">
+    <div class="split">
+      <div>
+        <h2 class="v2-sub section-h accent-line" style="--acc: var(--c-spenden)">Spenden</h2>
+        <p class="v2-body">
+          Jeder Betrag kommt direkt den Katzen zugute — Tierarzt, Futter,
+          Medikamente. Spenden geht klassisch per Überweisung, per PayPal
+          oder ganz nebenbei beim Online-Einkauf über Gooding.
+        </p>
+      </div>
+      <div class="v2-body account">
+        <p class="v2-eyebrow">Spendenkonto</p>
+        <!-- TODO: Platzhalter — Bankverbindung vor Livegang bestätigen -->
+        <p>
+          VR Bank München Land<br />
+          <strong>IBAN DE35&nbsp;7016&nbsp;6486&nbsp;0000&nbsp;7907&nbsp;70</strong><br />
+          BIC GENODEF1OHC
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+</BaseV2>
+
+<style>
+  .section-h {
+    margin-bottom: clamp(20px, 2.5vw, 32px);
+  }
+  .accent-line {
+    border-left: 10px solid var(--acc);
+    padding-left: 18px;
+  }
+  .split {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: calc(var(--v2-gap) * 2);
+    align-items: stretch;
+  }
+  .split-rev {
+    grid-template-columns: 1.4fr 1fr;
+  }
+  .split .v2-body {
+    max-width: 58ch;
+    color: var(--v2-ink);
+  }
+  .field {
+    min-height: 200px;
+  }
+  .contact-line {
+    margin-top: 18px;
+  }
+  .pate-btn {
+    margin-top: 22px;
+  }
+
+  .ehrenamt-zone {
+    margin-top: clamp(32px, 4vw, 56px);
+  }
+  .ehrenamt {
+    position: relative;
+    background: var(--c-ehrenamt);
+    padding-block: clamp(48px, 6vw, 84px);
+    overflow: hidden;
+  }
+  .jobs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: calc(var(--v2-gap) * 2);
+    /* Platz für die kletternde Katze rechts */
+    padding-right: clamp(140px, 16vw, 240px);
+  }
+  .job-h {
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  /* Die Katze klettert an der Bandkante hoch (steht auf der Unterkante);
+     Höhe an das Band gekoppelt, damit sie nie beschnitten wird */
+  .hang-cat {
+    position: absolute;
+    bottom: 0;
+    right: clamp(16px, 6vw, 110px);
+    height: calc(100% - 28px);
+    max-height: 400px;
+    width: auto;
+    z-index: 2;
+  }
+  .account {
+    background: color-mix(in srgb, var(--c-spenden) 22%, var(--v2-paper));
+    padding: 24px;
+    align-self: start;
+  }
+  .account .v2-eyebrow {
+    margin-bottom: 10px;
+  }
+  @media (max-width: 900px) {
+    .split {
+      grid-template-columns: 1fr;
+    }
+    .field {
+      min-height: 120px;
+      order: -1;
+    }
+    .jobs {
+      grid-template-columns: 1fr;
+      padding-right: 0;
+      padding-bottom: clamp(160px, 30vw, 220px);
+    }
+  }
+</style>

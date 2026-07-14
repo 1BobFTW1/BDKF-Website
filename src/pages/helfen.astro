@@ -1,0 +1,162 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Helfen — Pflegeplatz, Patenschaft, Spenden | Bund der Katzenfreunde e. V." current="helfen">
+  <!-- Kopf: Text links auf Weiß, Teilfläche rechts mit big-head-cat -->
+  <section class="kopf sec">
+    <div class="sec-head pad-x">
+      <p class="eyebrow">Helfen</p>
+      <h1 class="display"><span class="nb">Wohnung leer?</span> <span class="nb">Herz auch?</span></h1>
+    </div>
+    <p class="kopf-intro pad-x">
+      Können wir ändern. Beides. Und wenn es (noch) nicht die eigene Katze sein soll,
+      gibt es viele andere Wege zu helfen.
+    </p>
+    <div class="form-row" style="--c: var(--green); --form-w: 55%; --cat-w: clamp(130px, 17vw, 230px); --cat-ar: 1.12">
+      <img
+        class="illu form-cat reveal"
+        src="/assets/illustrations/big-head-cat-tight.svg"
+        alt=""
+        width="795"
+        height="711"
+      />
+      <div class="form-block kopf-form"></div>
+    </div>
+  </section>
+
+  <!-- Adoptieren -->
+  <section id="adoptieren" class="block pad-x sec">
+    <div class="sec-head">
+      <p class="eyebrow">Adoptieren</p>
+      <h2 class="display"><span class="nb">4 Wände</span> suchen <span class="nb">4 Pfoten.</span></h2>
+    </div>
+    <p>
+      Der direkteste Weg zu helfen: Gib einer unserer Katzen ein Zuhause für immer.
+      Alle aktuellen Vermittlungskatzen findest du auf der Katzen-Seite — und vorab
+      bitten wir um unseren kurzen Fragebogen, damit Katze und Mensch wirklich zusammenpassen.
+    </p>
+    <p class="gap-16"><a class="btn" href="/katzen/">Zu den Katzen</a></p>
+  </section>
+
+  <!-- Pflegeplatz -->
+  <section id="pflegeplatz" class="block pad-x sec">
+    <div class="sec-head">
+      <p class="eyebrow">Pflegeplatz geben</p>
+      <h2 class="display"><span class="nb">Ein Sofa</span> <span class="nb">auf Zeit.</span></h2>
+    </div>
+    <p>
+      Wir haben kein eigenes Tierheim — unsere Schützlinge leben auf privaten
+      Pflegeplätzen, bis sie vermittelt sind. Als Pflegestelle schenkst du einer Katze
+      Ruhe und Sicherheit; die Tierarztkosten übernehmen wir.
+    </p>
+    {/* TODO: Platzhalter — Ansprechpartnerin bestätigen */}
+    <p>
+      Interesse? Melde dich bei Norina Bernetti:
+      <a href="tel:+491728552419">0172&nbsp;8552419</a> oder
+      <a href="mailto:norina.bernetti@bund-der-katzenfreunde.de">per E‑Mail</a>.
+    </p>
+  </section>
+
+  <!-- Pate werden -->
+  <section id="pate" class="block pad-x sec">
+    <div class="sec-head">
+      <p class="eyebrow">Pate werden</p>
+      <h2 class="display">Homeoffice <span class="nb">ist besser</span> <span class="nb">mit Aufsicht.</span></h2>
+    </div>
+    <p>
+      Manche Katzen können nicht vermittelt werden — zu alt, zu scheu, zu krank. Mit einer
+      Patenschaft unterstützt du genau diese Katzen dauerhaft: mit einem festen Beitrag
+      für Futter, Pflege und Tierarzt.
+    </p>
+    {/* TODO: Platzhalter — aktuelle Patenkatzen und Beitragshöhen ergänzen */}
+    <p class="gap-16"><a class="btn btn-ghost" href="/verein/#kontakt">Patenschaft anfragen</a></p>
+  </section>
+
+  <!-- Mitanpacken -->
+  <section id="ehrenamt" class="block pad-x sec">
+    <div class="sec-head">
+      <p class="eyebrow">Ehrenamt</p>
+      <h2 class="display">Mitanpacken <span class="nb">statt zusehen.</span></h2>
+    </div>
+    <ul class="task-list">
+      <li>
+        <span class="task-name">Flohmarkt-Helfer</span>
+        <span>Auf- und Abbau, Verkauf, Kuchen — unsere Flohmärkte finanzieren die Tierarztkosten.</span>
+      </li>
+      <li>
+        <span class="task-name">Futterplätze</span>
+        <span>Betreue mit uns Futterstellen für verwilderte Katzen in München.</span>
+      </li>
+      <li>
+        <span class="task-name">Sachspenden</span>
+        <span>Gut erhaltene Flohmarkt-Artikel, Futter oder Zubehör — alles hilft.</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Spenden: Teilfläche links, hanging-cat klettert über die Kante -->
+  <section id="spenden" class="spenden sec">
+    <div class="sec-head pad-x">
+      <p class="eyebrow">Spenden</p>
+      <h2 class="display"><span class="nb">Kaufen kann</span> <span class="nb">jeder. Helfen</span> <span class="nb">ist Liebe.</span></h2>
+    </div>
+    <div
+      class="form-row dock-left"
+      style="--c: var(--green); --form-w: 62%; --cat-w: clamp(90px, 11vw, 160px); --cat-ar: 0.5067; --cat-in: clamp(110px, 14vw, 200px)"
+    >
+      <img
+        class="illu form-cat front reveal-fade"
+        src="/assets/illustrations/hanging-cat-tight.svg"
+        alt=""
+        width="444"
+        height="880"
+      />
+      <div class="form-block">
+        {/* TODO: Platzhalter — Bankverbindung, PayPal- und Gooding-Links bestätigen */}
+        <div class="spenden-facts">
+          <p>
+            <strong>VR Bank München Land eG</strong><br />
+            IBAN DE35&nbsp;7016&nbsp;6486&nbsp;0000&nbsp;7907&nbsp;70<br />
+            BIC GENODEF1OHC
+          </p>
+          <p>
+            Oder online: per PayPal sowie über Gooding — dort unterstützt dich jeder
+            Online-Einkauf ohne Mehrkosten.
+          </p>
+        </div>
+        <p class="gap-8"><a class="btn" href="/verein/#mitglied">Oder gleich Mitglied werden</a></p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .kopf { padding-top: clamp(24px, 6svh, 72px); }
+  .kopf-intro { max-width: 52ch; }
+  .kopf-form { min-height: clamp(140px, 24svh, 240px); }
+
+  .block { margin-top: clamp(96px, 15vw, 220px); }
+
+  .task-list { margin: 0; padding: 0; list-style: none; }
+
+  .task-list li {
+    display: grid;
+    grid-template-columns: minmax(10em, 16em) 1fr;
+    gap: 2px var(--gutter);
+    padding: clamp(12px, 1.6vw, 20px) 0;
+    border-top: 2px solid var(--black);
+    max-width: 76ch;
+  }
+  .task-list li:last-child { border-bottom: 2px solid var(--black); }
+
+  .task-name { font-weight: var(--fw-bold); text-transform: uppercase; }
+
+  .spenden { margin-top: clamp(96px, 15vw, 220px); }
+
+  .spenden-facts { display: flex; flex-wrap: wrap; gap: var(--gutter); }
+  .spenden-facts p { max-width: 40ch; margin: 0; flex: 1 1 280px; }
+
+  @media (max-width: 560px) {
+    .task-list li { grid-template-columns: 1fr; }
+  }
+</style>

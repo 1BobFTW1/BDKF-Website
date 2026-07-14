@@ -1,0 +1,10 @@
+# Build & Abhängigkeiten
+node_modules/
+dist/
+.astro/
+
+# macOS
+.DS_Store
+
+# Lokale Claude-Einstellungen
+.claude/settings.local.json
