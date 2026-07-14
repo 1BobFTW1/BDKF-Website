@@ -1,0 +1,173 @@
+/* ============================================================
+   Forma DJR Deck — komplett self-hosted (alle Schnitte)
+   Familienname 'forma-djr-deck' wie zuvor beim Typekit-Kit,
+   damit bestehendes CSS unverändert funktioniert.
+   Gewichte: 1 Hairline | 100 Thin | 275 ExtraLight | 300 Light |
+   400 Regular | 500 Medium | 700 Bold | 800 ExtraBold | 900 Black
+   (600 existiert nicht). Browser laden nur die Schnitte, die die
+   Seite tatsaechlich anfordert.
+   TODO: Testing-Lizenz (0 Web-Besucher) — vor Launch regulaer
+   lizenzieren (Adobe-Fonts-Kit oder djr.com).
+   ============================================================ */
+
+@font-face {
+  font-family: 'forma-djr-deck';
+  src: url('/assets/fonts/FormaDJRDeck-Hairline-Testing.woff2') format('woff2'),
+       url('/assets/fonts/FormaDJRDeck-Hairline-Testing.woff') format('woff');
+  font-style: normal;
+  font-weight: 1;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'forma-djr-deck';
+  src: url('/assets/fonts/FormaDJRDeck-HairlineItalic-Testing.woff2') format('woff2'),
+       url('/assets/fonts/FormaDJRDeck-HairlineItalic-Testing.woff') format('woff');
+  font-style: italic;
+  font-weight: 1;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'forma-djr-deck';
+  src: url('/assets/fonts/FormaDJRDeck-Thin-Testing.woff2') format('woff2'),
+       url('/assets/fonts/FormaDJRDeck-Thin-Testing.woff') format('woff');
+  font-style: normal;
+  font-weight: 100;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'forma-djr-deck';
+  src: url('/assets/fonts/FormaDJRDeck-ThinItalic-Testing.woff2') format('woff2'),
+       url('/assets/fonts/FormaDJRDeck-ThinItalic-Testing.woff') format('woff');
+  font-style: italic;
+  font-weight: 100;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'forma-djr-deck';
+  src: url('/assets/fonts/FormaDJRDeck-ExtraLight-Testing.woff2') format('woff2'),
+       url('/assets/fonts/FormaDJRDeck-ExtraLight-Testing.woff') format('woff');
+  font-style: normal;
+  font-weight: 275;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'forma-djr-deck';
+  src: url('/assets/fonts/FormaDJRDeck-ExtraLightItalic-Testing.woff2') format('woff2'),
+       url('/assets/fonts/FormaDJRDeck-ExtraLightItalic-Testing.woff') format('woff');
+  font-style: italic;
+  font-weight: 275;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'forma-djr-deck';
+  src: url('/assets/fonts/FormaDJRDeck-Light-Testing.woff2') format('woff2'),
+       url('/assets/fonts/FormaDJRDeck-Light-Testing.woff') format('woff');
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'forma-djr-deck';
+  src: url('/assets/fonts/FormaDJRDeck-LightItalic-Testing.woff2') format('woff2'),
+       url('/assets/fonts/FormaDJRDeck-LightItalic-Testing.woff') format('woff');
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'forma-djr-deck';
+  src: url('/assets/fonts/FormaDJRDeck-Regular-Testing.woff2') format('woff2'),
+       url('/assets/fonts/FormaDJRDeck-Regular-Testing.woff') format('woff');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'forma-djr-deck';
+  src: url('/assets/fonts/FormaDJRDeck-Italic-Testing.woff2') format('woff2'),
+       url('/assets/fonts/FormaDJRDeck-Italic-Testing.woff') format('woff');
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'forma-djr-deck';
+  src: url('/assets/fonts/FormaDJRDeck-Medium-Testing.woff2') format('woff2'),
+       url('/assets/fonts/FormaDJRDeck-Medium-Testing.woff') format('woff');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'forma-djr-deck';
+  src: url('/assets/fonts/FormaDJRDeck-MediumItalic-Testing.woff2') format('woff2'),
+       url('/assets/fonts/FormaDJRDeck-MediumItalic-Testing.woff') format('woff');
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'forma-djr-deck';
+  src: url('/assets/fonts/FormaDJRDeck-Bold-Testing.woff2') format('woff2'),
+       url('/assets/fonts/FormaDJRDeck-Bold-Testing.woff') format('woff');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'forma-djr-deck';
+  src: url('/assets/fonts/FormaDJRDeck-BoldItalic-Testing.woff2') format('woff2'),
+       url('/assets/fonts/FormaDJRDeck-BoldItalic-Testing.woff') format('woff');
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'forma-djr-deck';
+  src: url('/assets/fonts/FormaDJRDeck-ExtraBold-Testing.woff2') format('woff2'),
+       url('/assets/fonts/FormaDJRDeck-ExtraBold-Testing.woff') format('woff');
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'forma-djr-deck';
+  src: url('/assets/fonts/FormaDJRDeck-ExtraBoldItalic-Testing.woff2') format('woff2'),
+       url('/assets/fonts/FormaDJRDeck-ExtraBoldItalic-Testing.woff') format('woff');
+  font-style: italic;
+  font-weight: 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'forma-djr-deck';
+  src: url('/assets/fonts/FormaDJRDeck-Black-Testing.woff2') format('woff2'),
+       url('/assets/fonts/FormaDJRDeck-Black-Testing.woff') format('woff');
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'forma-djr-deck';
+  src: url('/assets/fonts/FormaDJRDeck-BlackItalic-Testing.woff2') format('woff2'),
+       url('/assets/fonts/FormaDJRDeck-BlackItalic-Testing.woff') format('woff');
+  font-style: italic;
+  font-weight: 900;
+  font-display: swap;
+}

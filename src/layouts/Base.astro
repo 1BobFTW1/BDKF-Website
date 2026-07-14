@@ -23,7 +23,8 @@ const {
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" id="favicon" />
-    <link rel="stylesheet" href="https://use.typekit.net/fzx4lwp.css" />
+    {/* Schrift komplett self-hosted (src/styles/fonts.css) — kein Typekit,
+        keine Domain-Freischaltung nötig */}
   </head>
   <body>
     <Nav current={current} />
