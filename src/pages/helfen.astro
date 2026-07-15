@@ -12,9 +12,10 @@ import Base from '../layouts/Base.astro';
       Können wir ändern. Beides. Und wenn es (noch) nicht die eigene Katze sein soll,
       gibt es viele andere Wege zu helfen.
     </p>
-    <div class="form-row" style="--c: var(--green); --form-w: 55%; --cat-w: clamp(130px, 17vw, 230px); --cat-ar: 1.12">
+    {/* Katze halb auf der Form, halb außerhalb: Eintauchtiefe = halbe Höhe */}
+    <div class="form-row" style="--c: var(--green); --form-w: 50%; --cat-w: clamp(180px, 24vw, 330px); --cat-ar: 1.12; --cat-in: calc(var(--cat-w) / var(--cat-ar) / 2)">
       <img
-        class="illu form-cat reveal"
+        class="illu form-cat front reveal"
         src="/assets/illustrations/big-head-cat-tight.svg"
         alt=""
         width="795"
@@ -131,9 +132,21 @@ import Base from '../layouts/Base.astro';
 </Base>
 
 <style>
-  .kopf { padding-top: clamp(24px, 6svh, 72px); }
+  /* Kopf füllt den ersten Viewport; die Farbfläche (50 % breit) wächst
+     bis zur Unterkante des Folds — sie dockt unten an, statt zu schweben */
+  .kopf {
+    padding-top: clamp(24px, 6svh, 72px);
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100svh - var(--nav-h));
+  }
+  .kopf .form-row {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+  }
   .kopf-intro { max-width: 52ch; }
-  .kopf-form { min-height: clamp(140px, 24svh, 240px); }
+  .kopf-form { flex: 1 1 auto; min-height: clamp(140px, 24svh, 240px); }
 
   .block { margin-top: clamp(96px, 15vw, 220px); }
 

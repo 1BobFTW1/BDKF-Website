@@ -6,7 +6,6 @@ const items = [
   { href: '/', label: 'Start', key: 'start' },
   { href: '/katzen/', label: 'Katzen', key: 'katzen' },
   { href: '/helfen/', label: 'Helfen', key: 'helfen' },
-  { href: '/aktuelles/', label: 'Aktuelles', key: 'aktuelles' },
   { href: '/verein/', label: 'Verein', key: 'verein' },
 ];
 ---
@@ -27,7 +26,12 @@ const items = [
 </header>
 
 <style>
+  /* Fixiert am oberen Rand: bleibt beim Scrollen stehen, liegt über allem
+     Seiteninhalt (auch über gepinnten GSAP-Flächen) */
   .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;

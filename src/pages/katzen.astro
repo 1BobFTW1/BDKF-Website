@@ -41,6 +41,10 @@ function paras(t) {
 // (Gesundheit, Haltungsanforderungen) bleiben erhalten.
 // TODO: Formulierungen mit dem Verein abstimmen
 const KURZ = {
+  'hermine': [
+    'Monate voller Husten, Untersuchungen und Medikamente liegen hinter Hermine — mehr als einmal war ungewiss, ob die junge Katze je wieder unbeschwert leben kann. Sie hat nicht aufgegeben. Jetzt sucht die tapfere Kämpferin endlich ihr Happy End.',
+    'Gesucht: ein ruhiges Zuhause bei verständnisvollen Katzenkennern, Wohnung mit vernetztem Balkon für ihre geliebten Sonnenstunden. Und weil uns Hermine am Herzen liegt: Sollte ihre frühere Erkrankung je zurückkommen, übernimmt der Verein die Tierarztkosten weiterhin.',
+  ],
   '9066-2': [
     'Benji (4) und Lui (1) sind gutmütig, verspielt und verschmust — nur mit dem 8-jährigen Kater zu Hause klappt es nicht mehr. Deshalb suchen die beiden jetzt gemeinsam ein neues Zuhause.',
     'Gesucht: Wohnungshaltung mit vernetztem Balkon bei katzenerprobten Menschen. Mit Hund aufgewachsen, Kinder kennen sie nicht. Beide kastriert und geimpft.',
@@ -669,7 +673,14 @@ const happyEnds = [
 </script>
 
 <style>
-  .tinder { padding-top: clamp(24px, 5svh, 64px); }
+  /* Sektion füllt mindestens den ersten Viewport — die Amber-Fläche
+     reicht damit immer bis zur Unterkante des Folds */
+  .tinder {
+    padding-top: clamp(24px, 5svh, 64px);
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100svh - var(--nav-h));
+  }
   .alle { margin-top: clamp(96px, 15vw, 220px); }
   .privat { margin-top: clamp(96px, 15vw, 220px); }
   .happy { margin-top: clamp(96px, 15vw, 220px); }
@@ -678,13 +689,15 @@ const happyEnds = [
      Viewportkante (Screenshot-Layout) */
   .tinder-grid {
     display: grid;
-    /* Matches-Fläche auf 4/8 — halbe Breite neben dem Deck */
-    grid-template-columns: minmax(0, 4fr) minmax(0, 4fr);
+    /* Matches-Fläche ragt exakt 50 % in den Viewport (linke Kante = 50vw) */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 50vw);
     gap: calc(var(--gutter) * 2) clamp(48px, 6vw, 120px);
     align-items: start;
     padding-left: var(--margin);
     /* großzügiger Abstand zur Headline — die Fläche darf atmen */
     margin-top: clamp(72px, 9vw, 168px);
+    /* füllt die Resthöhe der Sektion — Amber dockt an der Fold-Unterkante an */
+    flex: 1 1 auto;
   }
 
   /* Deck-Ebene explizit über der Matches-Fläche: die GSAP-Transforms machen
@@ -698,6 +711,8 @@ const happyEnds = [
     position: relative;
     z-index: 10;
   }
+  /* kein overflow-Clipping: die flat-cat liegt ÜBER der Fläche und darf
+     sichtbar über deren Unterkante hinausragen */
   .matches { position: relative; z-index: 1; }
 
   /* ---------- Sammelkarten-Stapel ---------- */
@@ -841,13 +856,14 @@ const happyEnds = [
     padding: clamp(40px, 5vw, 88px) var(--margin) clamp(40px, 5vw, 80px) clamp(32px, 4vw, 72px);
   }
 
-  /* Leerzustand: flat-cat liegt vollständig sichtbar auf der UNTERKANTE
-     der Amber-Fläche (innen aufliegend, nichts wird beschnitten) */
+  /* Leerzustand: flat-cat liegt ÜBER der Amber-Fläche auf deren Unterkante
+     und ragt leicht sichtbar darüber hinaus — vollständig sichtbar,
+     nichts wird beschnitten */
   .matches-cat {
     position: absolute;
-    bottom: 0;
+    bottom: -36px;
     right: clamp(24px, 4vw, 72px);
-    width: clamp(180px, 18vw, 280px);
+    width: clamp(220px, 22vw, 340px);
     height: auto;
   }
   /* .illu setzt display:block — hidden-Attribut braucht Vorrang */
@@ -989,7 +1005,7 @@ const happyEnds = [
     place-items: center;
     background: var(--white);
     color: var(--black);
-    border: 2px solid var(--black);
+    border: 0;
     font: inherit;
     line-height: 1;
     cursor: pointer;
@@ -1004,8 +1020,7 @@ const happyEnds = [
     bottom: 10px;
     padding: 0.1em 0.5em;
     background: var(--white);
-    border: 2px solid var(--black);
-    font-weight: var(--fw-bold);
+    font-weight: var(--fw-text);
   }
 
   .cd-name {
@@ -1048,6 +1063,8 @@ const happyEnds = [
   /* Raster in der rechten Hälfte: zwei Spalten */
   .grid-cards { grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr)); }
 
-  /* Ausgewählte Katze im Raster markieren */
-  .gcard.selected .card-media { outline: 4px solid var(--black); outline-offset: 0; }
+  /* Ausgewählte Katze im Raster: hellblaue Fläche hinter der Karte
+     (Markenfarbe als Fläche statt Kontur oder Gewicht). Kein Padding —
+     die Karte darf beim Auswählen nicht springen. */
+  .gcard.selected { background: var(--blue); }
 </style>

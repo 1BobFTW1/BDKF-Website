@@ -1,32 +1,26 @@
 ---
 import Base from '../layouts/Base.astro';
 
-// TODO: Platzhalter — Katzen & Termine von bund-der-katzenfreunde.de, mit Verein abgleichen
-const katzen = [
-  {
-    name: 'Melissa',
-    text: 'Sanfte Seele mit Vergangenheit — sucht ein ruhiges Zuhause mit viel Geduld.',
-    illu: 'lying-cat',
-    c: 'var(--amber)',
-  },
-  {
-    name: 'Tapsi',
-    text: 'Neugierig, verschmust und immer da, wo du gerade bist.',
-    illu: 'big-head-cat',
-    c: 'var(--blue)',
-  },
-  {
-    name: 'Mietz',
-    text: 'Erst schüchtern, dann Schnurrmaschine. Gern zusammen mit Tapsi.',
-    illu: 'crazy-cat',
-    c: 'var(--pink)',
-  },
-];
+import katzenRaw from '../data/katzen.json';
 
+// Neuankömmlinge: die 3 neuesten Vermittlungskatzen aus den echten Daten
+// (katzen.json ist vom Scraper bereits neueste-zuerst sortiert)
+function shortText(t) {
+  const s = t.replace(/^update[^:]*:\s*/i, '');
+  const m = s.match(/^[\s\S]{40,160}?[.!?…](?=\s|$)/);
+  return m ? m[0].trim() : `${s.slice(0, 140).trim()}…`;
+}
+
+const katzen = katzenRaw.slice(0, 3).map((k) => ({
+  name: k.title.replace(/\s*\+\s*/g, ' & '),
+  text: shortText(k.beschreibung),
+  photo: k.images[0],
+}));
+
+// Termine von bund-der-katzenfreunde.de (Stand 14.07.2026)
 const termine = [
-  { datum: '05.07.2026', titel: 'Viecherlmesse', ort: 'Nazareth-Kirche, München' },
-  { datum: '06.09.2026', titel: 'Herbst-Flohmarkt', ort: 'ASZ Fürstenried-West' },
-  { datum: '22.11.2026', titel: 'Weihnachtsflohmarkt', ort: 'St. Maximilian' },
+  { datum: '06.09.2026', titel: 'Herbst-Flohmarkt', ort: 'ASZ Fürstenried-West, Züricher Str. 80, München' },
+  { datum: '22.11.2026', titel: 'Weihnachtsflohmarkt', ort: 'Pfarrsaal St. Maximilian, Deutingerstr. 4, München' },
 ];
 ---
 <Base title="Bund der Katzenfreunde e. V. — Katzen adoptieren in München" current="start">
@@ -59,7 +53,7 @@ const termine = [
       </div>
       <div class="hero-form" style="--c: var(--amber)">
         <img
-          class="illu hero-form-cat reveal-fade"
+          class="illu hero-form-cat"
           src="/assets/illustrations/lying-cat-tight.svg"
           alt=""
           width="794"
@@ -97,7 +91,7 @@ const termine = [
     </ul>
   </section>
 
-  <!-- Katzen-Teaser: Karten als Mini-Poster, Illustration = Foto-Platzhalter -->
+  <!-- Katzen-Teaser: die 3 Neuankömmlinge mit echten Fotos (quadratisch) -->
   <section class="teaser pad-x sec">
     <div class="sec-head">
       <p class="eyebrow">Zuhause gesucht</p>
@@ -107,9 +101,8 @@ const termine = [
       {katzen.map((k) => (
         <article class="card">
           <a href="/katzen/">
-            <div class="card-media" style={`--c: ${k.c}`}>
-              {/* TODO: Platzhalter — echtes Foto einsetzen */}
-              <img class="illu reveal-fade" src={`/assets/illustrations/${k.illu}-tight.svg`} alt="" loading="lazy" />
+            <div class="card-media teaser-media">
+              <img class="teaser-photo" src={k.photo} alt={k.name} loading="lazy" />
             </div>
             <h3 class="card-name">{k.name}</h3>
           </a>
@@ -131,7 +124,7 @@ const termine = [
       style="--c: var(--coral); --form-w: 62%; --cat-w: clamp(110px, 15vw, 210px); --cat-ar: 0.97; --cat-in: clamp(40px, 6vw, 90px)"
     >
       <img
-        class="illu form-cat front reveal-fade"
+        class="illu form-cat front"
         src="/assets/illustrations/lying-cat-tight.svg"
         alt=""
         width="794"
@@ -147,7 +140,6 @@ const termine = [
             </li>
           ))}
         </ul>
-        <p class="gap-8"><a class="btn" href="/aktuelles/">Alle Termine</a></p>
       </div>
     </div>
   </section>
@@ -173,7 +165,105 @@ const termine = [
   </section>
 </Base>
 
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ---------- Entrance: Hero baut sich choreografiert auf ----------
+       Headline hebt sich, Text + CTA folgen; die Amber-Fläche schiebt von
+       rechts herein, die lying-cat legt sich danach auf ihre Kante. */
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    tl.from('.hero-head .display', { y: 90, opacity: 0, duration: 0.9 })
+      .from('.hero-intro', { y: 36, opacity: 0, duration: 0.6 }, '-=0.5')
+      .from('.hero-cta', { y: 28, opacity: 0, duration: 0.6 }, '-=0.4')
+      .from('.hero-form', { xPercent: 100, duration: 1.0, ease: 'power4.out' }, 0.2)
+      .from('.hero-form-cat', { y: 90, opacity: 0, duration: 0.7 }, '-=0.35');
+
+    /* Parallax: beim Wegscrollen bleibt die Amber-Fläche minimal zurück —
+       die Katze rutscht dabei sichtbar ein Stück hinter den Fold */
+    gsap.to('.hero-form', {
+      y: 60,
+      ease: 'none',
+      scrollTrigger: { trigger: '.hero', start: 'bottom bottom', end: 'bottom top', scrub: true },
+    });
+
+    /* ---------- Scroll-Reveals für die Sektionen ---------- */
+    document.querySelectorAll('.wege .sec-head, .teaser .sec-head, .termine .sec-head, .spenden .sec-head').forEach((el) => {
+      gsap.from(el, {
+        y: 56,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 88%' },
+      });
+    });
+
+    // Drei Wege: Zeilen staffeln sich ein
+    gsap.from('.wege-list li', {
+      y: 36,
+      opacity: 0,
+      duration: 0.6,
+      stagger: 0.12,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '.wege-list', start: 'top 85%' },
+    });
+
+    // Neuankömmlinge: Karten tauchen gestaffelt auf
+    ScrollTrigger.batch('.teaser .card', {
+      start: 'top 90%',
+      once: true,
+      onEnter: (batch) =>
+        gsap.fromTo(batch, { y: 48, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, stagger: 0.12, ease: 'power2.out', overwrite: true }),
+    });
+
+    // Termine: Coral-Fläche fährt von rechts herein, die Katze legt sich danach drauf
+    gsap.from('.termine .form-block', {
+      xPercent: 110,
+      duration: 0.9,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: '.termine .form-row', start: 'top 78%' },
+    });
+    gsap.from('.termine .form-cat', {
+      y: 60,
+      opacity: 0,
+      duration: 0.7,
+      delay: 0.35,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '.termine .form-row', start: 'top 78%' },
+    });
+
+    // Spenden: Grün-Fläche kommt von der Gegenseite (links)
+    gsap.from('.spenden .form-block', {
+      xPercent: -110,
+      duration: 0.9,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: '.spenden .form-row', start: 'top 78%' },
+    });
+  }
+</script>
+
 <style>
+  /* hereinfahrende Flächen dürfen währenddessen keinen horizontalen
+     Overflow/Scrollbalken erzeugen (clip statt hidden: vertikale Überhänge
+     wie die Termine-Katze bleiben sichtbar) */
+  .hero, .termine, .spenden { overflow-x: clip; }
+</style>
+
+<style>
+  /* Teaser-Fotos: immer quadratisch, flächenfüllend (wie im Katzen-Grid) */
+  .teaser-media { aspect-ratio: 1; }
+  .teaser-photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
   /* ---------- Hero (Figma 306:80) ---------- */
   .hero {
     --catw: clamp(220px, 26vw, 340px);

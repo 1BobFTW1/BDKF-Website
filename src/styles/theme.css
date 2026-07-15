@@ -30,7 +30,7 @@
                   (400 = Regular · 500 = Medium, braucht die @font-face oben)
      --fw-bold  = Headlines (144er), Eyebrows, Labels, Namen in Listen */
   --fw-text: 400;
-  --fw-bold: 500;
+  --fw-bold: 700;
 
   /* Typo strikt 1:3:9, keine Zwischengrößen: 16 → 48 → 144.
      Ist eine Stufe für eine Situation zu groß, wird die nächstkleinere
