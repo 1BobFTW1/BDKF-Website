@@ -51,7 +51,7 @@ const termine = [
           <a class="btn hero-btn" href="/katzen/">Katze adoptieren</a>
         </div>
       </div>
-      <div class="hero-form" style="--c: var(--amber)">
+      <div class="hero-form" style="--c: var(--yellow)">
         <img
           class="illu hero-form-cat"
           src="/assets/illustrations/lying-cat-tight.svg"
@@ -121,7 +121,7 @@ const termine = [
     </div>
     <div
       class="form-row"
-      style="--c: var(--coral); --form-w: 62%; --cat-w: clamp(110px, 15vw, 210px); --cat-ar: 0.97; --cat-in: clamp(40px, 6vw, 90px)"
+      style="--c: var(--red); --form-w: 62%; --cat-w: clamp(110px, 15vw, 210px); --cat-ar: 0.97; --cat-in: clamp(40px, 6vw, 90px)"
     >
       <img
         class="illu form-cat front"
@@ -171,6 +171,8 @@ const termine = [
 
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
     gsap.registerPlugin(ScrollTrigger);
+    // @ts-ignore — für Debugging in der Konsole erreichbar
+    window.ScrollTrigger = ScrollTrigger;
 
     /* ---------- Entrance: Hero baut sich choreografiert auf ----------
        Headline hebt sich, Text + CTA folgen; die Amber-Fläche schiebt von
@@ -182,12 +184,73 @@ const termine = [
       .from('.hero-form', { xPercent: 100, duration: 1.0, ease: 'power4.out' }, 0.2)
       .from('.hero-form-cat', { y: 90, opacity: 0, duration: 0.7 }, '-=0.35');
 
-    /* Parallax: beim Wegscrollen bleibt die Amber-Fläche minimal zurück —
-       die Katze rutscht dabei sichtbar ein Stück hinter den Fold */
-    gsap.to('.hero-form', {
-      y: 60,
-      ease: 'none',
-      scrollTrigger: { trigger: '.hero', start: 'bottom bottom', end: 'bottom top', scrub: true },
+    /* Rutsche: beim Scrollen kippt der gelbe Balken (Drehpunkt rechts unten,
+       die linke Kante senkt sich) — und die lying-cat rutscht die schiefe
+       Oberkante hinunter, aus dem Bild Richtung Grün. Die "Drei Wege"-
+       Sektion liegt auf einer höheren z-Ebene und schiebt sich dabei über
+       die rutschende Katze. Farbe und Breite des Balkens bleiben unberührt. */
+    const heroForm = document.querySelector('.hero-form');
+    const heroCat = document.querySelector('.hero-form-cat');
+    const wegeEl = document.querySelector('.wege');
+    // Fallhöhe: von der Ausgangslage bis komplett unter die Grün-Oberkante
+    // (im unverformten Zustand gemessen — invalidateOnRefresh setzt zurück)
+    // Fallstrecke in BILDSCHIRM-Pixeln (senkrecht nach unten, bis komplett
+    // hinter der Grün-Oberkante). Da die lokalen Achsen der Katze durch die
+    // 45°-Kippung diagonal liegen, wird der senkrechte Fall unten in gleiche
+    // x-/y-Anteile zerlegt (cos 45° ≈ 0,707).
+    const dropPx = () => {
+      const catBottomDoc = heroCat.getBoundingClientRect().bottom + window.scrollY;
+      const wegeTopDoc = wegeEl.getBoundingClientRect().top + window.scrollY;
+      return wegeTopDoc - catBottomDoc + heroCat.offsetHeight + 120;
+    };
+    const slide = gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: {
+        trigger: '.wege',
+        // Scrub-Weg im gleichen Verhältnis verlängert wie die Timeline
+        // (1,75 → 2 Einheiten): Grad pro Scroll-Pixel bleiben unverändert
+        start: 'top bottom',
+        end: 'top 30%',
+        scrub: true,
+        invalidateOnRefresh: true,
+      },
+    });
+    slide
+      // Balken klappt um volle 90° ab (Drehpunkt rechts unten, Rotation GEGEN
+      // den Uhrzeigersinn — die linke Kante taucht steil nach unten Richtung
+      // Grün). Doppelte Dauer bei verlängertem Scrub-Weg: die Kipp-
+      // GESCHWINDIGKEIT bleibt exakt wie bei der 45°-Fassung, es kippt nur
+      // weiter, wenn man weiterscrollt.
+      .to(heroForm, { rotate: -90, transformOrigin: 'right bottom', duration: 2 }, 0)
+      // die Katze rutscht GLEICHZEITIG die Schräge nach links hinunter —
+      // weiches Ein-/Ausgleiten entlang der gekippten Kante
+      .to(heroCat, { x: () => -heroForm.offsetWidth * 0.36, ease: 'power1.inOut', duration: 1 }, 0)
+      // ...und fällt am Ende senkrecht hinter den grünen Balken.
+      // Senkrecht in Bildschirm-Pixeln = lokal (−0,707 · d, +0,707 · d),
+      // weil die lokalen Achsen der Katze um −45° mitgedreht sind.
+      .to(heroCat, {
+        x: () => -heroForm.offsetWidth * 0.36 - 0.707 * dropPx(),
+        y: () => 0.707 * dropPx(),
+        rotate: 8,
+        ease: 'power2.in',
+        duration: 0.9,
+      }, '>-0.15');
+
+    /* Hero-Text (Headline, Intro, CTA) bleibt beim Scrollen stehen (Pin ab
+       Ausgangslage) — die grüne "Drei Wege"-Sektion (z-Ebene 2) schiebt sich
+       darüber und deckt ihn zu. Sobald ihre Oberkante den Viewport-Anfang
+       erreicht, löst sich der Pin. */
+    ['.hero-head', '.hero-lower'].forEach((sel) => {
+      const el = document.querySelector(sel);
+      const docTop = el.getBoundingClientRect().top + window.scrollY;
+      ScrollTrigger.create({
+        trigger: el,
+        start: `top ${docTop}px`,
+        endTrigger: '.wege',
+        end: 'top top',
+        pin: true,
+        pinSpacing: false,
+      });
     });
 
     /* ---------- Scroll-Reveals für die Sektionen ---------- */
@@ -346,13 +409,19 @@ const termine = [
   }
 
   /* Farbfläche: rechte Hälfte × 3/8 der Sektionshöhe, an rechter und unterer
-     Kante der Sektion angedockt (Figma-Proportionen) */
+     Kante der Sektion angedockt (Figma-Proportionen).
+     top-verankert (62,5 % + 37,5 % = Unterkante), damit das GSAP-Höhen-
+     wachstum beim Morph nach UNTEN läuft — Richtung grüner Balken. */
   .hero-form {
     position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 50%;
-    height: 37.5%;
+    /* rechts um 30vw über den Viewport hinaus verlängert: beim Kippen wirkt
+       die rechte Kante nicht abgeschnitten — sichtbar bleiben 50 % Breite */
+    right: -30vw;
+    top: 62.5%;
+    width: calc(50% + 30vw);
+    /* senkrecht nach unten verlängert — mehr Gelb unterhalb der Sektions-
+       kante (die Oberkante mit der Katze bleibt, wo sie ist) */
+    height: calc(37.5% + clamp(160px, 24vh, 360px));
     background: var(--c);
   }
 
@@ -362,14 +431,25 @@ const termine = [
   .hero-form-cat {
     position: absolute;
     z-index: 2;
-    left: calc(50% - var(--catw) / 2);
+    /* mittig auf dem SICHTBAREN Teil der Form (30vw ragen rechts raus) */
+    left: calc((100% - 30vw) / 2 - var(--catw) / 2);
     bottom: calc(100% - var(--catw) / 0.97 / 2);
     width: var(--catw);
     height: auto;
   }
 
   /* ---------- Drei Wege ---------- */
-  .wege { margin-top: clamp(96px, 15vw, 220px); }
+  /* komplette Sektion auf der Bereichsfarbe Grün (Helfen), Typo Schwarz.
+     Eigene z-Ebene ÜBER dem Hero: die rutschende lying-cat verschwindet
+     hinter der grünen Fläche. */
+  .wege {
+    position: relative;
+    z-index: 2;
+    margin-top: clamp(96px, 15vw, 220px);
+    padding-top: clamp(48px, 7vw, 110px);
+    padding-bottom: clamp(48px, 7vw, 110px);
+    background: var(--green);
+  }
 
   .wege-list {
     margin: 0;
@@ -387,6 +467,18 @@ const termine = [
     gap: 4px var(--gutter);
     padding: clamp(16px, 2.5vw, 32px) 0;
     text-decoration: none;
+    /* super dezenter Lift beim Hover */
+    transition: transform 0.25s ease;
+  }
+
+  .wege-list a:hover,
+  .wege-list a:focus-visible {
+    transform: translateY(-3px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wege-list a { transition: none; }
+    .wege-list a:hover, .wege-list a:focus-visible { transform: none; }
   }
 
   .wege-name {
@@ -397,11 +489,18 @@ const termine = [
     text-transform: uppercase;
   }
 
-  /* ---------- Teaser ---------- */
-  .teaser { margin-top: clamp(96px, 15vw, 220px); }
-
-  /* ---------- Termine ---------- */
-  .termine { margin-top: clamp(96px, 15vw, 220px); }
+  /* Alle Sektionen nach dem Grün liegen auf derselben deckenden Ebene
+     (weißer Grund, z-Ebene 2) — sonst blitzen die hinter dem Grün
+     "entsorgte" Katze und der gekippte gelbe Balken darunter wieder auf.
+     Abstände als Padding statt Margin, damit keine durchsichtigen Lücken
+     zwischen den Sektionen entstehen. */
+  .teaser, .termine, .spenden {
+    position: relative;
+    z-index: 2;
+    background: var(--white);
+    margin-top: 0;
+    padding-top: clamp(96px, 15vw, 220px);
+  }
 
   .termine-list {
     margin: 0;
@@ -423,7 +522,6 @@ const termine = [
   .termine-list li > span:last-child { grid-column: 2; }
 
   /* ---------- Spenden ---------- */
-  .spenden { margin-top: clamp(96px, 15vw, 220px); }
   .spenden-copy { max-width: 46ch; margin: 0; }
   .spenden-actions { display: flex; flex-wrap: wrap; gap: 12px var(--gutter); }
 </style>

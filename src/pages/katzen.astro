@@ -144,7 +144,7 @@ const filterGroups = [
   {
     label: 'Geschlecht',
     group: 'geschlecht',
-    c: 'var(--coral)',
+    c: 'var(--red)',
     options: [
       { val: 'w', label: 'Weiblich' },
       { val: 'm', label: 'Männlich' },
@@ -153,7 +153,7 @@ const filterGroups = [
   {
     label: 'Haltung',
     group: 'haltung',
-    c: 'var(--amber)',
+    c: 'var(--yellow)',
     options: [
       { val: 'wohnung', label: 'Wohnungskatze' },
       { val: 'freigang', label: 'Freigänger' },
@@ -770,7 +770,7 @@ const happyEnds = [
      Grün); Charakter bekommt Pink als eigene Kategorie. Flächen, Typo Schwarz. */
   .tc-tags :global(.c-alter) { background: var(--blue); }
   .tc-tags :global(.c-charakter) { background: var(--pink); }
-  .tc-tags :global(.c-haltung) { background: var(--amber); }
+  .tc-tags :global(.c-haltung) { background: var(--yellow); }
   .tc-tags :global(.c-doppel) { background: var(--green); }
 
   .tc-tags {
@@ -852,7 +852,7 @@ const happyEnds = [
     /* stretch ohne min-height: die Fläche folgt der Höhe des Decks
        (Karte + Buttons + Hinweis) statt sie zu dominieren */
     align-self: stretch;
-    background: var(--amber);
+    background: var(--yellow);
     padding: clamp(40px, 5vw, 88px) var(--margin) clamp(40px, 5vw, 80px) clamp(32px, 4vw, 72px);
   }
 
@@ -1049,8 +1049,8 @@ const happyEnds = [
   }
 
   .cat-detail :global(.c-alter) { background: var(--blue); }
-  .cat-detail :global(.c-geschlecht) { background: var(--coral); }
-  .cat-detail :global(.c-haltung) { background: var(--amber); }
+  .cat-detail :global(.c-geschlecht) { background: var(--red); }
+  .cat-detail :global(.c-haltung) { background: var(--yellow); }
   .cat-detail :global(.c-doppel) { background: var(--green); }
   .cat-detail :global(.c-charakter) { background: var(--pink); }
 

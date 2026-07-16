@@ -108,7 +108,7 @@ p:last-child { margin-bottom: 0; }
 .band {
   position: relative;
   z-index: 1;
-  background: var(--c, var(--coral));
+  background: var(--c, var(--red));
 }
 
 /* Innenabstände: 15 mm-Rand horizontal, 1/16-Abstand zur farbigen Kante vertikal
@@ -176,7 +176,7 @@ p:last-child { margin-bottom: 0; }
   z-index: 1;
   width: min(100%, var(--form-w));
   margin-left: auto; /* Standard: rechts angedockt */
-  background: var(--c, var(--amber));
+  background: var(--c, var(--yellow));
   padding: clamp(28px, 4vw, 56px) var(--margin);
   /* taucht eine Katze in die Fläche ein, bleibt der Bereich frei */
   padding-top: max(clamp(28px, 4vw, 56px), calc(var(--cat-in) + 20px));
@@ -244,7 +244,7 @@ p:last-child { margin-bottom: 0; }
 .card-media {
   position: relative;
   aspect-ratio: 4 / 5;
-  background: var(--c, var(--amber));
+  background: var(--c, var(--yellow));
   overflow: hidden;
 }
 
