@@ -174,17 +174,24 @@ const items = [
   .nav.on-dark .nav-burger img { filter: invert(1); }
 
   @media (max-width: 719px) {
-    .nav { flex-wrap: wrap; }
     .nav-burger { display: block; }
 
-    /* Menü zu: Links weg; offen: vollbreites Panel unter der Leiste
-       (erbt den mitwandernden Nav-Hintergrund) */
+    /* Menü als OVERLAY unter der Leiste: absolut positioniert, drückt die
+       Seite nicht runter. Kompakte Box nur hinter den Items rechts —
+       background: inherit übernimmt live den vom Kontrast-Script
+       gesetzten Nav-Hintergrund (weiß/gelb/schwarz/grün). */
     nav { display: none; }
     .nav.open nav {
       display: block;
-      flex-basis: 100%;
+      position: absolute;
+      top: 100%;
+      right: var(--margin);
+      left: auto;
+      width: max-content;
       max-width: none;
       margin-left: 0;
+      background: inherit;
+      padding: 4px 20px 16px;
     }
 
     /* Items rechtsbuendig, direkt unter der offenen Katze */

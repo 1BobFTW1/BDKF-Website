@@ -2,6 +2,7 @@
 import '../styles/main.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import Analytics from '@vercel/analytics/astro';
 
 interface Props {
   title: string;
@@ -25,6 +26,8 @@ const {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" id="favicon" />
     {/* Schrift komplett self-hosted (src/styles/fonts.css) — kein Typekit,
         keine Domain-Freischaltung nötig */}
+    {/* Vercel Web Analytics: Seitenaufrufe, laeuft nur auf Vercel-Deploys */}
+    <Analytics />
   </head>
   <body>
     <Nav current={current} />

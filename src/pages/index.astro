@@ -122,7 +122,9 @@ const termine = [
   <!-- Termine: Teilfläche rechts, lying-cat hängt über der Kante -->
   <section class="termine sec">
     <div class="sec-head pad-x">
-      <h2 class="display"><span class="nb">Schnurrstracks zu</span> <span class="nb">unseren Events</span></h2>
+      {/* &shy; = weiche Trennstelle: bricht nur bei Platzmangel (Mobile)
+          als SCHNURR-STRACKS um, Desktop bleibt ungetrennt */}
+      <h2 class="display"><span class="nb">Schnurr&shy;stracks zu</span> <span class="nb">unseren Events</span></h2>
     </div>
     <div
       class="form-row"
@@ -557,6 +559,7 @@ const termine = [
     flex: 0 0 auto;
     width: min(100%, 14em);
     font-size: var(--fs-sub);
+    font-weight: var(--fw-bold);
     line-height: 0.9;
     text-transform: uppercase;
   }
@@ -684,6 +687,7 @@ const termine = [
      Drei-Wege-Liste, damit die Events als Hauptinhalt der Sektion wirken */
   .termine-titel {
     font-size: var(--fs-sub);
+    font-weight: var(--fw-bold);
     line-height: 0.9;
     text-transform: uppercase;
   }
@@ -745,6 +749,11 @@ const termine = [
       flex: 0 0 78vw;
       scroll-snap-align: start;
     }
+
+    /* Termine-Headline: statt overflow-wrap:anywhere (wuerde so spaet wie
+       moeglich brechen) nur die weiche Trennstelle im Markup nutzen —
+       SCHNURR-STRACKS bricht kontrolliert am &shy; */
+    .termine .display { overflow-wrap: normal; }
 
     /* Termine: Balken vollbreit, Liste vollbreit, Eintraege gestapelt.
        Eventtitel eine Stufe runter (16 Bold) — "Weihnachtsflohmarkt"

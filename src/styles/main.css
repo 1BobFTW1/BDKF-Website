@@ -49,12 +49,12 @@ p:last-child { margin-bottom: 0; }
   overflow-wrap: normal;
 }
 
-/* Unterüberschrift: 3× Text, Regular, versal — die Standard-Headline
-   für Unterseiten und Sektionen. */
+/* Unterüberschrift: 3× Text, Bold, versal — die Standard-Headline
+   für Unterseiten und Sektionen. Alle Headings tragen dasselbe Gewicht. */
 .sub {
   margin: 0;
   font-size: var(--fs-sub);
-  font-weight: var(--fw-text);
+  font-weight: var(--fw-bold);
   line-height: var(--lh-display);
   text-transform: uppercase;
 }
@@ -73,6 +73,9 @@ p:last-child { margin-bottom: 0; }
 @media (max-width: 1279px) {
   .display { font-size: var(--fs-sub); }
 }
+
+/* Mobile-Überschriften: siehe Media-Query am Dateiende (muss nach den
+   .sec-head-Regeln stehen, sonst verliert sie die Kaskade). */
 
 /* ---------- Buttons — nur Schwarz/Weiß ---------- */
 
@@ -258,7 +261,7 @@ p:last-child { margin-bottom: 0; }
 .card-name {
   margin: 0.45em 0 0;
   font-size: var(--fs-sub);
-  font-weight: var(--fw-text);
+  font-weight: var(--fw-bold);
   line-height: var(--lh-display);
   text-transform: uppercase;
 }
@@ -281,4 +284,28 @@ p:last-child { margin-bottom: 0; }
   clip: rect(0 0 0 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* ---------- Mobile-Überschriften (< 720px) ----------
+   Fixe 80px — HIER ändern, falls größer/kleiner. Lange Wörter
+   (SCHNURRSTRACKS) dürfen mitten im Wort über mehrere Zeilen brechen
+   (overflow-wrap: anywhere), damit nichts über den Rand läuft.
+   Steht bewusst am Dateiende: überschreibt die Wortsäulen-Logik von
+   .sec-head .display (min-content + 100vw-word-spacing), deren
+   Riesen-Leerzeichen sonst selbst über den Rand hängen. */
+@media (max-width: 719px) {
+  .display {
+    font-size: 80px;
+    overflow-wrap: anywhere;
+  }
+
+  .sec-head .display {
+    width: auto;
+    word-spacing: normal;
+  }
+
+  .sec-head .display .nb {
+    white-space: normal;
+    word-spacing: normal;
+  }
 }
