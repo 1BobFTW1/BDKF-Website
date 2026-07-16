@@ -16,7 +16,13 @@ const items = [
     <img class="logo-black" src="/assets/logos/black/bdkf-wortbildmarke-tight.svg" alt="" width="895" height="465" />
     <img class="logo-white" src="/assets/logos/white/bdkf-wortbildmarke-white-tight.svg" alt="" width="895" height="465" />
   </a>
-  <nav aria-label="Hauptnavigation">
+  {/* Mobile: Burger aus dem Favicon — zu = nur die Ohren (Katze geduckt),
+      offen = der ganze Kopf schaut raus */}
+  <button class="nav-burger" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Menü öffnen">
+    <img class="burger-ears" src="/favicon-ears.svg" alt="" width="500" height="500" />
+    <img class="burger-head" src="/favicon.svg" alt="" width="500" height="500" />
+  </button>
+  <nav id="nav-menu" aria-label="Hauptnavigation">
     <ul>
       {items.map((i) => (
         <li>
@@ -54,6 +60,19 @@ const items = [
     addEventListener('scroll', update, { passive: true });
     addEventListener('resize', update);
     update();
+  }
+
+  /* Burger (Mobile): Klick klappt das Menü auf/zu — Icon wechselt von den
+     Ohren (zu) zum ganzen Kopf (offen); Linkklick schließt wieder */
+  const burger = document.querySelector('.nav-burger');
+  if (nav && burger) {
+    const setOpen = (open) => {
+      nav.classList.toggle('open', open);
+      burger.setAttribute('aria-expanded', String(open));
+      burger.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+    };
+    burger.addEventListener('click', () => setOpen(!nav.classList.contains('open')));
+    nav.querySelectorAll('#nav-menu a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
   }
 </script>
 
@@ -132,9 +151,44 @@ const items = [
     font-weight: var(--fw-bold);
   }
 
-  @media (max-width: 720px) {
-    .nav { flex-direction: column; align-items: flex-start; gap: 14px; }
-    nav { max-width: none; margin-left: 0; width: 100%; }
-    nav ul { justify-content: flex-start; }
+  /* Burger: nur Mobile sichtbar, quadratische Tap-Fläche; das Icon-Paar
+     wird über .open umgeschaltet */
+  .nav-burger {
+    display: none;
+    border: 0;
+    padding: 0;
+    background: none;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    line-height: 0;
+  }
+
+  .nav-burger img { display: block; width: 100%; height: 100%; }
+
+  .nav-burger .burger-head { display: none; }
+  .nav.open .burger-ears { display: none; }
+  .nav.open .burger-head { display: block; }
+
+  /* auf dunklen Flächen: schwarze Icon-Pfade auf Weiß drehen */
+  .nav.on-dark .nav-burger img { filter: invert(1); }
+
+  @media (max-width: 719px) {
+    .nav { flex-wrap: wrap; }
+    .nav-burger { display: block; }
+
+    /* Menü zu: Links weg; offen: vollbreites Panel unter der Leiste
+       (erbt den mitwandernden Nav-Hintergrund) */
+    nav { display: none; }
+    .nav.open nav {
+      display: block;
+      flex-basis: 100%;
+      max-width: none;
+      margin-left: 0;
+    }
+
+    /* Items rechtsbuendig, direkt unter der offenen Katze */
+    nav ul { flex-direction: column; align-items: flex-end; gap: 0; padding-top: 0; }
+    nav a { display: block; text-align: right; padding: 12px 0; }
   }
 </style>
