@@ -177,6 +177,12 @@ const termine = [
     // @ts-ignore — für Debugging in der Konsole erreichbar
     window.ScrollTrigger = ScrollTrigger;
 
+    /* Mobile (< 720px, wie der Nav-Breakpoint): keine Pins, kein Kippen,
+       kein Scroll-Lock — die Choreografien setzen Desktop-Geometrie voraus
+       und Scroll-Hijacking fühlt sich auf Touch falsch an. Es bleiben die
+       dezenten Einblendungen; der Teaser wird per CSS nativ swipebar. */
+    const desktop = matchMedia('(min-width: 720px)').matches;
+
     /* ---------- Entrance: dezent gestaffeltes Aufblenden ----------
        Einheitliche Lade-Formsprache auf allen Seiten: nur Fade + kleiner
        Versatz (≤ 24 px), kurze Dauern, enge Staffelung — keine weiten
@@ -193,6 +199,7 @@ const termine = [
        Oberkante hinunter, aus dem Bild. Die nachfolgende Teaser-Sektion
        ("Wer wartet heute auf dich?", z-Ebene 2) schiebt sich dabei über
        die rutschende Katze. Farbe und Breite des Balkens bleiben unberührt. */
+    if (desktop) {
     const heroForm = document.querySelector('.hero-form');
     const heroCat = document.querySelector('.hero-form-cat');
     const coverEl = document.querySelector('.teaser');
@@ -256,6 +263,7 @@ const termine = [
         pinSpacing: false,
       });
     });
+    }
 
     /* ---------- Scroll-Reveals für die Sektionen ---------- */
     document.querySelectorAll('.wege .sec-head, .teaser .sec-head, .termine .sec-head, .spenden .sec-head').forEach((el) => {
@@ -284,7 +292,7 @@ const termine = [
     // der Pin und es geht normal vertikal weiter
     const teaserTrack = document.querySelector('.teaser-track');
     const teaserClip = document.querySelector('.teaser-clip');
-    if (teaserTrack && teaserClip) {
+    if (desktop && teaserTrack && teaserClip) {
       const overhang = () => teaserTrack.scrollWidth - teaserClip.offsetWidth;
       gsap.to(teaserTrack, {
         x: () => -overhang(),
@@ -327,14 +335,16 @@ const termine = [
     // Wie beim Teaser ueber dem Hero: die rote Termine-Sektion rastet ein,
     // sobald ihre Unterkante den Viewport-Boden erreicht, die "Mach mit"-
     // Sektion schiebt sich beim Weiterscrollen darueber und deckt sie zu
-    ScrollTrigger.create({
-      trigger: '.termine',
-      start: 'bottom bottom',
-      endTrigger: '.spenden',
-      end: 'top top',
-      pin: true,
-      pinSpacing: false,
-    });
+    if (desktop) {
+      ScrollTrigger.create({
+        trigger: '.termine',
+        start: 'bottom bottom',
+        endTrigger: '.spenden',
+        end: 'top top',
+        pin: true,
+        pinSpacing: false,
+      });
+    }
 
     // Mach mit: Copy + Buttons blenden gestaffelt auf
     gsap.from('.spenden .spenden-copy, .spenden .spenden-actions', {
@@ -690,4 +700,85 @@ const termine = [
 
   .spenden-copy { max-width: 46ch; margin: 0; }
   .spenden-actions { display: flex; flex-wrap: wrap; gap: 12px var(--gutter); }
+
+  /* ==================== Mobile (< 720px) ====================
+     Gleicher Breakpoint wie der Nav. Keine Pins/Choreografien (im Script
+     deaktiviert) — hier die gestapelten Layouts dazu. */
+  @media (max-width: 719px) {
+    /* Hero: Text vollbreit, gelbe Flaeche als normaler Block darunter,
+       lying-cat mittig halb auf deren Oberkante */
+    .hero { --catw: clamp(150px, 42vw, 220px); min-height: auto; }
+    .hero-lower { width: 100%; }
+
+    .hero-form {
+      position: relative;
+      right: auto;
+      top: auto;
+      width: 100%;
+      height: clamp(160px, 45vw, 280px);
+      /* Platz fuer die halb aufliegende Katze ueber der Oberkante */
+      margin-top: calc(var(--catw) / 0.97 / 2 + 16px);
+    }
+
+    .hero-form-cat {
+      left: calc(50% - var(--catw) / 2);
+    }
+
+    /* Teaser: nativ swipebarer Karten-Slider statt GSAP-Scrub —
+       eine Karte plus Anschnitt der naechsten, mit Snap */
+    .teaser-clip {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--margin);
+      /* Slider laeuft bis an die Bildschirmkanten durch */
+      margin-inline: calc(-1 * var(--margin));
+      padding-inline: var(--margin);
+      scrollbar-width: none;
+    }
+
+    .teaser-clip::-webkit-scrollbar { display: none; }
+
+    .teaser-track { width: max-content; }
+
+    .teaser-track :global(.card) {
+      flex: 0 0 78vw;
+      scroll-snap-align: start;
+    }
+
+    /* Termine: Balken vollbreit, Liste vollbreit, Eintraege gestapelt.
+       Eventtitel eine Stufe runter (16 Bold) — "Weihnachtsflohmarkt"
+       passt als 48er-Einzelwort nicht in die Spaltenbreite. */
+    .termine {
+      padding-top: clamp(64px, 10vw, 104px);
+      padding-bottom: clamp(40px, 6vw, 64px);
+    }
+
+    .termine .form-block { width: 100%; }
+
+    .termine .termine-list { margin-left: 0; }
+
+    .termine .termine-list li { grid-template-columns: 1fr; }
+
+    .termine-datum { grid-row: auto; }
+
+    .termine .termine-titel {
+      font-size: var(--fs-text);
+      font-weight: var(--fw-bold);
+      line-height: 1.2;
+    }
+
+    .termine .termine-list li > span:last-child { grid-column: 1; }
+
+    /* crazy-cat halb ueber der Balken-Oberkante links statt mittig drauf */
+    .termine .form-row {
+      margin-top: calc(var(--cat-w) / var(--cat-ar) / 2 + 8px);
+    }
+
+    .termine .form-cat {
+      left: var(--margin);
+      top: auto;
+      bottom: calc(100% - var(--cat-w) / var(--cat-ar) / 2);
+    }
+  }
 </style>

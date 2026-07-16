@@ -122,6 +122,12 @@
     height: auto;
   }
 
+  /* Mobile: kein Peek — das Band ist dort fast viewporthoch, die Katze
+     laege am Scroll-Ende exakt hinter der sticky Nav-Leiste */
+  @media (max-width: 719px) {
+    .footer-cat { display: none; }
+  }
+
   .footer-band {
     --c: var(--black);
     color: var(--white);
