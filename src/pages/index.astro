@@ -3,15 +3,17 @@ import Base from '../layouts/Base.astro';
 
 import katzenRaw from '../data/katzen.json';
 
-// Neuankömmlinge: die 3 neuesten Vermittlungskatzen aus den echten Daten
-// (katzen.json ist vom Scraper bereits neueste-zuerst sortiert)
+// Neuankömmlinge: die 5 neuesten Vermittlungskatzen aus den echten Daten
+// (katzen.json ist vom Scraper bereits neueste-zuerst sortiert) —
+// 3 sind sichtbar, durch die restlichen scrollt GSAP horizontal durch
 function shortText(t) {
   const s = t.replace(/^update[^:]*:\s*/i, '');
   const m = s.match(/^[\s\S]{40,160}?[.!?…](?=\s|$)/);
   return m ? m[0].trim() : `${s.slice(0, 140).trim()}…`;
 }
 
-const katzen = katzenRaw.slice(0, 3).map((k) => ({
+const katzen = katzenRaw.slice(0, 5).map((k) => ({
+  slug: k.slug,
   name: k.title.replace(/\s*\+\s*/g, ' & '),
   text: shortText(k.beschreibung),
   photo: k.images[0],
@@ -63,10 +65,36 @@ const termine = [
     </div>
   </section>
 
-  <!-- Drei Wege zu helfen -->
-  <section class="wege pad-x sec">
+  <!-- Katzen-Teaser: die 5 Neuankömmlinge — erste Sektion nach dem Hero,
+       schiebt sich über den gepinnten Hero-Text und die rutschende Katze -->
+  <section class="teaser pad-x sec" data-nav-bg="var(--yellow)">
     <div class="sec-head">
-      <p class="eyebrow">Mehr als Adoption</p>
+      <h2 class="display"><span class="nb">Wer wartet</span> <span class="nb">heute</span> <span class="nb">auf dich?</span></h2>
+    </div>
+    {/* 5 Karten im 3er-Raster: der Track ist breiter als die Sektion und
+        wird beim Scrollen von GSAP horizontal durchgeschoben */}
+    <div class="teaser-clip">
+      <div class="cards teaser-track">
+        {katzen.map((k) => (
+          <article class="card">
+            {/* Deep-Link: öffnet auf der Katzen-Seite direkt die Detailansicht */}
+            <a href={`/katzen/#${k.slug}`}>
+              <div class="card-media teaser-media">
+                <img class="teaser-photo" src={k.photo} alt={k.name} loading="lazy" />
+              </div>
+              <h3 class="card-name">{k.name}</h3>
+            </a>
+            <p class="card-text">{k.text}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+    <p class="gap-8"><a class="btn btn-ghost" href="/katzen/">Alle Katzen ansehen</a></p>
+  </section>
+
+  <!-- Drei Wege zu helfen -->
+  <section class="wege pad-x sec" data-nav-bg="var(--black)" data-nav-dark>
+    <div class="sec-head">
       <h2 class="display"><span class="nb">Drei Wege</span> <span class="nb">zu helfen</span></h2>
     </div>
     <ul class="wege-list">
@@ -91,44 +119,21 @@ const termine = [
     </ul>
   </section>
 
-  <!-- Katzen-Teaser: die 3 Neuankömmlinge mit echten Fotos (quadratisch) -->
-  <section class="teaser pad-x sec">
-    <div class="sec-head">
-      <p class="eyebrow">Zuhause gesucht</p>
-      <h2 class="display"><span class="nb">Wer wartet</span> <span class="nb">auf dich?</span></h2>
-    </div>
-    <div class="cards">
-      {katzen.map((k) => (
-        <article class="card">
-          <a href="/katzen/">
-            <div class="card-media teaser-media">
-              <img class="teaser-photo" src={k.photo} alt={k.name} loading="lazy" />
-            </div>
-            <h3 class="card-name">{k.name}</h3>
-          </a>
-          <p class="card-text">{k.text}</p>
-        </article>
-      ))}
-    </div>
-    <p class="gap-8"><a class="btn btn-ghost" href="/katzen/">Alle Katzen ansehen</a></p>
-  </section>
-
   <!-- Termine: Teilfläche rechts, lying-cat hängt über der Kante -->
   <section class="termine sec">
     <div class="sec-head pad-x">
-      <p class="eyebrow">Termine</p>
-      <h2 class="display"><span class="nb">Die Katzen</span> <span class="nb">lästern schon</span> <span class="nb">über dich.</span></h2>
+      <h2 class="display"><span class="nb">Schnurrstracks zu</span> <span class="nb">unseren Events</span></h2>
     </div>
     <div
       class="form-row"
-      style="--c: var(--red); --form-w: 62%; --cat-w: clamp(110px, 15vw, 210px); --cat-ar: 0.97; --cat-in: clamp(40px, 6vw, 90px)"
+      style="--c: var(--red); --form-w: 75%; --cat-w: clamp(150px, 19vw, 270px); --cat-ar: 1.44; --cat-in: 0px"
     >
       <img
         class="illu form-cat front"
-        src="/assets/illustrations/lying-cat-tight.svg"
+        src="/assets/illustrations/crazy-cat-tight.svg"
         alt=""
-        width="794"
-        height="818"
+        width="858"
+        height="597"
       />
       <div class="form-block">
         <ul class="termine-list">
@@ -144,23 +149,21 @@ const termine = [
     </div>
   </section>
 
-  <!-- Spenden / Mitglied: Teilfläche links -->
-  <section class="spenden sec">
+  <!-- Mitmachen: komplette Sektion auf Gruen (wie die Drei-Wege-Sektion
+       auf Schwarz), Typo bleibt schwarz -->
+  <section class="spenden sec" data-nav-bg="var(--green)">
     <div class="sec-head pad-x">
-      <p class="eyebrow">Unterstützen</p>
-      <h2 class="display">Werde Mitglied. Schnurren inklusive.</h2>
+      <h2 class="display"><span class="nb">Grosses Herz</span> <span class="nb">fuer kleine</span> <span class="nb">Pfoten?</span> <span class="nb">Mach mit!</span></h2>
     </div>
-    <div class="form-row dock-left" style="--c: var(--green); --form-w: 58%; --cat-w: 0px; --cat-ar: 1">
-      <div class="form-block">
-        <p class="spenden-copy">
-          Jeder Beitrag hilft: Tierarztkosten, Futter, Kastrationen. Oder du machst es
-          offiziell und wirst Teil des Vereins.
-        </p>
-        <p class="gap-8 spenden-actions">
-          <a class="btn" href="/verein/#mitglied">Mitglied werden</a>
-          <a class="btn btn-ghost" href="/helfen/#spenden">Spenden</a>
-        </p>
-      </div>
+    <div class="pad-x">
+      <p class="spenden-copy">
+        Jeder Beitrag hilft: Tierarztkosten, Futter, Kastrationen. Oder du machst es
+        offiziell und wirst Teil des Vereins.
+      </p>
+      <p class="gap-8 spenden-actions">
+        <a class="btn" href="/verein/#mitglied">Mitglied werden</a>
+        <a class="btn btn-ghost" href="/helfen/#spenden">Spenden</a>
+      </p>
     </div>
   </section>
 </Base>
@@ -174,39 +177,40 @@ const termine = [
     // @ts-ignore — für Debugging in der Konsole erreichbar
     window.ScrollTrigger = ScrollTrigger;
 
-    /* ---------- Entrance: Hero baut sich choreografiert auf ----------
-       Headline hebt sich, Text + CTA folgen; die Amber-Fläche schiebt von
-       rechts herein, die lying-cat legt sich danach auf ihre Kante. */
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-    tl.from('.hero-head .display', { y: 90, opacity: 0, duration: 0.9 })
-      .from('.hero-intro', { y: 36, opacity: 0, duration: 0.6 }, '-=0.5')
-      .from('.hero-cta', { y: 28, opacity: 0, duration: 0.6 }, '-=0.4')
-      .from('.hero-form', { xPercent: 100, duration: 1.0, ease: 'power4.out' }, 0.2)
-      .from('.hero-form-cat', { y: 90, opacity: 0, duration: 0.7 }, '-=0.35');
+    /* ---------- Entrance: dezent gestaffeltes Aufblenden ----------
+       Einheitliche Lade-Formsprache auf allen Seiten: nur Fade + kleiner
+       Versatz (≤ 24 px), kurze Dauern, enge Staffelung — keine weiten
+       Flüge quer über die Seite. */
+    const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
+    tl.from('.hero-head .display', { y: 24, opacity: 0, duration: 0.6 })
+      .from('.hero-intro', { y: 16, opacity: 0, duration: 0.5 }, '-=0.35')
+      .from('.hero-cta', { y: 16, opacity: 0, duration: 0.5 }, '-=0.35')
+      .from('.hero-form', { opacity: 0, duration: 0.6 }, 0.15)
+      .from('.hero-form-cat', { y: 24, opacity: 0, duration: 0.5 }, '-=0.3');
 
     /* Rutsche: beim Scrollen kippt der gelbe Balken (Drehpunkt rechts unten,
        die linke Kante senkt sich) — und die lying-cat rutscht die schiefe
-       Oberkante hinunter, aus dem Bild Richtung Grün. Die "Drei Wege"-
-       Sektion liegt auf einer höheren z-Ebene und schiebt sich dabei über
+       Oberkante hinunter, aus dem Bild. Die nachfolgende Teaser-Sektion
+       ("Wer wartet heute auf dich?", z-Ebene 2) schiebt sich dabei über
        die rutschende Katze. Farbe und Breite des Balkens bleiben unberührt. */
     const heroForm = document.querySelector('.hero-form');
     const heroCat = document.querySelector('.hero-form-cat');
-    const wegeEl = document.querySelector('.wege');
-    // Fallhöhe: von der Ausgangslage bis komplett unter die Grün-Oberkante
+    const coverEl = document.querySelector('.teaser');
+    // Fallhöhe: von der Ausgangslage bis komplett unter die Teaser-Oberkante
     // (im unverformten Zustand gemessen — invalidateOnRefresh setzt zurück)
     // Fallstrecke in BILDSCHIRM-Pixeln (senkrecht nach unten, bis komplett
-    // hinter der Grün-Oberkante). Da die lokalen Achsen der Katze durch die
+    // hinter der Teaser-Oberkante). Da die lokalen Achsen der Katze durch die
     // 45°-Kippung diagonal liegen, wird der senkrechte Fall unten in gleiche
     // x-/y-Anteile zerlegt (cos 45° ≈ 0,707).
     const dropPx = () => {
       const catBottomDoc = heroCat.getBoundingClientRect().bottom + window.scrollY;
-      const wegeTopDoc = wegeEl.getBoundingClientRect().top + window.scrollY;
-      return wegeTopDoc - catBottomDoc + heroCat.offsetHeight + 120;
+      const coverTopDoc = coverEl.getBoundingClientRect().top + window.scrollY;
+      return coverTopDoc - catBottomDoc + heroCat.offsetHeight + 120;
     };
     const slide = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
-        trigger: '.wege',
+        trigger: '.teaser',
         // Scrub-Weg im gleichen Verhältnis verlängert wie die Timeline
         // (1,75 → 2 Einheiten): Grad pro Scroll-Pixel bleiben unverändert
         start: 'top bottom',
@@ -217,15 +221,15 @@ const termine = [
     });
     slide
       // Balken klappt um volle 90° ab (Drehpunkt rechts unten, Rotation GEGEN
-      // den Uhrzeigersinn — die linke Kante taucht steil nach unten Richtung
-      // Grün). Doppelte Dauer bei verlängertem Scrub-Weg: die Kipp-
+      // den Uhrzeigersinn — die linke Kante taucht steil nach unten).
+      // Doppelte Dauer bei verlängertem Scrub-Weg: die Kipp-
       // GESCHWINDIGKEIT bleibt exakt wie bei der 45°-Fassung, es kippt nur
       // weiter, wenn man weiterscrollt.
       .to(heroForm, { rotate: -90, transformOrigin: 'right bottom', duration: 2 }, 0)
       // die Katze rutscht GLEICHZEITIG die Schräge nach links hinunter —
       // weiches Ein-/Ausgleiten entlang der gekippten Kante
       .to(heroCat, { x: () => -heroForm.offsetWidth * 0.36, ease: 'power1.inOut', duration: 1 }, 0)
-      // ...und fällt am Ende senkrecht hinter den grünen Balken.
+      // ...und fällt am Ende senkrecht hinter die Teaser-Sektion.
       // Senkrecht in Bildschirm-Pixeln = lokal (−0,707 · d, +0,707 · d),
       // weil die lokalen Achsen der Katze um −45° mitgedreht sind.
       .to(heroCat, {
@@ -237,7 +241,7 @@ const termine = [
       }, '>-0.15');
 
     /* Hero-Text (Headline, Intro, CTA) bleibt beim Scrollen stehen (Pin ab
-       Ausgangslage) — die grüne "Drei Wege"-Sektion (z-Ebene 2) schiebt sich
+       Ausgangslage) — die gelbe Teaser-Sektion (z-Ebene 2) schiebt sich
        darüber und deckt ihn zu. Sobald ihre Oberkante den Viewport-Anfang
        erreicht, löst sich der Pin. */
     ['.hero-head', '.hero-lower'].forEach((sel) => {
@@ -246,7 +250,7 @@ const termine = [
       ScrollTrigger.create({
         trigger: el,
         start: `top ${docTop}px`,
-        endTrigger: '.wege',
+        endTrigger: '.teaser',
         end: 'top top',
         pin: true,
         pinSpacing: false,
@@ -256,7 +260,7 @@ const termine = [
     /* ---------- Scroll-Reveals für die Sektionen ---------- */
     document.querySelectorAll('.wege .sec-head, .teaser .sec-head, .termine .sec-head, .spenden .sec-head').forEach((el) => {
       gsap.from(el, {
-        y: 56,
+        y: 24,
         opacity: 0,
         duration: 0.8,
         ease: 'power3.out',
@@ -266,7 +270,7 @@ const termine = [
 
     // Drei Wege: Zeilen staffeln sich ein
     gsap.from('.wege-list li', {
-      y: 36,
+      y: 20,
       opacity: 0,
       duration: 0.6,
       stagger: 0.12,
@@ -274,12 +278,34 @@ const termine = [
       scrollTrigger: { trigger: '.wege-list', start: 'top 85%' },
     });
 
+    // Neuankömmlinge: erst ganz zur gelben Sektion scrollen (Unterkante am
+    // Viewport-Boden), dann pinnt sie — der weitere Vertikal-Scroll wird
+    // 1:1 in den Horizontal-Scrub des 5er-Tracks übersetzt, danach löst
+    // der Pin und es geht normal vertikal weiter
+    const teaserTrack = document.querySelector('.teaser-track');
+    const teaserClip = document.querySelector('.teaser-clip');
+    if (teaserTrack && teaserClip) {
+      const overhang = () => teaserTrack.scrollWidth - teaserClip.offsetWidth;
+      gsap.to(teaserTrack, {
+        x: () => -overhang(),
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.teaser',
+          start: 'bottom bottom',
+          end: () => `+=${overhang()}`,
+          scrub: true,
+          pin: true,
+          invalidateOnRefresh: true,
+        },
+      });
+    }
+
     // Neuankömmlinge: Karten tauchen gestaffelt auf
     ScrollTrigger.batch('.teaser .card', {
       start: 'top 90%',
       once: true,
       onEnter: (batch) =>
-        gsap.fromTo(batch, { y: 48, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, stagger: 0.12, ease: 'power2.out', overwrite: true }),
+        gsap.fromTo(batch, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, stagger: 0.12, ease: 'power2.out', overwrite: true }),
     });
 
     // Termine: Coral-Fläche fährt von rechts herein, die Katze legt sich danach drauf
@@ -298,12 +324,26 @@ const termine = [
       scrollTrigger: { trigger: '.termine .form-row', start: 'top 78%' },
     });
 
-    // Spenden: Grün-Fläche kommt von der Gegenseite (links)
-    gsap.from('.spenden .form-block', {
-      xPercent: -110,
-      duration: 0.9,
-      ease: 'power3.out',
-      scrollTrigger: { trigger: '.spenden .form-row', start: 'top 78%' },
+    // Wie beim Teaser ueber dem Hero: die rote Termine-Sektion rastet ein,
+    // sobald ihre Unterkante den Viewport-Boden erreicht, die "Mach mit"-
+    // Sektion schiebt sich beim Weiterscrollen darueber und deckt sie zu
+    ScrollTrigger.create({
+      trigger: '.termine',
+      start: 'bottom bottom',
+      endTrigger: '.spenden',
+      end: 'top top',
+      pin: true,
+      pinSpacing: false,
+    });
+
+    // Mach mit: Copy + Buttons blenden gestaffelt auf
+    gsap.from('.spenden .spenden-copy, .spenden .spenden-actions', {
+      y: 20,
+      opacity: 0,
+      duration: 0.6,
+      stagger: 0.12,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '.spenden .spenden-copy', start: 'top 85%' },
     });
   }
 </script>
@@ -313,6 +353,28 @@ const termine = [
      Overflow/Scrollbalken erzeugen (clip statt hidden: vertikale Überhänge
      wie die Termine-Katze bleiben sichtbar) */
   .hero, .termine, .spenden { overflow-x: clip; }
+</style>
+
+<style is:global>
+  /* Startseite: Footer grenzt direkt an die grüne Mach-mit-Sektion.
+     Der Peek-Slot wird um seine eigene Höhe nach oben gezogen — das schwarze
+     Band beginnt damit an der grünen Kante, die Katze schaut vor Grün über
+     die Band-Oberkante. z-Ebene 2, damit die Katze nicht hinter der grünen
+     Sektion (ebenfalls z2, früher im DOM) verschwindet. */
+  .footer.sec {
+    position: relative;
+    z-index: 2;
+    margin-top: 0;
+    /* eigener Formatierungskontext: verhindert, dass die negative Marge
+       des Peek-Slots mit der Footer-Marge kollabiert und die (klickfeste)
+       Footer-Box ueber die Buttons der gruenen Sektion hochzieht — so ragt
+       nur der pointer-events-freie Slot hinueber */
+    display: flow-root;
+  }
+  .footer.sec .footer-cat {
+    /* Slot-Höhe = Katzenbreite / Seitenverhältnis (779/491 ≈ 1,586) */
+    margin-top: calc(-1 * clamp(210px, 22.5vw, 345px) / 1.586);
+  }
 </style>
 
 <style>
@@ -414,11 +476,11 @@ const termine = [
      wachstum beim Morph nach UNTEN läuft — Richtung grüner Balken. */
   .hero-form {
     position: absolute;
-    /* rechts um 30vw über den Viewport hinaus verlängert: beim Kippen wirkt
+    /* rechts um 38vw über den Viewport hinaus verlängert: beim Kippen wirkt
        die rechte Kante nicht abgeschnitten — sichtbar bleiben 50 % Breite */
-    right: -30vw;
+    right: -38vw;
     top: 62.5%;
-    width: calc(50% + 30vw);
+    width: calc(50% + 38vw);
     /* senkrecht nach unten verlängert — mehr Gelb unterhalb der Sektions-
        kante (die Oberkante mit der Katze bleibt, wo sie ist) */
     height: calc(37.5% + clamp(160px, 24vh, 360px));
@@ -431,24 +493,24 @@ const termine = [
   .hero-form-cat {
     position: absolute;
     z-index: 2;
-    /* mittig auf dem SICHTBAREN Teil der Form (30vw ragen rechts raus) */
-    left: calc((100% - 30vw) / 2 - var(--catw) / 2);
+    /* mittig auf dem SICHTBAREN Teil der Form (38vw ragen rechts raus) */
+    left: calc((100% - 38vw) / 2 - var(--catw) / 2);
     bottom: calc(100% - var(--catw) / 0.97 / 2);
     width: var(--catw);
     height: auto;
   }
 
   /* ---------- Drei Wege ---------- */
-  /* komplette Sektion auf der Bereichsfarbe Grün (Helfen), Typo Schwarz.
-     Eigene z-Ebene ÜBER dem Hero: die rutschende lying-cat verschwindet
-     hinter der grünen Fläche. */
+  /* komplette Sektion auf Schwarz, Typo Weiß — liegt wie alle Sektionen
+     nach dem Teaser auf der deckenden z-Ebene 2. */
   .wege {
     position: relative;
     z-index: 2;
-    margin-top: clamp(96px, 15vw, 220px);
+    margin-top: 0;
     padding-top: clamp(48px, 7vw, 110px);
     padding-bottom: clamp(48px, 7vw, 110px);
-    background: var(--green);
+    background: var(--black);
+    color: var(--white);
   }
 
   .wege-list {
@@ -457,8 +519,8 @@ const termine = [
     list-style: none;
   }
 
-  .wege-list li { border-top: 2px solid var(--black); }
-  .wege-list li:last-child { border-bottom: 2px solid var(--black); }
+  .wege-list li { border-top: 2px solid var(--white); }
+  .wege-list li:last-child { border-bottom: 2px solid var(--white); }
 
   .wege-list a {
     display: flex;
@@ -489,17 +551,106 @@ const termine = [
     text-transform: uppercase;
   }
 
-  /* Alle Sektionen nach dem Grün liegen auf derselben deckenden Ebene
-     (weißer Grund, z-Ebene 2) — sonst blitzen die hinter dem Grün
+  /* Alle Sektionen nach dem Teaser liegen auf derselben deckenden Ebene
+     (weißer Grund, z-Ebene 2) — sonst blitzen die hinter dem Teaser
      "entsorgte" Katze und der gekippte gelbe Balken darunter wieder auf.
      Abstände als Padding statt Margin, damit keine durchsichtigen Lücken
      zwischen den Sektionen entstehen. */
-  .teaser, .termine, .spenden {
+  .termine, .spenden {
     position: relative;
     z-index: 2;
     background: var(--white);
     margin-top: 0;
     padding-top: clamp(96px, 15vw, 220px);
+  }
+
+  /* Katzen-Teaser: erste Sektion nach dem Hero — ganze Sektion in Gelb
+     (Bereichsfarbe Katzen/Vermittlung), Schrift schwarz. Der transparente
+     margin-top ist die Bühne, in der Balken-Kippen und Katzen-Rutsche
+     hinter der heranfahrenden Oberkante sichtbar sind. */
+  .teaser {
+    position: relative;
+    z-index: 2;
+    margin-top: clamp(96px, 15vw, 220px);
+    padding-top: clamp(48px, 7vw, 110px);
+    padding-bottom: clamp(48px, 7vw, 110px);
+    background: var(--yellow);
+  }
+
+  /* 5 Karten, 3 sichtbar: Track statt Grid — Kartenbreite entspricht exakt
+     der 3er-Rasterspalte, der Überhang wird per GSAP horizontal gescrubbt */
+  .teaser-clip { overflow: clip; }
+
+  .teaser-track {
+    display: flex;
+    gap: var(--gutter);
+    will-change: transform;
+  }
+
+  .teaser-track :global(.card) {
+    flex: 0 0 calc((100% - 2 * var(--gutter)) / 3);
+    min-width: 0;
+  }
+
+  /* Hover-Highlight wie im Katzen-Grid: 2px-Systemlinie unter dem Namen,
+     nur so breit wie der Text (Platz vorreserviert — nichts springt) */
+  .teaser-track :global(.card-name) {
+    width: fit-content;
+    max-width: 100%;
+    padding-bottom: 0.12em;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+
+  .teaser-track :global(a:hover .card-name),
+  .teaser-track :global(a:focus-visible .card-name) {
+    border-color: var(--black);
+  }
+
+  /* Ohne Motion: kein Scrub — die restlichen Karten sind nativ erreichbar */
+  @media (prefers-reduced-motion: reduce) {
+    .teaser-clip { overflow-x: auto; }
+  }
+
+  /* Waehrend des Pins muss die GANZE Sektion unter der Leiste in den
+     Viewport passen: kompaktere Aussenabstaende als der Kurtinen-Standard
+     (der Atem vor dem Gruen entsteht durch den Anfahrtsweg der Sektion) */
+  .termine {
+    padding-top: clamp(104px, 13vw, 208px);
+    padding-bottom: clamp(56px, 7vw, 112px);
+  }
+
+  /* Roter Balken: vertikales Innen-Padding — die Hoehe kommt jetzt
+     hauptsaechlich von den 48er-Eventtiteln */
+  .termine .form-block {
+    padding-top: clamp(40px, 5vw, 80px);
+    padding-bottom: clamp(40px, 5vw, 80px);
+  }
+
+  /* Etwas engerer Abstand Headline → Balken, damit die ganze Sektion
+     beim Pin unter der Leiste ins Bild passt */
+  .termine .sec-head { margin-bottom: clamp(24px, 3.5vw, 56px); }
+
+  /* crazy-cat liegt AUF dem Balken, an dessen linker Kante (halb drueber
+     hinaus), vertikal mittig — kein Peek ueber die Oberkante mehr */
+  .termine .form-row { margin-top: 0; }
+  .termine .form-cat {
+    right: auto;
+    left: calc((100% - var(--form-w)) - var(--cat-w) * 0.35);
+    bottom: auto;
+    top: calc(50% - var(--cat-w) / var(--cat-ar) / 2);
+  }
+
+  /* Terminliste beginnt an der 50%-Mittelmarke des Viewports — links davon
+     bleibt Platz fuer die Katze (Balken startet bei 25vw + Innenrand).
+     Zeilen laufen bis zum rechten Innenrand durch (keine 62ch-Kappung,
+     sonst brechen die 48er-Titel um). */
+  .termine .termine-list {
+    margin-left: calc(25vw - var(--margin));
+  }
+
+  .termine .termine-list li {
+    max-width: none;
   }
 
   .termine-list {
@@ -518,10 +669,25 @@ const termine = [
   }
 
   .termine-datum { font-weight: var(--fw-bold); grid-row: span 2; }
-  .termine-titel { font-weight: var(--fw-bold); text-transform: uppercase; }
+
+  /* Eventtitel auf Unterüberschriften-Stufe (48) — wie die Namen in der
+     Drei-Wege-Liste, damit die Events als Hauptinhalt der Sektion wirken */
+  .termine-titel {
+    font-size: var(--fs-sub);
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
   .termine-list li > span:last-child { grid-column: 2; }
 
   /* ---------- Spenden ---------- */
+  /* Ganze Sektion auf Gruen — deckt als opake Flaeche auch die gepinnte
+     rote Termine-Sektion beim Drueberschieben ab */
+  .spenden {
+    background: var(--green);
+    padding-top: clamp(48px, 7vw, 110px);
+    padding-bottom: clamp(48px, 7vw, 110px);
+  }
+
   .spenden-copy { max-width: 46ch; margin: 0; }
   .spenden-actions { display: flex; flex-wrap: wrap; gap: 12px var(--gutter); }
 </style>

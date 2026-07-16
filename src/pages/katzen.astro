@@ -111,6 +111,7 @@ const katzen = katzenRaw.map((k) => {
   const freigang = /freigang|freigäng/.test(text);
   const tags = [...new Set(TAG_WORDS.filter(([word]) => text.includes(word)).map(([, label]) => label))].slice(0, 2);
   return {
+    slug: k.slug,
     name: k.title.replace(/\s*\+\s*/g, ' & '),
     ageText: k.age === 1 ? '1 Jahr' : k.age ? `${k.age} Jahre` : 'Alter unbekannt',
     alter: k.age == null || k.age <= 2 ? 'jung' : k.age <= 7 ? 'erwachsen' : 'senior',
@@ -189,7 +190,6 @@ const happyEnds = [
        Teilfläche, die an die rechte Viewportkante andockt -->
   <section id="zuhause-gesucht" class="tinder sec">
     <div class="sec-head pad-x">
-      <p class="eyebrow">Katzentinder</p>
       <h1 class="display"><span class="nb">Liebe auf den</span> <span class="nb">ersten Miau</span></h1>
     </div>
     <div class="tinder-grid">
@@ -220,8 +220,13 @@ const happyEnds = [
           ))}
           <div class="deck-empty" id="deck-empty" hidden>
             <p class="deck-empty-line">Alle durchgeswiped.</p>
-            <p>Keine Sorge — die Katzen nehmen das nicht persönlich. Fast.</p>
-            <p class="gap-16"><button class="btn btn-ghost" id="btn-restart" type="button">Nochmal von vorn</button></p>
+            <p id="deck-empty-copy">Keine Sorge — die Katzen nehmen das nicht persönlich. Fast.</p>
+            <p class="gap-16 deck-empty-actions">
+              {/* zeigt nur die Katzen, die noch kein Match sind */}
+              <button class="btn" id="btn-continue" type="button">Weiter stöbern</button>
+              {/* kompletter Neustart inkl. Matches */}
+              <button class="btn btn-ghost" id="btn-restart" type="button">Alles auf Anfang</button>
+            </p>
           </div>
         </div>
         <div class="deck-actions" id="deck-actions">
@@ -253,7 +258,6 @@ const happyEnds = [
   <!-- Überblick: alle Katzen als Raster mit Filtern -->
   <section id="alle-katzen" class="alle pad-x sec">
     <div class="sec-head">
-      <p class="eyebrow">Lieber Überblick statt Swipen?</p>
       <h2 class="display"><span class="nb">Alle Katzen</span> <span class="nb">im Blick.</span></h2>
     </div>
     <div class="filters" id="filters">
@@ -332,8 +336,7 @@ const happyEnds = [
   <!-- Katzen von privat -->
   <section id="privat" class="privat pad-x sec">
     <div class="sec-head">
-      <p class="eyebrow">Katzen von privat</p>
-      <h2 class="display"><span class="nb">Nicht bei</span> <span class="nb">uns, aber</span> <span class="nb">über uns.</span></h2>
+      <h2 class="display"><span class="nb">Von privat,</span> <span class="nb">aber mit</span> <span class="nb">Herz.</span></h2>
     </div>
     <p>
       Manchmal suchen Katzen direkt aus privaten Haushalten ein neues Zuhause — etwa wenn
@@ -346,7 +349,6 @@ const happyEnds = [
   <!-- Happy Ends: Teilfläche rechts, fat-cat lugt über die Kante -->
   <section id="happy-ends" class="happy sec">
     <div class="sec-head pad-x">
-      <p class="eyebrow">Happy Ends</p>
       <h2 class="display"><span class="nb">Erst schnurrt</span> <span class="nb">sie. Dann</span> <span class="nb">regiert sie.</span></h2>
     </div>
     <div class="form-row" style="--c: var(--pink); --form-w: 62%; --cat-w: clamp(120px, 16vw, 220px); --cat-ar: 1.29">
@@ -389,17 +391,22 @@ const happyEnds = [
   const matchCta = document.getElementById('match-cta');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const THRESHOLD = 120;
+  // aktive Runde: beim "Weiter stöbern" nur die Katzen ohne Match
+  let deckCards = cards;
+  // Namen der gematchten Katzen (nicht "liked" nennen — der swipe()-
+  // Parameter heißt so und würde das Set innerhalb der Funktion verdecken)
+  const matched = new Set();
   let top = 0;
   let drag = null;
 
-  const topCard = () => (top < cards.length ? cards[top] : null);
+  const topCard = () => (top < deckCards.length ? deckCards[top] : null);
 
   // Stapel: hintere Karten leicht nach rechts unten versetzt. Max. 7 px pro
   // Ebene — so lugt nur der weiße Kartenrand (14 px Padding) hervor.
   const TILTS = ['none', 'translate(7px, 7px)', 'translate(14px, 14px)'];
 
   function setStack() {
-    cards.forEach((c, i) => {
+    deckCards.forEach((c, i) => {
       if (i < top) return;
       const d = i - top;
       c.style.transform = TILTS[Math.min(d, 2)];
@@ -442,6 +449,7 @@ const happyEnds = [
     btn.append(swatch, name, more);
     li.appendChild(btn);
     matchList.appendChild(li);
+    matched.add(cat.name);
     matchesEmpty.hidden = true;
     document.getElementById('matches-cat').hidden = true;
     matchCta.hidden = false;
@@ -461,11 +469,17 @@ const happyEnds = [
     if (liked) addMatch(byName[card.dataset.name]);
     window.setTimeout(() => {
       // nach Restart nicht mehr ausblenden
-      if (cards.indexOf(card) < top) card.style.visibility = 'hidden';
+      if (deckCards.indexOf(card) < top) card.style.visibility = 'hidden';
     }, reduced ? 0 : 500);
     setStack();
-    if (top >= cards.length) {
-      // alle durch: Buttons weichen dem "Nochmal von vorn"-Button
+    if (top >= deckCards.length) {
+      // alle durch: Buttons weichen den Restart-Optionen. "Weiter stöbern"
+      // nur anbieten, wenn es noch Katzen ohne Match gibt.
+      const allMatched = matched.size >= cards.length;
+      document.getElementById('btn-continue').hidden = allMatched;
+      document.getElementById('deck-empty-copy').textContent = allMatched
+        ? 'Alle gematcht — mehr Katzen haben wir gerade nicht. Respekt.'
+        : 'Keine Sorge — die Katzen nehmen das nicht persönlich. Fast.';
       empty.hidden = false;
       document.getElementById('deck-actions').hidden = true;
     }
@@ -509,7 +523,11 @@ const happyEnds = [
 
   document.getElementById('btn-like').addEventListener('click', () => swipe(true));
   document.getElementById('btn-nope').addEventListener('click', () => swipe(false));
-  document.getElementById('btn-restart').addEventListener('click', () => {
+
+  // Deck mit einer (Teil-)Menge der Karten neu aufsetzen — Karten außerhalb
+  // der Runde bleiben ausgeblendet
+  function resetDeck(list) {
+    deckCards = list;
     top = 0;
     empty.hidden = true;
     document.getElementById('deck-actions').hidden = false;
@@ -518,9 +536,25 @@ const happyEnds = [
       c.style.opacity = '';
       c.style.visibility = '';
       c.style.pointerEvents = '';
+      c.style.display = list.includes(c) ? '' : 'none';
       stamps(c, 0);
     });
     setStack();
+  }
+
+  // Weiter stöbern: nur die Katzen, die noch kein Match sind
+  document.getElementById('btn-continue').addEventListener('click', () => {
+    resetDeck(cards.filter((c) => !matched.has(c.dataset.name)));
+  });
+
+  // Alles auf Anfang: kompletter Reset inkl. Matches
+  document.getElementById('btn-restart').addEventListener('click', () => {
+    matched.clear();
+    matchList.innerHTML = '';
+    matchesEmpty.hidden = false;
+    document.getElementById('matches-cat').hidden = false;
+    matchCta.hidden = true;
+    resetDeck(cards);
   });
 
   setStack();
@@ -596,8 +630,12 @@ const happyEnds = [
     b.addEventListener('click', () => selectCat(b.dataset.name));
   });
 
-  // Initialauswahl: erste Katze (verdrahtet auch das Carousel)
-  selectCat(CATS[0].name);
+  // Initialauswahl: Deep-Link /katzen/#<slug> (z. B. von den Teaser-Karten
+  // der Startseite) springt direkt zur Detailansicht dieser Katze,
+  // sonst erste Katze (verdrahtet auch das Carousel)
+  const bySlug = Object.fromEntries(CATS.map((c) => [c.slug, c]));
+  const linked = bySlug[decodeURIComponent(location.hash.slice(1))];
+  selectCat((linked ?? CATS[0]).name, Boolean(linked));
 
   /* ---------- Filter fürs Raster ---------- */
   const chips = Array.from(document.querySelectorAll('.chip'));
@@ -637,14 +675,15 @@ const happyEnds = [
   if (!reduced) {
     gsap.registerPlugin(ScrollTrigger);
 
-    // Einstieg: Deck hebt sich, Matches-Fläche schiebt von rechts herein
-    gsap.from('.deck-col', { y: 48, opacity: 0, duration: 0.8, ease: 'power3.out', delay: 0.1 });
-    gsap.from('.matches', { x: 90, opacity: 0, duration: 0.9, ease: 'power3.out', delay: 0.2 });
+    // Einstieg: dezent gestaffeltes Aufblenden (einheitliche Lade-
+    // Formsprache: nur Fade + kleiner Versatz, keine weiten Flüge)
+    gsap.from('.deck-col', { y: 20, opacity: 0, duration: 0.6, ease: 'power2.out', delay: 0.05 });
+    gsap.from('.matches', { y: 20, opacity: 0, duration: 0.6, ease: 'power2.out', delay: 0.15 });
 
     // Sektionsköpfe steigen beim Hereinscrollen auf
     document.querySelectorAll('.alle .sec-head, .privat .sec-head, .happy .sec-head').forEach((el) => {
       gsap.from(el, {
-        y: 56,
+        y: 24,
         opacity: 0,
         duration: 0.8,
         ease: 'power3.out',
@@ -654,7 +693,7 @@ const happyEnds = [
 
     // Filtergruppen staffeln sich ein
     gsap.from('.filter-group', {
-      y: 28,
+      y: 16,
       opacity: 0,
       duration: 0.5,
       stagger: 0.08,
@@ -667,7 +706,7 @@ const happyEnds = [
       start: 'top 92%',
       once: true,
       onEnter: (batch) =>
-        gsap.fromTo(batch, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.07, ease: 'power2.out', overwrite: true }),
+        gsap.fromTo(batch, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.07, ease: 'power2.out', overwrite: true }),
     });
   }
 </script>
@@ -829,6 +868,9 @@ const happyEnds = [
 
   /* display:flex würde das hidden-Attribut sonst aushebeln */
   .deck-empty[hidden] { display: none; }
+
+  .deck-empty-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .deck-empty-actions .btn[hidden] { display: none; }
 
   .deck-empty-line {
     font-size: var(--fs-sub);
@@ -1011,13 +1053,15 @@ const happyEnds = [
     cursor: pointer;
   }
   .cd-nav:hover, .cd-nav:focus-visible { background: var(--black); color: var(--white); }
-  .cd-prev { left: 10px; }
-  .cd-next { right: 10px; }
+  /* Pfeile berühren die jeweilige Bildkante */
+  .cd-prev { left: 0; }
+  .cd-next { right: 0; }
 
+  /* Pagination sitzt bündig in der Ecke */
   .cd-count {
     position: absolute;
-    right: 10px;
-    bottom: 10px;
+    right: 0;
+    bottom: 0;
     padding: 0.1em 0.5em;
     background: var(--white);
     font-weight: var(--fw-text);
@@ -1063,8 +1107,18 @@ const happyEnds = [
   /* Raster in der rechten Hälfte: zwei Spalten */
   .grid-cards { grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr)); }
 
-  /* Ausgewählte Katze im Raster: hellblaue Fläche hinter der Karte
-     (Markenfarbe als Fläche statt Kontur oder Gewicht). Kein Padding —
-     die Karte darf beim Auswählen nicht springen. */
-  .gcard.selected { background: var(--blue); }
+  /* Ausgewählte Katze im Raster: Systemlinie (2px, wie bei Termine- und
+     Drei-Wege-Listen) als Unterstreichung unterm Namen — nur so breit wie
+     der Text. Transparente Linie reserviert den Platz, damit beim Auswählen
+     nichts springt; Hover/Fokus zeigen sie als Vorschau ebenfalls. */
+  .gcard :global(.card-name) {
+    width: fit-content;
+    max-width: 100%;
+    padding-bottom: 0.12em;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+  .gcard.selected :global(.card-name),
+  .gcard-open:hover :global(.card-name),
+  .gcard-open:focus-visible :global(.card-name) { border-color: var(--black); }
 </style>

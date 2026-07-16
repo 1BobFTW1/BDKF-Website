@@ -11,8 +11,10 @@ const items = [
 ---
 <header class="nav">
   <a class="nav-logo" href="/" aria-label="Bund der Katzenfreunde — zur Startseite">
-    {/* Wort-Bild-Marke, Höhe ≈ 1/16 der Bezugsgröße (Viewporthöhe) */}
-    <img src="/assets/logos/black/bdkf-wortbildmarke-tight.svg" alt="" width="895" height="465" />
+    {/* Wort-Bild-Marke, Höhe ≈ 1/16 der Bezugsgröße (Viewporthöhe) —
+        beide Varianten im DOM, der Kontrast-Switch blendet um */}
+    <img class="logo-black" src="/assets/logos/black/bdkf-wortbildmarke-tight.svg" alt="" width="895" height="465" />
+    <img class="logo-white" src="/assets/logos/white/bdkf-wortbildmarke-white-tight.svg" alt="" width="895" height="465" />
   </a>
   <nav aria-label="Hauptnavigation">
     <ul>
@@ -25,23 +27,66 @@ const items = [
   </nav>
 </header>
 
+<script>
+  /* Farb-Mitnahme: die Leiste übernimmt die Hintergrundfarbe der Fläche,
+     die gerade unter ihrer Mittellinie liegt. Farbige Sektionen tragen
+     data-nav-bg="<CSS-Farbe>", dunkle zusätzlich data-nav-dark (schaltet
+     .on-dark: Logo + Links auf Weiß). Ohne Treffer: Weiß.
+     getBoundingClientRect berücksichtigt auch GSAP-Pins/Transforms;
+     bei Überlappung gewinnt die spätere Fläche im DOM (= obere z-Ebene). */
+  const nav = document.querySelector('.nav');
+  const surfaces = Array.from(document.querySelectorAll('[data-nav-bg]'));
+  if (nav && surfaces.length) {
+    const update = () => {
+      const mid = nav.getBoundingClientRect().height / 2;
+      let bg = '';
+      let dark = false;
+      for (const el of surfaces) {
+        const r = el.getBoundingClientRect();
+        if (r.top < mid && r.bottom > mid) {
+          bg = el.dataset.navBg || '';
+          dark = el.hasAttribute('data-nav-dark');
+        }
+      }
+      nav.style.background = bg || 'var(--white)';
+      nav.classList.toggle('on-dark', dark);
+    };
+    addEventListener('scroll', update, { passive: true });
+    addEventListener('resize', update);
+    update();
+  }
+</script>
+
 <style>
   /* Fixiert am oberen Rand: bleibt beim Scrollen stehen, liegt über allem
-     Seiteninhalt (auch über gepinnten GSAP-Flächen) */
+     Seiteninhalt (auch über gepinnten GSAP-Flächen). Der Hintergrund wird
+     per Script an die Fläche darunter angeglichen ([data-nav-bg]) —
+     auf dunklen Flächen schaltet .on-dark Logo und Links auf Weiß. */
   .nav {
     position: sticky;
     top: 0;
     z-index: 100;
     display: flex;
-    align-items: flex-start;
+    /* Logo und Links vertikal mittig zueinander, symmetrisches Padding */
+    align-items: center;
     justify-content: space-between;
     gap: var(--gutter);
-    padding: clamp(20px, 4svh, 52px) var(--margin) 8px;
+    padding: clamp(16px, 2.5svh, 32px) var(--margin);
     background: var(--white);
+    transition: background-color 0.25s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav { transition: none; }
   }
 
   .nav-logo { display: block; line-height: 0; }
   .nav-logo img { height: clamp(40px, 6.25svh, 56px); width: auto; }
+
+  .nav .logo-white { display: none; }
+  .nav.on-dark .logo-black { display: none; }
+  .nav.on-dark .logo-white { display: block; }
+  .nav.on-dark nav a { color: var(--white); }
 
   /* Links: versal, rechtsbündig über die rechte Hälfte verteilt */
   nav { flex: 1 1 auto; max-width: 50%; margin-left: auto; }
@@ -64,6 +109,11 @@ const items = [
     text-decoration: none;
     font-size: var(--fs-text);
     line-height: 1.2;
+    transition: color 0.2s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    nav a { transition: none; }
   }
 
   /* Breite auf Bold-Maß reservieren, damit beim Fett-Werden nichts springt */
