@@ -181,17 +181,20 @@ const items = [
        background: inherit übernimmt live den vom Kontrast-Script
        gesetzten Nav-Hintergrund (weiß/gelb/schwarz/grün). */
     nav { display: none; }
+    /* Box laeuft bis an die rechte Bildschirmkante durch; die Items bleiben
+       ueber padding-right = Seitenrand exakt unter dem Burger-Icon */
     .nav.open nav {
       display: block;
       position: absolute;
       top: 100%;
-      right: var(--margin);
+      right: 0;
       left: auto;
       width: max-content;
       max-width: none;
       margin-left: 0;
       background: inherit;
       padding: 4px 20px 16px;
+      padding-right: var(--margin);
     }
 
     /* Items rechtsbuendig, direkt unter der offenen Katze */
