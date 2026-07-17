@@ -24,6 +24,14 @@ const {
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" id="favicon" />
+    <script is:inline>
+      // SYNCHRON vor dem ersten Paint: .motion gated alle Einblende-Styles.
+      // Laeuft das erst im deferred Bundle, painten Elemente kurz sichtbar,
+      // werden dann versteckt und wieder eingeblendet — das Flickern beim Laden.
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('motion');
+      }
+    </script>
     {/* Schrift komplett self-hosted (src/styles/fonts.css) — kein Typekit,
         keine Domain-Freischaltung nötig */}
     {/* Vercel Web Analytics: Seitenaufrufe, laeuft nur auf Vercel-Deploys */}
@@ -38,9 +46,9 @@ const {
 
     <script>
       // Peek-in-Animation: einmalig beim Scrollen in den Viewport.
-      // prefers-reduced-motion: Endzustand steht sofort (keine .motion-Klasse).
+      // prefers-reduced-motion: Endzustand steht sofort (keine .motion-Klasse —
+      // die setzt das Inline-Script im <head> vor dem ersten Paint).
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        document.documentElement.classList.add('motion');
         const io = new IntersectionObserver(
           (entries) => {
             for (const entry of entries) {

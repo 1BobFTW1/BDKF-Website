@@ -4,12 +4,14 @@ import Base from '../layouts/Base.astro';
 <Base title="404 — Seite nicht gefunden | Bund der Katzenfreunde e. V.">
   <section class="nf sec">
     <div class="nf-text pad-x">
-      <h1 class="display">Hier ist nichts. Nur eine Katze.</h1>
+      <h1 class="display">Hier ist nichts.<br />Nur diese Katze.</h1>
       <p class="gap-8"><a class="btn" href="/">Zurück zur Startseite</a></p>
     </div>
-    <div class="form-row" style="--c: var(--purple); --form-w: 62%; --cat-w: clamp(140px, 18vw, 260px); --cat-ar: 1.21">
+    {/* Katze auf der Kante: --cat-in = 55 % Eintauchtiefe — wirkt halbiert,
+        laesst die groessere Katze aber noch in den Viewport passen */}
+    <div class="form-row" style="--c: var(--purple); --form-w: 100%; --cat-w: clamp(220px, 28vw, 420px); --cat-ar: 1.21; --cat-in: calc(var(--cat-w) / var(--cat-ar) * 0.55)">
       <img
-        class="illu form-cat reveal"
+        class="illu form-cat front reveal"
         src="/assets/illustrations/flat-cat-tight.svg"
         alt=""
         width="857"
@@ -20,15 +22,32 @@ import Base from '../layouts/Base.astro';
   </section>
 </Base>
 
+<style is:global>
+  /* Wie auf der Startseite: Footer grenzt direkt an die farbige Flaeche —
+     der lila Balken laeuft bis ans schwarze Band, die Peek-Katze schaut
+     vor Lila ueber die Band-Oberkante. */
+  .footer.sec {
+    position: relative;
+    z-index: 2;
+    margin-top: 0;
+    display: flow-root;
+  }
+  .footer.sec .footer-cat {
+    margin-top: calc(-1 * clamp(210px, 22.5vw, 345px) / 1.586);
+  }
+</style>
+
 <style>
   .nf {
     display: flex;
     flex-direction: column;
-    min-height: calc(100svh - var(--nav-h));
+    /* echte Leistenhoehe (Logo + 2x Padding) statt --nav-h-Token — der
+       unterschaetzt sie, und der Balken rutschte unter den Fold */
+    min-height: calc(100svh - clamp(40px, 6.25svh, 56px) - 2 * clamp(16px, 2.5svh, 32px));
   }
 
-  /* Freiraum über der Kante = sichtbare Katzenhöhe (AR flat-cat ≈ 1.21) */
-  .nf { --cat-w: clamp(140px, 18vw, 260px); }
+  /* Freiraum über der Kante = sichtbarer Katzenanteil (AR ≈ 1.21) */
+  .nf { --cat-w: clamp(220px, 28vw, 420px); }
 
   .nf-text {
     flex: 1 0 auto;
@@ -36,10 +55,67 @@ import Base from '../layouts/Base.astro';
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    padding-top: clamp(24px, 4svh, 56px);
-    padding-bottom: calc(var(--cat-w) / 1.21 + 16px);
+    padding-top: clamp(8px, 1.5svh, 16px);
+    /* kein extra Puffer: den Ueberhang der Katze reserviert bereits der
+       margin-top der form-row — so rutscht die ganze Komposition hoeher */
+    padding-bottom: 0;
   }
-  .nf-text .eyebrow { margin-bottom: clamp(12px, 1.5vw, 24px); }
 
-  .nf-band { min-height: clamp(120px, 25svh, 240px); }
+  /* enger, damit Headline + Button + Katze + 40svh-Balken zusammen in den
+     ersten Viewport passen; Ueberhang = 45 % der Katzenhoehe */
+  .nf-text .gap-8 { margin-top: 8px; }
+  .nf .form-row { margin-top: calc(var(--cat-w) / 1.21 * 0.45); }
+
+  /* Lila Balken: 40 % der Viewporthoehe */
+  .nf-band { min-height: 40svh; }
+
+  /* Katze gross, exakt horizontal mittig, auf der Kante geschnitten */
+  .nf .form-cat {
+    right: auto;
+    left: calc(50% - var(--cat-w) / 2);
+  }
 </style>
+
+<script>
+  /* Die Katze weicht der Maus aus: kommt der Cursor in ihren Fluchtradius,
+     schiebt sie sich vom Cursor weg (die Messung folgt dem Transform, sie
+     flieht also weiter, wenn man nachsetzt) — ganz anhovern geht nie.
+     Nur fuer echte Zeiger, nicht bei reduzierter Bewegung. */
+  const cat = document.querySelector('.nf .form-cat');
+  if (
+    cat instanceof HTMLElement &&
+    matchMedia('(pointer: fine)').matches &&
+    !matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
+    let tx = 0;
+    let ty = 0;
+    document.addEventListener('mousemove', (e) => {
+      const r = cat.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const dx = cx - e.clientX;
+      const dy = cy - e.clientY;
+      const dist = Math.hypot(dx, dy) || 1;
+      const R = r.width * 0.85; // Fluchtradius
+      if (dist < R) {
+        const step = ((R - dist) / R) * 36;
+        tx += (dx / dist) * step;
+        ty += (dy / dist) * step;
+        // Auf dem Balken bleiben: seitlich bis kurz vor den Rand, vertikal
+        // nur leicht — die Kante soll sie weiter schneiden
+        const maxX = innerWidth / 2 - r.width / 2 - 24;
+        tx = Math.max(-maxX, Math.min(maxX, tx));
+        ty = Math.max(-36, Math.min(60, ty));
+        cat.style.transition = 'transform 0.3s ease-out';
+        cat.style.transform = `translate(${tx}px, ${ty}px)`;
+      } else if (dist > R * 1.8 && (tx || ty)) {
+        // Cursor weit weg: gemuetlich zurueck zur Mitte
+        tx *= 0.9;
+        ty *= 0.9;
+        if (Math.abs(tx) < 1 && Math.abs(ty) < 1) { tx = 0; ty = 0; }
+        cat.style.transition = 'transform 0.6s ease-out';
+        cat.style.transform = `translate(${tx}px, ${ty}px)`;
+      }
+    });
+  }
+</script>

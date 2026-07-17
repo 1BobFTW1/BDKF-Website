@@ -188,13 +188,17 @@ const termine = [
     /* ---------- Entrance: dezent gestaffeltes Aufblenden ----------
        Einheitliche Lade-Formsprache auf allen Seiten: nur Fade + kleiner
        Versatz (≤ 24 px), kurze Dauern, enge Staffelung — keine weiten
-       Flüge quer über die Seite. */
+       Flüge quer über die Seite.
+       WICHTIG: Die STARTZUSTAENDE (opacity 0 + Versatz) setzt CSS unter
+       html.motion — schon vor dem ersten Paint. Hier wird nur noch per
+       .to() zum Endzustand animiert: kein sichtbar→versteckt→sichtbar-
+       Flickern beim Laden mehr. */
     const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
-    tl.from('.hero-head .display', { y: 24, opacity: 0, duration: 0.6 })
-      .from('.hero-intro', { y: 16, opacity: 0, duration: 0.5 }, '-=0.35')
-      .from('.hero-cta', { y: 16, opacity: 0, duration: 0.5 }, '-=0.35')
-      .from('.hero-form', { opacity: 0, duration: 0.6 }, 0.15)
-      .from('.hero-form-cat', { y: 24, opacity: 0, duration: 0.5 }, '-=0.3');
+    tl.to('.hero-head .display', { y: 0, opacity: 1, duration: 0.6 })
+      .to('.hero-intro', { y: 0, opacity: 1, duration: 0.5 }, '-=0.35')
+      .to('.hero-cta', { y: 0, opacity: 1, duration: 0.5 }, '-=0.35')
+      .to('.hero-form', { opacity: 1, duration: 0.6 }, 0.15)
+      .to('.hero-form-cat', { y: 0, opacity: 1, duration: 0.5 }, '-=0.3');
 
     /* Rutsche: beim Scrollen kippt der gelbe Balken (Drehpunkt rechts unten,
        die linke Kante senkt sich) — und die lying-cat rutscht die schiefe
@@ -267,11 +271,14 @@ const termine = [
     });
     }
 
-    /* ---------- Scroll-Reveals für die Sektionen ---------- */
+    /* ---------- Scroll-Reveals für die Sektionen ----------
+       Wie beim Hero-Entrance: Startzustaende kommen aus CSS (html.motion,
+       vor dem ersten Paint), hier wird nur per .to() zum Endzustand
+       animiert — kein Flickern beim Reinscrollen. */
     document.querySelectorAll('.wege .sec-head, .teaser .sec-head, .termine .sec-head, .spenden .sec-head').forEach((el) => {
-      gsap.from(el, {
-        y: 24,
-        opacity: 0,
+      gsap.to(el, {
+        y: 0,
+        opacity: 1,
         duration: 0.8,
         ease: 'power3.out',
         scrollTrigger: { trigger: el, start: 'top 88%' },
@@ -279,9 +286,9 @@ const termine = [
     });
 
     // Drei Wege: Zeilen staffeln sich ein
-    gsap.from('.wege-list li', {
-      y: 20,
-      opacity: 0,
+    gsap.to('.wege-list li', {
+      y: 0,
+      opacity: 1,
       duration: 0.6,
       stagger: 0.12,
       ease: 'power2.out',
@@ -315,19 +322,19 @@ const termine = [
       start: 'top 90%',
       once: true,
       onEnter: (batch) =>
-        gsap.fromTo(batch, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, stagger: 0.12, ease: 'power2.out', overwrite: true }),
+        gsap.to(batch, { y: 0, opacity: 1, duration: 0.7, stagger: 0.12, ease: 'power2.out', overwrite: true }),
     });
 
-    // Termine: Coral-Fläche fährt von rechts herein, die Katze legt sich danach drauf
-    gsap.from('.termine .form-block', {
-      xPercent: 110,
+    // Termine: Rot-Fläche fährt von rechts herein, die Katze legt sich danach drauf
+    gsap.to('.termine .form-block', {
+      x: 0,
       duration: 0.9,
       ease: 'power3.out',
       scrollTrigger: { trigger: '.termine .form-row', start: 'top 78%' },
     });
-    gsap.from('.termine .form-cat', {
-      y: 60,
-      opacity: 0,
+    gsap.to('.termine .form-cat', {
+      y: 0,
+      opacity: 1,
       duration: 0.7,
       delay: 0.35,
       ease: 'power2.out',
@@ -349,9 +356,9 @@ const termine = [
     }
 
     // Mach mit: Copy + Buttons blenden gestaffelt auf
-    gsap.from('.spenden .spenden-copy, .spenden .spenden-actions', {
-      y: 20,
-      opacity: 0,
+    gsap.to('.spenden .spenden-copy, .spenden .spenden-actions', {
+      y: 0,
+      opacity: 1,
       duration: 0.6,
       stagger: 0.12,
       ease: 'power2.out',
@@ -399,6 +406,52 @@ const termine = [
     height: 100%;
     object-fit: cover;
     display: block;
+  }
+
+  /* Entrance-Startzustaende: greifen VOR dem ersten Paint (html.motion wird
+     synchron im <head> gesetzt), GSAP blendet per .to() zum Endzustand.
+     Ohne Motion (reduced motion / kein JS-Gate) bleibt alles sichtbar. */
+  :global(html.motion) .hero-head .display,
+  :global(html.motion) .hero-form-cat {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  :global(html.motion) .hero-intro,
+  :global(html.motion) .hero-cta {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  :global(html.motion) .hero-form {
+    opacity: 0;
+  }
+
+  /* Scroll-Reveal-Startzustaende (gleiches Prinzip): die GSAP-.to()-Tweens
+     blenden beim Reinscrollen zum Endzustand */
+  :global(html.motion) .wege .sec-head,
+  :global(html.motion) .teaser .sec-head,
+  :global(html.motion) .termine .sec-head,
+  :global(html.motion) .spenden .sec-head,
+  :global(html.motion) .teaser-track :global(.card) {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  :global(html.motion) .wege-list li,
+  :global(html.motion) .spenden-copy,
+  :global(html.motion) .spenden-actions {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  :global(html.motion) .termine .form-block {
+    transform: translateX(110%);
+  }
+
+  :global(html.motion) .termine .form-cat {
+    opacity: 0;
+    transform: translateY(60px);
   }
 
   /* ---------- Hero (Figma 306:80) ---------- */
