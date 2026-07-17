@@ -728,6 +728,11 @@ const termine = [
       left: calc(50% - var(--catw) / 2);
     }
 
+    /* Gelber Balken grenzt direkt an die gelbe "Wer wartet"-Sektion:
+       der transparente margin-top (Desktop-Buehne fuers Kippen) entfaellt —
+       Balken und Sektion verschmelzen zu einer Flaeche */
+    .teaser { margin-top: 0; }
+
     /* Teaser: nativ swipebarer Karten-Slider statt GSAP-Scrub —
        eine Karte plus Anschnitt der naechsten, mit Snap */
     .teaser-clip {

@@ -287,7 +287,7 @@ p:last-child { margin-bottom: 0; }
 }
 
 /* ---------- Mobile-Überschriften (< 720px) ----------
-   Fixe 80px — HIER ändern, falls größer/kleiner. Lange Wörter
+   Fixe 70px — HIER ändern, falls größer/kleiner. Lange Wörter
    (SCHNURRSTRACKS) dürfen mitten im Wort über mehrere Zeilen brechen
    (overflow-wrap: anywhere), damit nichts über den Rand läuft.
    Steht bewusst am Dateiende: überschreibt die Wortsäulen-Logik von
@@ -295,7 +295,7 @@ p:last-child { margin-bottom: 0; }
    Riesen-Leerzeichen sonst selbst über den Rand hängen. */
 @media (max-width: 719px) {
   .display {
-    font-size: 80px;
+    font-size: 70px;
     overflow-wrap: anywhere;
   }
 
