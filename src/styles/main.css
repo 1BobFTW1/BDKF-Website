@@ -49,12 +49,13 @@ p:last-child { margin-bottom: 0; }
   overflow-wrap: normal;
 }
 
-/* Unterüberschrift: 3× Text, Bold, versal — die Standard-Headline
-   für Unterseiten und Sektionen. Alle Headings tragen dasselbe Gewicht. */
+/* Unterüberschrift: 3× Text, Regular, versal — die Standard-Headline
+   für Unterseiten und Sektionen. Bold bleibt den 144er-Überschriften
+   und den 16er-Labels vorbehalten. */
 .sub {
   margin: 0;
   font-size: var(--fs-sub);
-  font-weight: var(--fw-bold);
+  font-weight: var(--fw-text);
   line-height: var(--lh-display);
   text-transform: uppercase;
 }
@@ -261,7 +262,7 @@ p:last-child { margin-bottom: 0; }
 .card-name {
   margin: 0.45em 0 0;
   font-size: var(--fs-sub);
-  font-weight: var(--fw-bold);
+  font-weight: var(--fw-text);
   line-height: var(--lh-display);
   text-transform: uppercase;
 }
