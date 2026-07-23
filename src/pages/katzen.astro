@@ -711,7 +711,8 @@ const lightboxData = Object.fromEntries([
   const openDetail = (name) => selectCat(name, true);
 
   document.querySelectorAll('.gcard-open').forEach((b) => {
-    b.addEventListener('click', () => selectCat(b.dataset.name));
+    // Mobile (einspaltig): Detailansicht liegt unterm Raster — hinscrollen
+    b.addEventListener('click', () => selectCat(b.dataset.name, matchMedia('(max-width: 719px)').matches));
   });
 
   // Initialauswahl: Deep-Link /katzen/#<slug> (z. B. von den Teaser-Karten
@@ -1394,4 +1395,46 @@ const lightboxData = Object.fromEntries([
   .gcard.selected :global(.card-name),
   .gcard-open:hover :global(.card-name),
   .gcard-open:focus-visible :global(.card-name) { border-color: var(--black); }
+
+  /* ---------- Mobile (< 720px) ----------
+     Am Dateiende, damit die Regeln in der Kaskade gewinnen. */
+  @media (max-width: 719px) {
+    /* Tinder gestapelt: Deck vollbreit oben, Matches-Flaeche darunter */
+    .tinder-grid {
+      grid-template-columns: 1fr;
+      padding-right: var(--margin);
+      gap: clamp(48px, 12vw, 72px) 0;
+      margin-top: clamp(48px, 12vw, 72px);
+    }
+    .deck-col { --cardw: calc(100vw - 2 * var(--margin)); width: 100%; }
+    .deck-actions { width: 100%; }
+
+    /* Matches wieder randlos: volle Breite wie am Desktop */
+    .matches {
+      margin-left: calc(-1 * var(--margin));
+      margin-right: calc(-1 * var(--margin));
+      padding: clamp(32px, 9vw, 48px) var(--margin) clamp(48px, 13vw, 64px);
+    }
+    .matches-cat {
+      width: clamp(140px, 40vw, 200px);
+      bottom: -24px;
+      right: var(--margin);
+    }
+
+    /* Filter duerfen mobil in mehrere Zeilen umbrechen */
+    .filters { flex-wrap: wrap; }
+
+    /* Grid-Split einspaltig: Raster zuerst, Detailansicht darunter
+       (Auswahl scrollt per JS zur Detailansicht) */
+    .grid-split { display: flex; flex-direction: column; gap: clamp(40px, 10vw, 56px); }
+    .cat-detail { position: static; order: 2; width: 100%; }
+
+    /* Privat-Carousel: Karten schmaler als der Viewport — die naechste
+       Karte lugt rein und laedt zum Swipen ein */
+    .privat-track .card { flex: 0 0 78vw; }
+
+    /* Happy-Zeilen: Foto + Name nebeneinander, Kurzzeile darunter */
+    .happy-open { grid-template-columns: 56px 1fr; }
+    .happy-zeile { grid-column: 2; }
+  }
 </style>
