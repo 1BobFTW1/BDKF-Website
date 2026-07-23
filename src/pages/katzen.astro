@@ -1,7 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
+import CatLightbox from '../components/CatLightbox.astro';
 
 import katzenRaw from '../data/katzen.json';
+import privatRaw from '../data/privat.json';
+import happyRaw from '../data/happy.json';
 
 // Echte Daten von bund-der-katzenfreunde.de (WP REST API, siehe
 // scratchpad/scrape-bdkf.mjs). Abgeleitete Felder (Haltung, Charakter-Tags)
@@ -9,7 +12,8 @@ import katzenRaw from '../data/katzen.json';
 // TODO: Ableitungen (Haltung, Tags, Kurztexte) mit dem Verein abgleichen
 
 function shortText(t) {
-  const s = t.replace(/^update[^:]*:\s*/i, '');
+  // Emojis (z. B. ❤️) wirken im Original als Satzgrenze — durch Punkt ersetzen
+  const s = t.replace(/^update[^:]*:\s*/i, '').replace(/\s*[❤♥]️?\s*/gu, '. ');
   const m = s.match(/^[\s\S]{60,220}?[.!?…](?=\s|$)/);
   return m ? m[0].trim() : `${s.slice(0, 180).trim()}…`;
 }
@@ -178,12 +182,53 @@ const filterGroups = [
   },
 ];
 
-// TODO: Platzhalter — Happy Ends von bund-der-katzenfreunde.de
-const happyEnds = [
-  { name: 'Willy & Leila', text: 'Gemeinsam eingezogen, gemeinsam glücklich.' },
-  { name: 'Oma Lisa', text: 'Mit 14 Jahren noch einmal angekommen.' },
-  { name: 'Karli', text: 'Vom Notfall zum Sofakönig.' },
-];
+// Echte Daten von bund-der-katzenfreunde.de (Scraper: scrape-extra.mjs) —
+// Klick-Hinweise der alten Website aus den Texten entfernen
+const cleanText = (t) =>
+  t
+    .replace(/^Zur Großansicht anklicken\.\s*/i, '')
+    .replace(/^Zum Verg[oö]?ßern anklicken\.\s*/i, '');
+
+// TODO: Kurzzeilen mit dem Verein abstimmen (Namen/Fotos/Steckbriefe sind echt)
+const HAPPY_ZEILEN = {
+  'foxi-2': 'Vom scheuen Roten zum Sofa-Profi.',
+  joschi: 'Hat sein Personal gefunden.',
+  'malou-ibi-balou': 'Drei auf einen Streich vermittelt.',
+  'kira-mila': 'Gemeinsam eingezogen, gemeinsam glücklich.',
+  'leo-sammy': 'Zwei Kumpel, ein Zuhause.',
+  'malou-kinder': 'Mama plus vier — alle angekommen.',
+  '8661-2': 'Doppelpack mit Happy End.',
+  'minni-athene': 'Zwei Schwestern, ein Sofa.',
+  'lilly-bobby': 'Eingezogen und eingeschnurrt.',
+  'franzi-micki': 'Zusammen gefunden, zusammen geblieben.',
+  'lio-boncuk': 'Von Anfang an ein Team.',
+  charlie: 'Schwarzer Kater, großes Los.',
+};
+
+const happyEnds = happyRaw.map((h) => ({
+  slug: h.slug,
+  name: h.title.replace(/\s*\+\s*/g, ' & '),
+  text: HAPPY_ZEILEN[h.slug] ?? 'Angekommen — für immer.',
+  photo: h.images[0],
+}));
+
+const privatKatzen = privatRaw.map((p) => ({
+  slug: p.slug,
+  name: p.title.replace(/\s*\+\s*/g, ' & '),
+  photo: p.images[0],
+}));
+
+// Popup-Daten: alle Fotos + kompletter Steckbrief je Katze
+const lightboxData = Object.fromEntries([
+  ...privatRaw.map((p) => [
+    `privat-${p.slug}`,
+    { name: p.title.replace(/\s*\+\s*/g, ' & '), images: p.images, text: cleanText(p.beschreibung) },
+  ]),
+  ...happyRaw.map((h) => [
+    `happy-${h.slug}`,
+    { name: h.title.replace(/\s*\+\s*/g, ' & '), images: h.images, text: cleanText(h.beschreibung) },
+  ]),
+]);
 ---
 <Base title="Katzen — Zuhause gesucht | Bund der Katzenfreunde e. V." current="katzen">
   <!-- Katzentinder: Headline plakativ, Deck links, Matches auf gelber
@@ -333,46 +378,85 @@ const happyEnds = [
     </div>
   </section>
 
-  <!-- Katzen von privat -->
+  <!-- Katzen von privat: Karten-Raster mit Platzhalter-Inseraten -->
   <section id="privat" class="privat pad-x sec">
     <div class="sec-head">
       <h2 class="display"><span class="nb">Von privat,</span> <span class="nb">aber mit</span> <span class="nb">Herz.</span></h2>
     </div>
-    <p>
+    <p class="privat-intro">
       Manchmal suchen Katzen direkt aus privaten Haushalten ein neues Zuhause — etwa wenn
       sich die Lebensumstände ihrer Menschen ändern. Wir stellen den Kontakt her, die
       Vermittlung läuft direkt zwischen Ihnen und den bisherigen Haltern.
     </p>
-    {/* TODO: Platzhalter — aktuelle Privat-Vermittlungen ergänzen */}
+    {/* Carousel: nativ swipe-/scrollbar (scroll-snap), Pfeile fuer Maus-Nutzer */}
+    <div class="privat-slider reveal-fade">
+      <div class="privat-track" id="privat-track">
+        {privatKatzen.map((p) => (
+          <article class="card">
+            <button class="privat-open" type="button" data-lightbox={`privat-${p.slug}`}>
+              <div class="card-media privat-media">
+                <img src={p.photo} alt={p.name} loading="lazy" />
+              </div>
+              <h3 class="card-name">{p.name}</h3>
+              <span class="card-link">Steckbrief ansehen</span>
+            </button>
+          </article>
+        ))}
+      </div>
+      <div class="privat-nav">
+        <button class="pv-nav" id="pv-prev" type="button" aria-label="Zurück">←</button>
+        <button class="pv-nav" id="pv-next" type="button" aria-label="Weiter">→</button>
+      </div>
+    </div>
   </section>
 
-  <!-- Happy Ends: Teilfläche rechts, fat-cat lugt über die Kante -->
+  <!-- Happy Ends: pinke Vollflaeche, fat-cat halb auf der Oberkante -->
   <section id="happy-ends" class="happy sec">
     <div class="sec-head pad-x">
-      <h2 class="display"><span class="nb">Erst schnurrt</span> <span class="nb">sie. Dann</span> <span class="nb">regiert sie.</span></h2>
+      <h2 class="display"><span class="nb">Ende gut.</span> <span class="nb">Alles Katze.</span></h2>
     </div>
-    <div class="form-row" style="--c: var(--pink); --form-w: 62%; --cat-w: clamp(120px, 16vw, 220px); --cat-ar: 1.29">
+    <div
+      class="form-row"
+      style="--c: var(--pink); --form-w: 100%; --cat-w: clamp(180px, 20vw, 300px); --cat-ar: 1.29; --cat-in: calc(var(--cat-w) / var(--cat-ar) / 2)"
+      data-nav-bg="var(--pink)"
+    >
       <img
-        class="illu form-cat reveal"
+        class="illu form-cat front reveal"
         src="/assets/illustrations/fat-cat-tight.svg"
         alt=""
         width="834"
         height="645"
       />
-      <div class="form-block">
-        <ul class="happy-list">
-          {happyEnds.map((h) => (
-            <li>
-              <span class="happy-name">{h.name}</span>
-              <span>{h.text}</span>
+      <div class="form-block happy-block">
+        <ul class="happy-list" id="happy-list">
+          {happyEnds.map((h, i) => (
+            <li hidden={i >= 4}>
+              <button class="happy-open" type="button" data-lightbox={`happy-${h.slug}`}>
+                <img class="happy-foto" src={h.photo} alt={h.name} loading="lazy" />
+                <span class="happy-name">{h.name}</span>
+                <span class="happy-zeile">{h.text}</span>
+              </button>
             </li>
           ))}
         </ul>
+        <p class="happy-more-wrap">
+          <button class="btn" id="happy-more" type="button">Mehr Happy Ends</button>
+        </p>
       </div>
     </div>
   </section>
 
+  <!-- Ausklang: Ueberleitung statt hartem Seitenende -->
+  <section class="ausklang pad-x sec reveal-fade">
+    <h2 class="sub">Deine Geschichte fehlt hier noch.</h2>
+    <p class="gap-8">
+      <a class="btn" href="/helfen/">So kannst du helfen</a>
+    </p>
+  </section>
+
   <script is:inline type="application/json" id="cats-data" set:html={JSON.stringify(katzen)} />
+  <script is:inline type="application/json" id="lightbox-data" set:html={JSON.stringify(lightboxData)} />
+  <CatLightbox />
 </Base>
 
 <script>
@@ -671,20 +755,48 @@ const happyEnds = [
     });
   });
 
+  /* ---------- Privat-Carousel: Pfeile blaettern kartenweise ---------- */
+  const pvTrack = document.getElementById('privat-track');
+  if (pvTrack) {
+    const step = () => {
+      const card = pvTrack.querySelector('.card');
+      return card ? card.getBoundingClientRect().width + parseFloat(getComputedStyle(pvTrack).columnGap || '0') : 320;
+    };
+    document.getElementById('pv-prev')?.addEventListener('click', () => {
+      pvTrack.scrollBy({ left: -step(), behavior: reduced ? 'auto' : 'smooth' });
+    });
+    document.getElementById('pv-next')?.addEventListener('click', () => {
+      pvTrack.scrollBy({ left: step(), behavior: reduced ? 'auto' : 'smooth' });
+    });
+  }
+
+  /* ---------- Happy Ends: Mehr laden ---------- */
+  const happyMore = document.getElementById('happy-more');
+  if (happyMore) {
+    happyMore.addEventListener('click', () => {
+      const hiddenLis = document.querySelectorAll('#happy-list li[hidden]');
+      Array.from(hiddenLis).slice(0, 4).forEach((li) => (li.hidden = false));
+      if (hiddenLis.length <= 4) happyMore.hidden = true;
+      // die pinke Flaeche waechst — gepinnte Trigger drunter neu vermessen
+      ScrollTrigger.refresh();
+    });
+  }
+
   /* ---------- GSAP Scroll-Animationen ---------- */
   if (!reduced) {
     gsap.registerPlugin(ScrollTrigger);
 
-    // Einstieg: dezent gestaffeltes Aufblenden (einheitliche Lade-
-    // Formsprache: nur Fade + kleiner Versatz, keine weiten Flüge)
-    gsap.from('.deck-col', { y: 20, opacity: 0, duration: 0.6, ease: 'power2.out', delay: 0.05 });
-    gsap.from('.matches', { y: 20, opacity: 0, duration: 0.6, ease: 'power2.out', delay: 0.15 });
+    // Einstieg: dezent gestaffeltes Aufblenden. Startzustaende kommen aus
+    // CSS unter html.motion (vor dem ersten Paint) — hier nur .to() zum
+    // Endzustand: kein sichtbar→versteckt→sichtbar-Flickern.
+    gsap.to('.deck-col', { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out', delay: 0.05 });
+    gsap.to('.matches', { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out', delay: 0.15 });
 
     // Sektionsköpfe steigen beim Hereinscrollen auf
     document.querySelectorAll('.alle .sec-head, .privat .sec-head, .happy .sec-head').forEach((el) => {
-      gsap.from(el, {
-        y: 24,
-        opacity: 0,
+      gsap.to(el, {
+        y: 0,
+        opacity: 1,
         duration: 0.8,
         ease: 'power3.out',
         scrollTrigger: { trigger: el, start: 'top 88%' },
@@ -692,9 +804,9 @@ const happyEnds = [
     });
 
     // Filtergruppen staffeln sich ein
-    gsap.from('.filter-group', {
-      y: 16,
-      opacity: 0,
+    gsap.to('.filter-group', {
+      y: 0,
+      opacity: 1,
       duration: 0.5,
       stagger: 0.08,
       ease: 'power2.out',
@@ -706,7 +818,7 @@ const happyEnds = [
       start: 'top 92%',
       once: true,
       onEnter: (batch) =>
-        gsap.fromTo(batch, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.07, ease: 'power2.out', overwrite: true }),
+        gsap.to(batch, { y: 0, opacity: 1, duration: 0.6, stagger: 0.07, ease: 'power2.out', overwrite: true }),
     });
   }
 </script>
@@ -952,15 +1064,31 @@ const happyEnds = [
   .match-list :global(.match-more) { text-transform: uppercase; }
 
   /* ---------- Filter + Raster ---------- */
+  /* Alle Kategorien in EINER Reihe; enge Abstaende dazwischen. Die Chips
+     duerfen INNERHALB ihrer Kategorie umbrechen (z. B. Pink: Zeile 1
+     ruhig/verschmust, Zeile 2 verspielt/menschenbezogen). */
   .filters {
     display: flex;
-    flex-wrap: wrap;
-    gap: clamp(16px, 2vw, 32px) clamp(24px, 3vw, 56px);
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: clamp(16px, 2.2vw, 40px);
   }
+
+  /* Gruppen exakt auf Chip-Breite (kein flex-shrink!): schrumpfende Flexboxen
+     rechnen von der Ein-Zeilen-Breite herunter und lassen bei breiten Fenstern
+     unsichtbaren Leerraum in der Box stehen — das sah wie Riesenluecken aus.
+     Stattdessen feste Chip-Raster je Kategorie (unten). */
+  .filter-group { flex: 0 0 auto; }
 
   .filter-label { display: block; margin-bottom: 8px; }
 
-  .filter-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  /* Zweier-Kategorien gestapelt (1 Spalte); Alter + Charakter 2-spaltig:
+     Ruhig/Verschmust oben, Verspielt/Menschenbezogen drunter. */
+  .filter-chips { display: grid; grid-template-columns: max-content; gap: 8px; }
+  .filter-group:first-child .filter-chips,
+  .filter-group:last-child .filter-chips {
+    grid-template-columns: repeat(2, max-content);
+  }
 
   /* Chips tragen die Gruppenfarbe als Fläche, Schrift Schwarz, ohne Rahmen;
      aktiv = Schwarz mit weißer Schrift (wie .btn) */
@@ -1003,18 +1131,161 @@ const happyEnds = [
   }
 
   /* ---------- Happy Ends ---------- */
-  .happy-list { margin: 0; padding: 0; list-style: none; }
+  /* ---------- Katzen von privat: Karten mit echten Fotos ---------- */
+  .privat-intro { max-width: 62ch; }
 
-  .happy-list li {
-    display: grid;
-    grid-template-columns: minmax(10em, 16em) 1fr;
-    gap: 2px var(--gutter);
-    padding: clamp(12px, 1.6vw, 20px) 0;
-    border-top: 2px solid var(--black);
-    max-width: 70ch;
+  /* Carousel: nativer horizontaler Scroll mit Snap — swipebar per Touch/
+     Trackpad, Pfeile blaettern kartenweise fuer Maus-Nutzer */
+  .privat-slider { margin-top: clamp(32px, 5vw, 72px); }
+
+  .privat-track {
+    display: flex;
+    gap: var(--gutter);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .privat-track::-webkit-scrollbar { display: none; }
+
+  .privat-track .card {
+    flex: 0 0 clamp(240px, 26vw, 360px);
+    scroll-snap-align: start;
   }
 
-  .happy-name { font-weight: var(--fw-bold); text-transform: uppercase; }
+  .privat-nav {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: clamp(12px, 1.5vw, 20px);
+  }
+
+  .pv-nav {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border: 2px solid var(--black);
+    background: var(--white);
+    color: var(--black);
+    font: inherit;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .pv-nav:hover, .pv-nav:focus-visible { background: var(--black); color: var(--white); }
+
+  /* ganze Karte klickbar: oeffnet das Popup mit allen Fotos + Steckbrief */
+  .privat-open {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .privat-media {
+    aspect-ratio: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .privat-media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .privat-open .card-link { display: inline-block; margin-top: 0.6em; }
+
+  /* ---------- Happy Ends: pinke Vollflaeche ---------- */
+  /* Liste mit mehr Raum auf der vollen Breite; Nav-Marker sitzt auf der
+     form-row (data-nav-bg) */
+  .happy-block {
+    padding-bottom: clamp(48px, 6vw, 96px);
+  }
+
+  .happy-list { margin: 0; padding: 0; list-style: none; }
+
+  .happy-list li { border-top: 2px solid var(--black); }
+  .happy-list li:last-child { border-bottom: 2px solid var(--black); }
+
+  /* ganze Zeile klickbar (Popup mit allen Fotos + Geschichte), mit Foto-
+     Thumb fuer den Aww-Effekt und dezentem Hover-Lift */
+  .happy-open {
+    display: grid;
+    grid-template-columns: clamp(64px, 6vw, 88px) minmax(12em, 18em) 1fr;
+    gap: 2px var(--gutter);
+    align-items: center;
+    width: 100%;
+    padding: clamp(14px, 2vw, 24px) 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.25s ease;
+  }
+
+  .happy-open:hover,
+  .happy-open:focus-visible { transform: translateY(-3px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .happy-open { transition: none; }
+    .happy-open:hover, .happy-open:focus-visible { transform: none; }
+  }
+
+  .happy-foto {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+  }
+
+  .happy-name {
+    font-size: var(--fs-sub);
+    font-weight: var(--fw-text);
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
+
+  .happy-more-wrap { margin: clamp(24px, 3vw, 40px) 0 0; }
+
+  /* ---------- Ausklang ---------- */
+  .ausklang {
+    margin-top: clamp(96px, 15vw, 220px);
+    margin-bottom: clamp(48px, 8vw, 120px);
+  }
+
+  /* ---------- Animations-Startzustaende ----------
+     Greifen VOR dem ersten Paint (html.motion wird synchron im <head>
+     gesetzt); die GSAP-.to()-Tweens blenden zum Endzustand — kein
+     Flickern beim Laden oder Reinscrollen. */
+  :global(html.motion) .deck-col,
+  :global(html.motion) .matches,
+  :global(html.motion) .gcard {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  :global(html.motion) .alle .sec-head,
+  :global(html.motion) .privat .sec-head,
+  :global(html.motion) .happy .sec-head {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  :global(html.motion) .filter-group {
+    opacity: 0;
+    transform: translateY(16px);
+  }
 
   /* ---------- Split: sticky Detail links (2/6), Raster rechts (4/6) ---------- */
   .grid-split {

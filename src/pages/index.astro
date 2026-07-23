@@ -7,7 +7,8 @@ import katzenRaw from '../data/katzen.json';
 // (katzen.json ist vom Scraper bereits neueste-zuerst sortiert) —
 // 3 sind sichtbar, durch die restlichen scrollt GSAP horizontal durch
 function shortText(t) {
-  const s = t.replace(/^update[^:]*:\s*/i, '');
+  // Emojis (z. B. ❤️) wirken im Original als Satzgrenze — durch Punkt ersetzen
+  const s = t.replace(/^update[^:]*:\s*/i, '').replace(/\s*[❤♥]️?\s*/gu, '. ');
   const m = s.match(/^[\s\S]{40,160}?[.!?…](?=\s|$)/);
   return m ? m[0].trim() : `${s.slice(0, 140).trim()}…`;
 }

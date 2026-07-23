@@ -1,122 +1,225 @@
 ---
 import Base from '../layouts/Base.astro';
 
-// TODO: Platzhalter — Katzenwissen-Themen von bund-der-katzenfreunde.de
+// Anker-Weiche im Kopf (Reihenfolge = Seitenreihenfolge)
+const bereiche = [
+  { href: '#ueber-uns', name: 'Wer wir sind', text: 'Katzenschutz aus Muenchen — ohne Tierheim.' },
+  { href: '#arbeit', name: 'So arbeiten wir', text: 'Der Weg einer Katze durch den Verein.' },
+  { href: '#mitglied', name: 'Mitglied werden', text: 'Der Beitrag, der alles planbar macht.' },
+  { href: '#katzenwissen', name: 'Katzenwissen', text: 'Ratgeber fuer den Alltag mit Katze.' },
+  { href: '#kontakt', name: 'Kontakt', text: 'Sag einfach Miau.' },
+];
+
+// TODO: Platzhalter — Zahlen mit dem Verein bestätigen. „369" ist real:
+// so viele Happy-End-Meldungen dokumentiert die alte Website (Stand Juli 2026).
+const stats = [
+  { nr: 369, suffix: '', label: 'Katzen in ein neues Zuhause vermittelt' },
+  { nr: 100, suffix: '%', label: 'ehrenamtlich — jede Spende geht in den Tierschutz' },
+  { nr: 0, suffix: '', label: 'Zwinger, Boxen, Gitter — unsere Katzen leben auf Sofas' },
+];
+
+// Der Weg einer Katze durch den Verein
+const weg = [
+  { name: 'Gemeldet', text: 'Eine Katze in Not wird uns gemeldet — vom Finder, vom Tierarzt, vom Nachbarn.' },
+  { name: 'Aufgenommen', text: 'Sie zieht auf einen privaten Pflegeplatz: ein ruhiges Zimmer statt Zwinger.' },
+  { name: 'Versorgt', text: 'Tierarzt-Check, Impfung, Kastration, Chip — der Verein traegt die Kosten.' },
+  { name: 'Vermittelt', text: 'Kennenlernen, Schutzvertrag, Nachkontrolle — und ein Zuhause fuer immer.' },
+];
+
+// TODO: Platzhalter — Ratgeber-Texte von bund-der-katzenfreunde.de uebernehmen
 const wissen = [
-  { titel: 'Warum Kastrieren so wichtig ist', text: 'Weniger Leid auf der Straße beginnt mit einem kleinen Eingriff.' },
-  { titel: 'Was Sie wissen sollten', text: 'Grundwissen für ein gutes Leben mit Katze — von Anfang an.' },
-  { titel: 'Gefahrenquellen für Katzen', text: 'Kippfenster, Giftpflanzen & Co. — die unterschätzten Risiken.' },
-  { titel: 'Die katzensichere Wohnung', text: 'So wird dein Zuhause sicher, bevor die Katze einzieht.' },
-  { titel: 'Unsauberkeit bei Katzen', text: 'Warum Katzen unsauber werden — und was wirklich hilft.' },
+  {
+    titel: 'Warum Kastrieren so wichtig ist',
+    teaser: 'Weniger Leid auf der Straße beginnt mit einem kleinen Eingriff.',
+    text: 'Eine unkastrierte Katze kann in wenigen Jahren für hunderte Nachkommen sorgen — die meisten davon landen auf der Straße. Kastration ist der wirksamste Tierschutz, den es gibt.',
+  },
+  {
+    titel: 'Was Sie wissen sollten',
+    teaser: 'Grundwissen für ein gutes Leben mit Katze — von Anfang an.',
+    text: 'Von der Eingewöhnung über Fütterung bis zur Frage Einzelkatze oder Doppelpack: die wichtigsten Grundlagen, bevor eine Katze einzieht.',
+  },
+  {
+    titel: 'Gefahrenquellen für Katzen',
+    teaser: 'Kippfenster, Giftpflanzen & Co. — die unterschätzten Risiken.',
+    text: 'Viele Unfälle passieren in der eigenen Wohnung: gekippte Fenster, giftige Pflanzen, offene Waschmaschinen. Die meisten Gefahren lassen sich mit wenigen Handgriffen entschärfen.',
+  },
+  {
+    titel: 'Die katzensichere Wohnung',
+    teaser: 'So wird dein Zuhause sicher, bevor die Katze einzieht.',
+    text: 'Balkon vernetzen, Fenster sichern, Verstecke schaffen: eine Checkliste für die Tage vor dem Einzug.',
+  },
+  {
+    titel: 'Unsauberkeit bei Katzen',
+    teaser: 'Warum Katzen unsauber werden — und was wirklich hilft.',
+    text: 'Unsauberkeit ist fast immer ein Signal — Schmerzen, Stress oder das falsche Klo. Wer die Ursache findet, löst das Problem meist ohne Drama.',
+  },
 ];
 ---
 <Base title="Verein — Über uns, Mitgliedschaft, Katzenwissen | Bund der Katzenfreunde e. V." current="verein">
-  <!-- Kopf: Text links auf Weiß, Teilfläche rechts mit flat-cat -->
+  <!-- Kopf: gespiegelt zu Helfen — blaue Hochkant-Flaeche RECHTS mit
+       flat-cat auf der Kante, links Intro + Anker-Weiche -->
   <section class="kopf sec">
     <div class="sec-head pad-x">
-      <h1 class="display">Der Verein hinter den Katzen.</h1>
+      <h1 class="display"><span class="nb">Wir sind die</span> <span class="nb">mit den Katzen.</span></h1>
     </div>
-    {/* Katze halb auf der Form, halb außerhalb: Eintauchtiefe = halbe Höhe */}
-    <div class="form-row" style="--c: var(--blue); --form-w: 50%; --cat-w: clamp(180px, 24vw, 330px); --cat-ar: 1.21; --cat-in: calc(var(--cat-w) / var(--cat-ar) / 2)">
-      <img
-        class="illu form-cat front reveal"
-        src="/assets/illustrations/flat-cat-tight.svg"
-        alt=""
-        width="857"
-        height="711"
-      />
-      <div class="form-block kopf-form"></div>
-    </div>
-  </section>
-
-  <!-- Über uns -->
-  <section id="ueber-uns" class="block pad-x sec">
-    <div class="sec-head">
-      <h2 class="display"><span class="nb">Wer wir</span> sind.</h2>
-    </div>
-    <p>
-      Der Bund der Katzenfreunde e.&nbsp;V. ist ein Katzenschutzverein aus München.
-      Wir nehmen Katzen in Not auf, versorgen sie auf privaten Pflegeplätzen und
-      vermitteln sie in gute Hände. Ein eigenes Tierheim haben wir nicht — dafür
-      viele Sofas und noch mehr Herz.
-    </p>
-    <p>Wir sind Mitglied im Deutschen Tierschutzbund e.&nbsp;V.</p>
-  </section>
-
-  <!-- Mitgliedschaft: Teilfläche rechts -->
-  <section id="mitglied" class="mitglied sec">
-    <div class="sec-head pad-x">
-      <h2 class="display">Werde Mitglied. Schnurren inklusive.</h2>
-    </div>
-    <div class="form-row" style="--c: var(--blue); --form-w: 62%; --cat-w: 0px; --cat-ar: 1">
-      <div class="form-block">
-        <div class="mitglied-cols">
-          <p>
-            Mit deiner Mitgliedschaft machst du unsere Arbeit planbar: Kastrationen,
-            Tierarztkosten, Futterstellen. Einfach Beitrittserklärung und SEPA-Mandat
-            ausfüllen und per Post an uns senden.
-          </p>
-          {/* TODO: Platzhalter — echte Formular-PDFs verlinken, Adresse bestätigen */}
-          <p>
-            Bund der Katzenfreunde e.&nbsp;V.<br />
-            c/o Marius Zisselsberger<br />
-            Oberhachinger Str. 24a<br />
-            82031 Grünwald
-          </p>
-        </div>
-        <p class="mitglied-actions gap-8">
-          <a class="btn" href="#" aria-disabled="true">Beitrittserklärung (PDF)</a>
-          <a class="btn btn-ghost" href="#" aria-disabled="true">SEPA-Mandat (PDF)</a>
+    <div class="kopf-unten">
+      <div class="kopf-links">
+        <p class="kopf-intro">
+          Katzenschutzverein aus München, komplett ehrenamtlich — mit vielen
+          Sofas statt einem Tierheim. Schau dich um:
         </p>
+        <ul class="hilf-liste">
+          {bereiche.map((b) => (
+            <li>
+              <a href={b.href}>
+                <span class="hilf-name">{b.name}</span>
+                <span class="hilf-text">{b.text}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="kopf-flaeche">
+        <img
+          class="illu kopf-cat"
+          src="/assets/illustrations/flat-cat-tight.svg"
+          alt=""
+          width="857"
+          height="711"
+        />
       </div>
     </div>
   </section>
 
-  <!-- Satzung -->
-  <section id="satzung" class="block pad-x sec">
+  <!-- Wer wir sind: Kurztext + Zahlen, die beim Reinscrollen hochzaehlen -->
+  <section id="ueber-uns" class="ueber pad-x sec">
     <div class="sec-head">
-      <h2 class="display">Schwarz <span class="nb">auf weiß.</span></h2>
+      <h2 class="display"><span class="nb">Kein Tierheim.</span> <span class="nb">Lauter Sofas.</span></h2>
     </div>
-    <p>
-      Was wir tun und wie wir es tun, steht in unserer Vereinssatzung.
-      {/* TODO: Platzhalter — Satzungs-PDF verlinken */}
+    <p class="ueber-copy">
+      Der Bund der Katzenfreunde e.&nbsp;V. ist ein Katzenschutzverein aus München und
+      Mitglied im Deutschen Tierschutzbund. Wir nehmen Katzen in Not auf, versorgen sie
+      auf privaten Pflegeplätzen und vermitteln sie in gute Hände — seit Jahrzehnten,
+      komplett ehrenamtlich.
     </p>
-    <p class="gap-16"><a class="btn btn-ghost" href="#" aria-disabled="true">Satzung lesen (PDF)</a></p>
-  </section>
-
-  <!-- Katzenwissen -->
-  <section id="katzenwissen" class="block pad-x sec">
-    <div class="sec-head">
-      <h2 class="display">Wissen, <span class="nb">das schnurrt.</span></h2>
-    </div>
-    <ul class="wissen-list">
-      {wissen.map((w) => (
-        <li>
-          <span class="wissen-titel">{w.titel}</span>
-          <span>{w.text}</span>
+    <ul class="stats">
+      {stats.map((s) => (
+        <li class="stat">
+          <span class="stat-nr display" data-count={s.nr} data-suffix={s.suffix}>{s.nr}{s.suffix}</span>
+          <span class="stat-label">{s.label}</span>
         </li>
       ))}
     </ul>
-    {/* TODO: Platzhalter — vollständige Ratgeber-Artikel ergänzen */}
   </section>
 
-  <!-- Kontakt: Teilfläche links -->
+  <!-- So arbeiten wir: der Weg einer Katze als nummerierte Linien-Liste.
+       Die Sektion pinnt am Ende kurz — die blaue Mitglied-Flaeche schiebt
+       sich als Cover darueber (Muster Termine→Gruen auf der Startseite). -->
+  <section id="arbeit" class="arbeit pad-x sec">
+    <div class="sec-head">
+      <h2 class="display"><span class="nb">Von der Strasse</span> <span class="nb">aufs Sofa.</span></h2>
+    </div>
+    <ol class="weg-steps">
+      {weg.map((w, i) => (
+        <li class="wstep">
+          <span class="wstep-nr">{i + 1}</span>
+          <span class="wstep-name">{w.name}</span>
+          <span class="wstep-text">{w.text}</span>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <!-- Mitglied werden: Conversion-Sektion auf blauer Vollflaeche -->
+  <section id="mitglied" class="mitglied sec" data-nav-bg="var(--blue)">
+    <div class="mitglied-inner pad-x">
+      <div class="sec-head">
+        <h2 class="display"><span class="nb">Werde Mitglied.</span> <span class="nb">Schnurren</span> <span class="nb">inklusive.</span></h2>
+      </div>
+      <div class="mitglied-cols">
+        <p>
+          Mit deiner Mitgliedschaft machst du unsere Arbeit planbar: Kastrationen,
+          Tierarztkosten, Futterstellen. Du musst dafür nichts tun außer dabei sein —
+          das Schnurren übernehmen die anderen.
+        </p>
+        {/* TODO: Platzhalter — Beitragshoehe + Adresse mit dem Verein bestätigen */}
+        <p>
+          <strong>So geht's:</strong> Beitrittserklärung und SEPA-Mandat ausfüllen und
+          per Post an uns senden — Bund der Katzenfreunde e.&nbsp;V., c/o Marius
+          Zisselsberger, Oberhachinger Str. 24a, 82031 Grünwald.
+        </p>
+      </div>
+      <p class="mitglied-actions gap-8">
+        {/* TODO: Platzhalter — echte Formular-PDFs verlinken */}
+        <a class="btn" href="#mitglied" aria-disabled="true">Beitrittserklärung (PDF)</a>
+        <a class="btn btn-ghost" href="#mitglied" aria-disabled="true">SEPA-Mandat (PDF)</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Katzenwissen: Ratgeber-Themen als aufklappbare Linien-Liste -->
+  <section id="katzenwissen" class="wissen pad-x sec">
+    <div class="sec-head">
+      <h2 class="display"><span class="nb">Wissen, das</span> <span class="nb">schnurrt.</span></h2>
+    </div>
+    <div class="wissen-list">
+      {wissen.map((w) => (
+        <details class="wissen-item">
+          <summary>
+            <span class="wissen-titel">{w.titel}</span>
+            <span class="wissen-teaser">{w.teaser}</span>
+            <span class="wissen-plus" aria-hidden="true">+</span>
+          </summary>
+          <p class="wissen-text">{w.text}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <!-- Satzung: ruhiger Formales-Block — wortwoertlich schwarz auf weiss
+       invertiert (schwarze Vollflaeche, weisse Schrift) -->
+  <section id="satzung" class="satzung sec" data-nav-bg="var(--black)" data-nav-dark>
+    <div class="satzung-inner pad-x">
+      <div class="sec-head">
+        <h2 class="display"><span class="nb">Schwarz</span> <span class="nb">auf weiss.</span></h2>
+      </div>
+      <p class="satzung-copy">
+        Was wir tun und wie wir es tun, steht in unserer Vereinssatzung.
+        {/* TODO: Platzhalter — Satzungs-PDF verlinken */}
+      </p>
+      <p class="gap-16"><a class="btn btn-invert btn-satzung" href="#satzung" aria-disabled="true">Satzung lesen (PDF)</a></p>
+    </div>
+  </section>
+
+  <!-- Kontakt: blaue Teilflaeche links, lying-cat auf der Oberkante.
+       Zentraler Anker (#kontakt) fuer CTAs der ganzen Website. -->
   <section id="kontakt" class="kontakt sec">
     <div class="sec-head pad-x">
-      <h2 class="display"><span class="nb">Sag einfach</span> Miau.</h2>
+      <h2 class="display"><span class="nb">Sag einfach</span> <span class="nb">Miau.</span></h2>
     </div>
-    <div class="form-row dock-left" style="--c: var(--blue); --form-w: 58%; --cat-w: 0px; --cat-ar: 1">
+    <div
+      class="form-row dock-left"
+      style="--c: var(--blue); --form-w: 58%; --cat-w: clamp(150px, 17vw, 250px); --cat-ar: 0.97; --cat-in: calc(var(--cat-w) / var(--cat-ar) / 2)"
+    >
+      <img
+        class="illu form-cat front"
+        src="/assets/illustrations/lying-cat-tight.svg"
+        alt=""
+        width="798"
+        height="822"
+      />
       <div class="form-block">
-        {/* TODO: Platzhalter — Ansprechpartner bestätigen */}
+        {/* Ansprechpartner nach bund-der-katzenfreunde.de/kontakt/ansprechpartner;
+            bewusst OHNE mailto-/tel-Links, solange die Seite nicht live ist */}
         <div class="kontakt-cols">
           <p>
-            <strong>Norina Bernetti</strong><br />
-            <a href="tel:+491728552419">0172&nbsp;8552419</a><br />
-            <a href="mailto:norina.bernetti@bund-der-katzenfreunde.de">norina.bernetti@<wbr />bund-der-katzenfreunde.de</a>
+            <strong>Marius Zisselsberger</strong> (1. Vorsitzender)<br />
+            vorstand@<wbr />bund-der-katzenfreunde.de<br />
+            Info-Telefon: 089&nbsp;66&nbsp;61&nbsp;67&nbsp;82 (Anemone Wach)
           </p>
           <p>
-            Für Fragen zu Vermittlung, Pflegeplätzen und Patenschaften —
-            wir melden uns so schnell wie möglich zurück.
+            Ob Adoption, Pflegeplatz, Patenschaft oder Mitgliedschaft —
+            schreib uns, wir melden uns so schnell wie möglich zurück.
           </p>
         </div>
       </div>
@@ -124,48 +227,391 @@ const wissen = [
   </section>
 </Base>
 
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    gsap.registerPlugin(ScrollTrigger);
+    // @ts-ignore — für Debugging in der Konsole erreichbar
+    window.ScrollTrigger = ScrollTrigger;
+    const desktop = matchMedia('(min-width: 720px)').matches;
+
+    /* Entrance: Startzustaende kommen aus CSS (html.motion, vor dem ersten
+       Paint) — hier nur .to() zum Endzustand, kein Flickern. */
+    const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
+    tl.to('.kopf .display', { y: 0, opacity: 1, duration: 0.6 })
+      .to('.kopf-flaeche', { opacity: 1, duration: 0.6 }, 0.1)
+      .to('.kopf-cat', { y: 0, opacity: 1, duration: 0.5 }, '-=0.3')
+      .to('.kopf-intro', { y: 0, opacity: 1, duration: 0.5 }, '-=0.4')
+      .to('.hilf-liste li', { y: 0, opacity: 1, duration: 0.5, stagger: 0.08 }, '-=0.3');
+
+    /* Sektionskoepfe beim Reinscrollen */
+    document
+      .querySelectorAll('.ueber .sec-head, .arbeit .sec-head, .mitglied .sec-head, .wissen .sec-head, .satzung .sec-head, .kontakt .sec-head')
+      .forEach((el) => {
+        gsap.to(el, {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 88%' },
+        });
+      });
+
+    /* GSAP-Moment 1: die Zahlen zaehlen beim Reinscrollen hoch */
+    document.querySelectorAll('.stat-nr').forEach((el) => {
+      const target = Number(el.dataset.count);
+      const suffix = el.dataset.suffix || '';
+      const state = { v: 0 };
+      el.textContent = `0${suffix}`;
+      gsap.to(state, {
+        v: target,
+        duration: 1.4,
+        ease: 'power1.out',
+        scrollTrigger: { trigger: '.stats', start: 'top 85%' },
+        onUpdate: () => {
+          el.textContent = `${Math.round(state.v)}${suffix}`;
+        },
+      });
+    });
+    gsap.to('.stat', {
+      y: 0,
+      opacity: 1,
+      duration: 0.6,
+      stagger: 0.12,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '.stats', start: 'top 85%' },
+    });
+
+    /* Weg-Schritte staffeln sich ein */
+    gsap.to('.wstep', {
+      y: 0,
+      opacity: 1,
+      duration: 0.6,
+      stagger: 0.12,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '.weg-steps', start: 'top 85%' },
+    });
+
+    /* GSAP-Moment 2 (nur Desktop): die Arbeit-Sektion pinnt am unteren
+       Rand, die blaue Mitglied-Flaeche schiebt sich als Cover darueber
+       (Muster Termine→Gruen auf der Startseite). */
+    if (desktop) {
+      ScrollTrigger.create({
+        trigger: '.arbeit',
+        start: 'bottom bottom',
+        end: '+=55%',
+        pin: true,
+        pinSpacing: false,
+      });
+    }
+
+    /* Wissen-Liste staffelt sich ein */
+    gsap.to('.wissen-item', {
+      y: 0,
+      opacity: 1,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '.wissen-list', start: 'top 85%' },
+    });
+
+    /* Kontakt-Flaeche faehrt von links herein */
+    gsap.to('.kontakt .form-block', {
+      x: 0,
+      duration: 0.9,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: '.kontakt .form-row', start: 'top 78%' },
+    });
+  }
+</script>
+
 <style>
-  /* Kopf füllt den ersten Viewport; die Farbfläche (50 % breit) wächst
-     bis zur Unterkante des Folds — sie dockt unten an, statt zu schweben */
+  /* ---------- Kopf: Headline oben, links Anker-Weiche, rechts blaue
+     Hochkant-Flaeche mit flat-cat auf der Kante ---------- */
   .kopf {
     padding-top: clamp(24px, 6svh, 72px);
     display: flex;
     flex-direction: column;
     min-height: calc(100svh - var(--nav-h));
+    overflow-x: clip;
   }
-  .kopf .form-row {
+
+  .kopf-unten {
     flex: 1 1 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 38%);
+    gap: 0 clamp(32px, 5vw, 96px);
+    /* Luft fuer die halb aufliegende Katze ueber der Flaechen-Oberkante */
+    margin-top: calc(clamp(140px, 17vw, 250px) / 1.21 / 2 + 20px);
+  }
+
+  /* Blaue Flaeche: buendig zur RECHTEN Bildschirmkante, waechst bis zum
+     Fold; flat-cat liegt halb auf ihrer Oberkante */
+  .kopf-flaeche {
+    position: relative;
+    background: var(--blue);
+    min-height: clamp(240px, 42svh, 460px);
+  }
+
+  .kopf-cat {
+    --katw: clamp(140px, 17vw, 250px);
+    position: absolute;
+    left: calc(50% - var(--katw) / 2);
+    bottom: calc(100% - var(--katw) / 1.21 / 2);
+    width: var(--katw);
+    height: auto;
+  }
+
+  .kopf-links {
+    padding-left: var(--margin);
     display: flex;
     flex-direction: column;
+    gap: clamp(24px, 4vh, 48px);
   }
-  .kopf-form { flex: 1 1 auto; min-height: clamp(140px, 24svh, 240px); }
 
-  .block { margin-top: clamp(96px, 15vw, 220px); }
+  .kopf-intro { max-width: 44ch; margin: 0; }
 
-  .mitglied { margin-top: clamp(96px, 15vw, 220px); }
+  /* Anker-Weiche: Linien-Liste mit Hover-Lift (Muster Helfen) */
+  .hilf-liste { margin: 0; padding: 0; list-style: none; }
 
-  .mitglied-cols, .kontakt-cols { display: flex; flex-wrap: wrap; gap: var(--gutter); }
-  .mitglied-cols p, .kontakt-cols p { max-width: 44ch; margin: 0; flex: 1 1 280px; }
+  .hilf-liste li { border-top: 2px solid var(--black); }
+  .hilf-liste li:last-child { border-bottom: 2px solid var(--black); }
 
-  .mitglied-actions { display: flex; flex-wrap: wrap; gap: 12px var(--gutter); }
-
-  .wissen-list { margin: 0; padding: 0; list-style: none; }
-
-  .wissen-list li {
-    display: grid;
-    grid-template-columns: minmax(12em, 20em) 1fr;
-    gap: 2px var(--gutter);
+  .hilf-liste a {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px var(--gutter);
     padding: clamp(12px, 1.6vw, 20px) 0;
-    border-top: 2px solid var(--black);
-    max-width: 80ch;
+    text-decoration: none;
+    transition: transform 0.25s ease;
   }
-  .wissen-list li:last-child { border-bottom: 2px solid var(--black); }
+
+  .hilf-liste a:hover,
+  .hilf-liste a:focus-visible { transform: translateY(-3px); }
+
+  .hilf-name {
+    flex: 0 0 auto;
+    width: min(100%, 9em);
+    font-size: var(--fs-sub);
+    font-weight: var(--fw-text);
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
+
+  .hilf-text { max-width: 34ch; }
+
+  /* ---------- Wer wir sind: Zahlen ---------- */
+  .ueber { margin-top: clamp(96px, 15vw, 220px); }
+
+  .ueber-copy { max-width: 62ch; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(24px, 4vw, 64px);
+    margin: clamp(40px, 6vw, 88px) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .stat {
+    border-top: 2px solid var(--black);
+    padding-top: clamp(12px, 1.6vw, 20px);
+  }
+
+  /* Zahl in Display-Groesse (Groesse/Gewicht kommen von der globalen
+     .display-Klasse) — die Typo traegt die Sektion */
+  .stat-nr { display: block; }
+
+  .stat-label {
+    display: block;
+    margin-top: 0.6em;
+    max-width: 26ch;
+  }
+
+  /* ---------- So arbeiten wir ---------- */
+  .arbeit { margin-top: clamp(96px, 15vw, 220px); }
+
+  .weg-steps {
+    margin: clamp(24px, 4vh, 48px) 0 0;
+    padding: 0;
+    list-style: none;
+    /* Luft unterm letzten Schritt, bevor die blaue Flaeche drueberschiebt */
+    padding-bottom: clamp(48px, 8vh, 112px);
+  }
+
+  .wstep {
+    display: grid;
+    grid-template-columns: 2.5em minmax(9em, 14em) 1fr;
+    gap: 2px var(--gutter);
+    align-items: baseline;
+    padding: clamp(12px, 1.8vh, 20px) 0;
+    border-top: 2px solid var(--black);
+    max-width: 86ch;
+  }
+
+  .wstep-nr {
+    font-size: var(--fs-sub);
+    line-height: 0.9;
+  }
+
+  .wstep-name { font-weight: var(--fw-bold); text-transform: uppercase; }
+
+  /* ---------- Mitglied: blaue Vollflaeche (Cover ueber .arbeit) ---------- */
+  .mitglied {
+    position: relative;
+    z-index: 1;
+    background: var(--blue);
+  }
+
+  .mitglied-inner {
+    padding-top: clamp(48px, 7vh, 96px);
+    padding-bottom: clamp(48px, 7vh, 96px);
+  }
+
+  .mitglied-cols {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gutter);
+    margin-top: clamp(20px, 3vh, 40px);
+  }
+  .mitglied-cols p { max-width: 44ch; margin: 0; flex: 1 1 280px; }
+
+  .mitglied-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px var(--gutter);
+    margin-top: clamp(24px, 4vh, 48px);
+  }
+
+  /* Platzhalter-Buttons sichtbar deaktiviert */
+  .mitglied-actions a[aria-disabled='true'],
+  .satzung a[aria-disabled='true'] {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  /* ---------- Katzenwissen: aufklappbare Linien-Liste ---------- */
+  .wissen { margin-top: clamp(96px, 15vw, 220px); }
+
+  .wissen-list { max-width: 86ch; }
+
+  .wissen-item { border-top: 2px solid var(--black); }
+  .wissen-item:last-child { border-bottom: 2px solid var(--black); }
+
+  .wissen-item summary {
+    display: grid;
+    grid-template-columns: minmax(12em, 20em) 1fr auto;
+    gap: 2px var(--gutter);
+    align-items: baseline;
+    padding: clamp(12px, 1.6vw, 20px) 0;
+    cursor: pointer;
+    list-style: none;
+    transition: transform 0.25s ease;
+  }
+  .wissen-item summary::-webkit-details-marker { display: none; }
+
+  .wissen-item summary:hover,
+  .wissen-item summary:focus-visible { transform: translateY(-3px); }
 
   .wissen-titel { font-weight: var(--fw-bold); text-transform: uppercase; }
 
-  .kontakt { margin-top: clamp(96px, 15vw, 220px); }
+  .wissen-plus {
+    font-weight: var(--fw-bold);
+    transition: rotate 0.2s ease;
+  }
+  .wissen-item[open] .wissen-plus { rotate: 45deg; }
 
-  @media (max-width: 560px) {
-    .wissen-list li { grid-template-columns: 1fr; }
+  .wissen-text {
+    margin: 0;
+    padding: 0 0 clamp(16px, 2vw, 24px);
+    max-width: 62ch;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wissen-item summary, .wissen-plus { transition: none; }
+    .wissen-item summary:hover, .wissen-item summary:focus-visible { transform: none; }
+  }
+
+  /* ---------- Satzung: schwarze Vollflaeche, weisse Schrift ---------- */
+  .satzung {
+    margin-top: clamp(96px, 15vw, 220px);
+    background: var(--black);
+    color: var(--white);
+  }
+
+  .satzung-inner {
+    padding-top: clamp(96px, 14vw, 220px);
+    padding-bottom: clamp(96px, 14vw, 220px);
+  }
+
+  .satzung-copy { max-width: 52ch; }
+
+  /* Ghost-Variante auf Schwarz: weisser Rahmen, weisse Schrift */
+  .btn-satzung {
+    background: transparent;
+    color: var(--white);
+    border-color: var(--white);
+  }
+
+  /* ---------- Kontakt ---------- */
+  .kontakt { margin-top: clamp(96px, 15vw, 220px); overflow-x: clip; }
+
+  .kontakt-cols { display: flex; flex-wrap: wrap; gap: var(--gutter); }
+  .kontakt-cols p { max-width: 44ch; margin: 0; flex: 1 1 280px; }
+
+  /* ---------- Animations-Startzustaende (html.motion = vor dem Paint) ---------- */
+  :global(html.motion) .kopf .display,
+  :global(html.motion) .kopf-cat {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  :global(html.motion) .kopf-flaeche { opacity: 0; }
+
+  :global(html.motion) .kopf-intro,
+  :global(html.motion) .hilf-liste li {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  :global(html.motion) .ueber .sec-head,
+  :global(html.motion) .arbeit .sec-head,
+  :global(html.motion) .mitglied .sec-head,
+  :global(html.motion) .wissen .sec-head,
+  :global(html.motion) .satzung .sec-head,
+  :global(html.motion) .kontakt .sec-head {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  :global(html.motion) .stat,
+  :global(html.motion) .wstep,
+  :global(html.motion) .wissen-item {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  :global(html.motion) .kontakt .form-block {
+    transform: translateX(-110%);
+  }
+
+  /* ---------- Mobile-Grundlagen (< 720px) ---------- */
+  @media (max-width: 719px) {
+    .kopf-unten { grid-template-columns: 1fr; }
+    .kopf-links { padding-right: var(--margin); }
+    /* Flaeche unter der Liste, Katze auf der Kante */
+    .kopf-flaeche {
+      min-height: clamp(180px, 32svh, 300px);
+      margin-top: calc(clamp(140px, 17vw, 250px) / 1.21 / 2 + 16px);
+    }
+    .stats { grid-template-columns: 1fr; }
+    .wstep { grid-template-columns: 2em 1fr; }
+    .wstep-text { grid-column: 2; }
+    .wissen-item summary { grid-template-columns: 1fr auto; }
+    .wissen-teaser { grid-column: 1 / -1; }
   }
 </style>

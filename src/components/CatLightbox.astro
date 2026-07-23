@@ -1,0 +1,178 @@
+---
+// Wiederverwendbares Katzen-Popup im Trading-Card-Aufbau: oben EIN Foto mit
+// Carousel-Pfeilen (wie die Grid-Detailansicht), darunter Name + Story.
+// Nutzung auf einer Seite:
+//   1. <CatLightbox /> einbinden
+//   2. ein <script type="application/json" id="lightbox-data"> mit
+//      { "<key>": { name, images: [], text } } einbetten
+//   3. beliebige Elemente mit data-lightbox="<key>" versehen — Klick öffnet
+---
+<dialog class="cl" id="cat-lightbox">
+  <div class="cl-media">
+    <img class="cl-photo" alt="" />
+    <button class="cl-nav cl-prev" type="button" aria-label="Vorheriges Foto">←</button>
+    <button class="cl-nav cl-next" type="button" aria-label="Nächstes Foto">→</button>
+    <span class="cl-count"></span>
+    <button class="cl-close" type="button" aria-label="Schließen">Schließen</button>
+  </div>
+  <div class="cl-body">
+    <h3 class="cl-name"></h3>
+    <p class="cl-text"></p>
+  </div>
+</dialog>
+
+<script>
+  const dlg = document.getElementById('cat-lightbox');
+  const dataEl = document.getElementById('lightbox-data');
+
+  if (dlg instanceof HTMLDialogElement && dataEl) {
+    const data = JSON.parse(dataEl.textContent || '{}');
+    const nameEl = dlg.querySelector('.cl-name');
+    const photoEl = dlg.querySelector('.cl-photo');
+    const countEl = dlg.querySelector('.cl-count');
+    const prevBtn = dlg.querySelector('.cl-prev');
+    const nextBtn = dlg.querySelector('.cl-next');
+    const textEl = dlg.querySelector('.cl-text');
+
+    let images = [];
+    let idx = 0;
+
+    const show = (i) => {
+      idx = (i + images.length) % images.length;
+      photoEl.src = images[idx];
+      countEl.textContent = `${idx + 1}/${images.length}`;
+      // Pfeile + Zähler nur, wenn es was zu blättern gibt
+      const single = images.length < 2;
+      prevBtn.hidden = single;
+      nextBtn.hidden = single;
+      countEl.hidden = single;
+    };
+
+    const open = (key) => {
+      const cat = data[key];
+      if (!cat || !cat.images.length) return;
+      nameEl.textContent = cat.name;
+      photoEl.alt = cat.name;
+      images = cat.images;
+      show(0);
+      // Klick-Hinweise der alten Website aus dem Text entfernen
+      textEl.textContent = (cat.text || '')
+        .replace(/^Zur Großansicht anklicken\.\s*/i, '')
+        .replace(/^Zum Verg[oö]?ßern anklicken\.\s*/i, '');
+      dlg.scrollTop = 0;
+      dlg.showModal();
+    };
+
+    document.addEventListener('click', (e) => {
+      const trigger = e.target instanceof Element && e.target.closest('[data-lightbox]');
+      if (trigger) {
+        e.preventDefault();
+        open(trigger.getAttribute('data-lightbox'));
+      }
+    });
+
+    prevBtn.addEventListener('click', () => show(idx - 1));
+    nextBtn.addEventListener('click', () => show(idx + 1));
+    dlg.addEventListener('keydown', (e) => {
+      if (images.length < 2) return;
+      if (e.key === 'ArrowLeft') show(idx - 1);
+      if (e.key === 'ArrowRight') show(idx + 1);
+    });
+
+    dlg.querySelector('.cl-close')?.addEventListener('click', () => dlg.close());
+    // Klick auf den Backdrop (= das dialog-Element selbst) schließt
+    dlg.addEventListener('click', (e) => {
+      if (e.target === dlg) dlg.close();
+    });
+  }
+</script>
+
+<style>
+  /* Trading-Card-Silhouette: Foto buendig oben, Text im gepolsterten Fuss */
+  .cl {
+    width: min(92vw, 640px);
+    max-height: 90svh;
+    padding: 0;
+    border: 2px solid var(--black);
+    background: var(--white);
+    color: var(--black);
+  }
+
+  .cl::backdrop {
+    background: rgb(0 0 0 / 55%);
+  }
+
+  .cl-media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background: var(--black);
+  }
+
+  .cl-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Pfeile wie in der Grid-Detailansicht: weisse Quadrate an den Bildkanten */
+  .cl-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    background: var(--white);
+    color: var(--black);
+    border: 0;
+    font: inherit;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .cl-nav:hover, .cl-nav:focus-visible { background: var(--black); color: var(--white); }
+  .cl-prev { left: 0; }
+  .cl-next { right: 0; }
+
+  .cl-count {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 0.1em 0.5em;
+    background: var(--white);
+    font-weight: var(--fw-text);
+  }
+
+  .cl-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 0;
+    padding: 0.35em 0.7em;
+    background: var(--white);
+    color: var(--black);
+    font: inherit;
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .cl-close:hover, .cl-close:focus-visible { background: var(--black); color: var(--white); }
+
+  .cl-body {
+    padding: clamp(20px, 3vw, 36px);
+  }
+
+  .cl-name {
+    margin: 0 0 0.5em;
+    font-size: var(--fs-sub);
+    font-weight: var(--fw-text);
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
+
+  .cl-text {
+    margin: 0;
+    max-width: none;
+  }
+</style>

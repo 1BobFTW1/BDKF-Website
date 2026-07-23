@@ -1,78 +1,179 @@
 ---
 import Base from '../layouts/Base.astro';
+import CatLightbox from '../components/CatLightbox.astro';
+
+import patenRaw from '../data/paten.json';
+
+// Anker-Weiche im Kopf: sortiert die Besucher sofort zu ihrem Weg
+// (Reihenfolge = Seitenreihenfolge)
+const wege = [
+  { href: '#spenden', name: 'Geld spenden', text: 'Der schnellste Weg. Kein Papierkram.' },
+  { href: '#pflegeplatz', name: 'Pflegeplatz geben', text: 'Ein Sofa auf Zeit — der wichtigste Job im Verein.' },
+  { href: '#pate', name: 'Pate werden', text: 'Ein fester Beitrag für eine Katze, die bleibt.' },
+  { href: '#zeit', name: 'Zeit spenden', text: 'Flohmarkt, Futterstellen, Sachspenden.' },
+];
+
+// Echte Patenkatzen von der alten Website (Fotos + Steckbrief)
+const cleanText = (t) =>
+  t
+    .replace(/^Zur Großansicht anklicken\.\s*/i, '')
+    .replace(/^Zum Verg[oö]?ßern anklicken\.\s*/i, '');
+
+const patenkatze = patenRaw[0];
+const patenName = patenkatze.title.replace(/\s*\+\s*/g, ' & ');
+
+const lightboxData = Object.fromEntries(
+  patenRaw.map((p) => [
+    `paten-${p.slug}`,
+    { name: p.title.replace(/\s*\+\s*/g, ' & '), images: p.images, text: cleanText(p.beschreibung) },
+  ])
+);
 ---
 <Base title="Helfen — Pflegeplatz, Patenschaft, Spenden | Bund der Katzenfreunde e. V." current="helfen">
-  <!-- Kopf: Text links auf Weiß, Teilfläche rechts mit big-head-cat -->
+  <!-- Kopf: bewusst gespiegelt zur Startseite — gruene Hochkant-Flaeche
+       LINKS mit big-head-cat auf der Kante, rechts die Anker-Weiche -->
   <section class="kopf sec">
     <div class="sec-head pad-x">
-      <h1 class="display"><span class="nb">Wohnung leer?</span> <span class="nb">Herz auch?</span></h1>
+      <h1 class="display"><span class="nb">Wie viel</span> <span class="nb">Katze passt</span> <span class="nb">in dein Leben?</span></h1>
     </div>
-    <p class="kopf-intro pad-x">
-      Können wir ändern. Beides. Und wenn es (noch) nicht die eigene Katze sein soll,
-      gibt es viele andere Wege zu helfen.
-    </p>
-    {/* Katze halb auf der Form, halb außerhalb: Eintauchtiefe = halbe Höhe */}
-    <div class="form-row" style="--c: var(--green); --form-w: 50%; --cat-w: clamp(180px, 24vw, 330px); --cat-ar: 1.12; --cat-in: calc(var(--cat-w) / var(--cat-ar) / 2)">
+    <div class="kopf-unten">
+      <div class="kopf-flaeche">
+        <img
+          class="illu kopf-cat"
+          src="/assets/illustrations/big-head-cat-tight.svg"
+          alt=""
+          width="795"
+          height="711"
+        />
+      </div>
+      <div class="kopf-rechts">
+        <p class="kopf-intro">
+          Ein ganzes Sofa, ein fester Beitrag oder zwei helfende Hände —
+          hier findest du den Weg, der zu dir passt.
+        </p>
+        <ul class="hilf-liste">
+          {wege.map((w) => (
+            <li>
+              <a href={w.href}>
+                <span class="hilf-name">{w.name}</span>
+                <span class="hilf-text">{w.text}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Spenden: ganz oben, spielerisch — die hanging-cat baumelt an der
+       Kante der gruenen Flaeche -->
+  <section id="spenden" class="spenden sec">
+    <div class="sec-head pad-x">
+      <h2 class="display"><span class="nb">Kaufen kann</span> <span class="nb">jeder. Spenden</span> <span class="nb">ist Liebe.</span></h2>
+    </div>
+    <div
+      class="form-row dock-left"
+      style="--c: var(--green); --form-w: 62%; --cat-w: clamp(90px, 11vw, 160px); --cat-ar: 0.5067; --cat-in: clamp(110px, 14vw, 200px)"
+    >
       <img
-        class="illu form-cat front reveal"
-        src="/assets/illustrations/big-head-cat-tight.svg"
+        class="illu form-cat front"
+        src="/assets/illustrations/hanging-cat-tight.svg"
         alt=""
-        width="795"
-        height="711"
+        width="444"
+        height="880"
       />
-      <div class="form-block kopf-form"></div>
+      <div class="form-block">
+        {/* TODO: Platzhalter — Bankverbindung, PayPal- und Gooding-Links bestätigen */}
+        <div class="spenden-facts">
+          <p>
+            <strong>VR Bank München Land eG</strong><br />
+            IBAN DE35&nbsp;7016&nbsp;6486&nbsp;0000&nbsp;7907&nbsp;70<br />
+            BIC GENODEF1OHC
+          </p>
+          <p>
+            Wird zu Futter, Tierarzt und Kastrationen. Kein Cent für
+            Kratzbaum-Deko im Büro — wir haben nicht mal ein Büro.
+          </p>
+        </div>
+        <p class="gap-8 spenden-actions">
+          <button class="btn" type="button" id="iban-copy">IBAN kopieren</button>
+          {/* TODO: Platzhalter — echte PayPal-/Gooding-Links einsetzen */}
+          <a class="btn btn-ghost" href="#spenden" aria-disabled="true">PayPal</a>
+          <a class="btn btn-ghost" href="#spenden" aria-disabled="true">Gooding</a>
+        </p>
+      </div>
     </div>
   </section>
 
-  <!-- Adoptieren -->
-  <section id="adoptieren" class="block pad-x sec">
-    <div class="sec-head">
-      <h2 class="display"><span class="nb">Helfen hat</span> <span class="nb">viele Pfoten.</span></h2>
+  <!-- Pflegeplatz: der Held der Seite — gruene Vollflaeche, gepinnt;
+       die drei Schritte blenden beim Scrollen nacheinander ein -->
+  <section id="pflegeplatz" class="pflege sec" data-nav-bg="var(--green)">
+    <div class="pflege-inner pad-x">
+      <div class="sec-head">
+        <h2 class="display"><span class="nb">Dein Sofa.</span> <span class="nb">Ihr Neustart.</span></h2>
+      </div>
+      <p class="pflege-intro">
+        Wir haben kein Tierheim — unsere Katzen leben auf privaten Pflegeplätzen, bis sie
+        vermittelt sind. Ohne Pflegestellen keine Rettung. So einfach ist das, und so
+        einfach geht es:
+      </p>
+      <ol class="steps">
+        <li class="step">
+          <span class="step-nr">1</span>
+          <span class="step-name">Melde dich</span>
+          <span class="step-text">
+            Kurzes Kennenlernen über unser Kontaktformular — der Vorstand
+            (Marius Zisselsberger) meldet sich bei dir.
+          </span>
+        </li>
+        <li class="step">
+          <span class="step-nr">2</span>
+          <span class="step-name">Katze zieht ein</span>
+          <span class="step-text">Ein ruhiges Zimmer, Futter, Geduld — mehr braucht es am Anfang nicht.</span>
+        </li>
+        <li class="step">
+          <span class="step-nr">3</span>
+          <span class="step-name">Wir bleiben dran</span>
+          <span class="step-text">Tierarztkosten zahlt der Verein, Beratung gibt es dazu — bis deine Pflegekatze ihr Zuhause hat.</span>
+        </li>
+      </ol>
+      <p class="pflege-cta"><a class="btn" href="/verein/#kontakt">Pflegeplatz anbieten</a></p>
     </div>
-    <p>
-      Der direkteste Weg zu helfen: Gib einer unserer Katzen ein Zuhause für immer.
-      Alle aktuellen Vermittlungskatzen findest du auf der Katzen-Seite — und vorab
-      bitten wir um unseren kurzen Fragebogen, damit Katze und Mensch wirklich zusammenpassen.
-    </p>
-    <p class="gap-16"><a class="btn" href="/katzen/">Zu den Katzen</a></p>
   </section>
 
-  <!-- Pflegeplatz -->
-  <section id="pflegeplatz" class="block pad-x sec">
+  <!-- Pate werden: Text links, Beispiel-Patenkarte slidet von rechts ein -->
+  <section id="pate" class="pate pad-x sec">
     <div class="sec-head">
-      <h2 class="display"><span class="nb">Ein Sofa</span> <span class="nb">auf Zeit.</span></h2>
+      <h2 class="display"><span class="nb">Sei ihr Mensch.</span> <span class="nb">Aus der Ferne.</span></h2>
     </div>
-    <p>
-      Wir haben kein eigenes Tierheim — unsere Schützlinge leben auf privaten
-      Pflegeplätzen, bis sie vermittelt sind. Als Pflegestelle schenkst du einer Katze
-      Ruhe und Sicherheit; die Tierarztkosten übernehmen wir.
-    </p>
-    {/* TODO: Platzhalter — Ansprechpartnerin bestätigen */}
-    <p>
-      Interesse? Melde dich bei Norina Bernetti:
-      <a href="tel:+491728552419">0172&nbsp;8552419</a> oder
-      <a href="mailto:norina.bernetti@bund-der-katzenfreunde.de">per E‑Mail</a>.
-    </p>
+    <div class="pate-grid">
+      <p class="pate-copy">
+        Manche Katzen können nicht vermittelt werden — zu alt, zu scheu, zu krank. Mit
+        einer Patenschaft unterstützt du genau so eine Katze dauerhaft: mit einem festen
+        Beitrag für Futter, Pflege und Tierarzt. Sie bleibt auf ihrer Pflegestelle —
+        aber sie hat dich.
+      </p>
+      {/* Echte Patenkatzen der alten Website; TODO: Kurzzeile + Beitragshoehen abstimmen */}
+      <aside class="pate-karte">
+        <button class="pate-open" type="button" data-lightbox={`paten-${patenkatze.slug}`}>
+          <img class="pate-foto" src={patenkatze.images[0]} alt={patenName} loading="lazy" />
+          <span class="pate-label">Patenkatzen</span>
+          <h3 class="pate-name">{patenName}</h3>
+          <p>
+            Leben dauerhaft auf ihrer Pflegestelle — und warten auf Menschen
+            mit Fernbeziehungspotenzial.
+          </p>
+          <span class="pate-mehr">Alle Fotos & Steckbrief</span>
+        </button>
+        <p class="gap-16"><a class="btn btn-ghost" href="/verein/#kontakt">Patenschaft anfragen</a></p>
+      </aside>
+    </div>
   </section>
 
-  <!-- Pate werden -->
-  <section id="pate" class="block pad-x sec">
+  <!-- Zeit spenden: Ehrenamt + Sachspenden als Linien-Liste mit Hover-Lift -->
+  <section id="zeit" class="zeit pad-x sec">
     <div class="sec-head">
-      <h2 class="display">Homeoffice <span class="nb">ist besser</span> <span class="nb">mit Aufsicht.</span></h2>
-    </div>
-    <p>
-      Manche Katzen können nicht vermittelt werden — zu alt, zu scheu, zu krank. Mit einer
-      Patenschaft unterstützt du genau diese Katzen dauerhaft: mit einem festen Beitrag
-      für Futter, Pflege und Tierarzt.
-    </p>
-    {/* TODO: Platzhalter — aktuelle Patenkatzen und Beitragshöhen ergänzen */}
-    <p class="gap-16"><a class="btn btn-ghost" href="/verein/#kontakt">Patenschaft anfragen</a></p>
-  </section>
-
-  <!-- Mitanpacken -->
-  <section id="ehrenamt" class="block pad-x sec">
-    <div class="sec-head">
-      <h2 class="display">Mitanpacken <span class="nb">statt zusehen.</span></h2>
+      <h2 class="display"><span class="nb">Zeit ist auch</span> <span class="nb">eine Spende.</span></h2>
     </div>
     <ul class="task-list">
       <li>
@@ -90,59 +191,299 @@ import Base from '../layouts/Base.astro';
     </ul>
   </section>
 
-  <!-- Spenden: Teilfläche links, hanging-cat klettert über die Kante -->
-  <section id="spenden" class="spenden sec">
-    <div class="sec-head pad-x">
-      <h2 class="display"><span class="nb">Kaufen kann</span> <span class="nb">jeder. Helfen</span> <span class="nb">ist Liebe.</span></h2>
-    </div>
-    <div
-      class="form-row dock-left"
-      style="--c: var(--green); --form-w: 62%; --cat-w: clamp(90px, 11vw, 160px); --cat-ar: 0.5067; --cat-in: clamp(110px, 14vw, 200px)"
-    >
-      <img
-        class="illu form-cat front reveal-fade"
-        src="/assets/illustrations/hanging-cat-tight.svg"
-        alt=""
-        width="444"
-        height="880"
-      />
-      <div class="form-block">
-        {/* TODO: Platzhalter — Bankverbindung, PayPal- und Gooding-Links bestätigen */}
-        <div class="spenden-facts">
-          <p>
-            <strong>VR Bank München Land eG</strong><br />
-            IBAN DE35&nbsp;7016&nbsp;6486&nbsp;0000&nbsp;7907&nbsp;70<br />
-            BIC GENODEF1OHC
-          </p>
-          <p>
-            Oder online: per PayPal sowie über Gooding — dort unterstützt dich jeder
-            Online-Einkauf ohne Mehrkosten.
-          </p>
-        </div>
-        <p class="gap-8"><a class="btn" href="/verein/#mitglied">Oder gleich Mitglied werden</a></p>
-      </div>
-    </div>
+  <!-- Ausklang: Bruecke zurueck zur Adoption -->
+  <section class="ausklang pad-x sec reveal-fade">
+    <h2 class="sub">Oder doch gleich adoptieren?</h2>
+    <p class="gap-8"><a class="btn" href="/katzen/">Zu den Katzen</a></p>
   </section>
+
+  <script is:inline type="application/json" id="lightbox-data" set:html={JSON.stringify(lightboxData)} />
+  <CatLightbox />
 </Base>
 
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  /* IBAN-Kopierknopf */
+  const copyBtn = document.getElementById('iban-copy');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', async () => {
+      const iban = 'DE35 7016 6486 0000 7907 70';
+      try {
+        await navigator.clipboard.writeText(iban);
+        copyBtn.textContent = 'Kopiert!';
+        setTimeout(() => { copyBtn.textContent = 'IBAN kopieren'; }, 2000);
+      } catch {
+        copyBtn.textContent = iban;
+      }
+    });
+  }
+
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    gsap.registerPlugin(ScrollTrigger);
+    // @ts-ignore — für Debugging in der Konsole erreichbar
+    window.ScrollTrigger = ScrollTrigger;
+    const desktop = matchMedia('(min-width: 720px)').matches;
+
+    /* Entrance: Startzustaende kommen aus CSS (html.motion, vor dem ersten
+       Paint) — hier nur .to() zum Endzustand, kein Flickern. */
+    const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
+    tl.to('.kopf .display', { y: 0, opacity: 1, duration: 0.6 })
+      .to('.kopf-flaeche', { opacity: 1, duration: 0.6 }, 0.1)
+      .to('.kopf-cat', { y: 0, opacity: 1, duration: 0.5 }, '-=0.3')
+      .to('.kopf-intro', { y: 0, opacity: 1, duration: 0.5 }, '-=0.4')
+      .to('.hilf-liste li', { y: 0, opacity: 1, duration: 0.5, stagger: 0.08 }, '-=0.3');
+
+    /* Pflegeplatz: Sektion pinnt, die drei Schritte blenden scrub-gekoppelt
+       nacheinander ein — DER Scroll-Moment der Seite (nur Desktop; auf
+       Mobile stehen die Schritte statisch). Pin-Start auf halber Leisten-
+       hoehe: so faerbt sich der Header schon beim Einrasten gruen (der
+       Kontrast-Switch misst an der Nav-Mittellinie). */
+    if (desktop) {
+      gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: {
+          trigger: '.pflege',
+          start: () => `top ${Math.floor(document.querySelector('.nav').offsetHeight / 2) - 2}px`,
+          end: '+=800',
+          pin: true,
+          scrub: true,
+          invalidateOnRefresh: true,
+        },
+      }).to('.step', { y: 0, opacity: 1, stagger: 0.5, duration: 1 })
+        .to('.pflege-cta', { y: 0, opacity: 1, duration: 0.8 }, '>-0.3');
+    }
+
+    /* Spielerisch: die haengende Katze baumelt sanft an der Spenden-Kante */
+    gsap.fromTo(
+      '.spenden .form-cat',
+      { rotate: -3 },
+      { rotate: 3, transformOrigin: '50% 6%', duration: 1.9, yoyo: true, repeat: -1, ease: 'sine.inOut' }
+    );
+
+    /* Sektionskoepfe + Reveals beim Reinscrollen */
+    document.querySelectorAll('.pate .sec-head, .zeit .sec-head, .spenden .sec-head').forEach((el) => {
+      gsap.to(el, {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 88%' },
+      });
+    });
+
+    // Paten-Karte slidet von rechts ein
+    gsap.to('.pate-karte', {
+      x: 0,
+      opacity: 1,
+      duration: 0.8,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: '.pate-grid', start: 'top 80%' },
+    });
+
+    // Zeit-Liste staffelt sich ein
+    gsap.to('.task-list li', {
+      y: 0,
+      opacity: 1,
+      duration: 0.6,
+      stagger: 0.12,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '.task-list', start: 'top 85%' },
+    });
+
+    // Spenden-Flaeche faehrt von links herein
+    gsap.to('.spenden .form-block', {
+      x: 0,
+      duration: 0.9,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: '.spenden .form-row', start: 'top 78%' },
+    });
+  }
+</script>
+
 <style>
-  /* Kopf füllt den ersten Viewport; die Farbfläche (50 % breit) wächst
-     bis zur Unterkante des Folds — sie dockt unten an, statt zu schweben */
+  /* ---------- Kopf: Headline oben, darunter gruene Hochkant-Flaeche
+     links + Anker-Weiche rechts ---------- */
   .kopf {
     padding-top: clamp(24px, 6svh, 72px);
     display: flex;
     flex-direction: column;
     min-height: calc(100svh - var(--nav-h));
+    overflow-x: clip;
   }
-  .kopf .form-row {
+
+  .kopf-unten {
     flex: 1 1 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 38%) minmax(0, 1fr);
+    gap: 0 clamp(32px, 5vw, 96px);
+    /* Luft fuer die halb aufliegende Katze ueber der Flaechen-Oberkante */
+    margin-top: calc(clamp(140px, 17vw, 250px) / 1.12 / 2 + 20px);
+  }
+
+  /* Gruene Flaeche: buendig zur linken Bildschirmkante, waechst bis zum
+     Fold; big-head-cat liegt halb auf ihrer Oberkante */
+  .kopf-flaeche {
+    position: relative;
+    background: var(--green);
+    min-height: clamp(240px, 42svh, 460px);
+  }
+
+  .kopf-cat {
+    --katw: clamp(140px, 17vw, 250px);
+    position: absolute;
+    left: calc(50% - var(--katw) / 2);
+    bottom: calc(100% - var(--katw) / 1.12 / 2);
+    width: var(--katw);
+    height: auto;
+  }
+
+  .kopf-rechts {
+    padding-right: var(--margin);
     display: flex;
     flex-direction: column;
+    gap: clamp(24px, 4vh, 48px);
   }
-  .kopf-intro { max-width: 52ch; }
-  .kopf-form { flex: 1 1 auto; min-height: clamp(140px, 24svh, 240px); }
 
-  .block { margin-top: clamp(96px, 15vw, 220px); }
+  .kopf-intro { max-width: 44ch; margin: 0; }
+
+  /* Anker-Weiche: Linien-Liste mit Hover-Lift (wie Drei Wege auf Start) */
+  .hilf-liste { margin: 0; padding: 0; list-style: none; }
+
+  .hilf-liste li { border-top: 2px solid var(--black); }
+  .hilf-liste li:last-child { border-bottom: 2px solid var(--black); }
+
+  .hilf-liste a {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px var(--gutter);
+    padding: clamp(14px, 2vw, 24px) 0;
+    text-decoration: none;
+    transition: transform 0.25s ease;
+  }
+
+  .hilf-liste a:hover,
+  .hilf-liste a:focus-visible { transform: translateY(-3px); }
+
+  .hilf-name {
+    flex: 0 0 auto;
+    width: min(100%, 9em);
+    font-size: var(--fs-sub);
+    font-weight: var(--fw-text);
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
+
+  .hilf-text { max-width: 34ch; }
+
+  /* ---------- Pflegeplatz: gruene Vollflaeche, gepinnt ---------- */
+  .pflege {
+    position: relative;
+    z-index: 1;
+    margin-top: clamp(96px, 15vw, 220px);
+    background: var(--green);
+  }
+
+  .pflege-inner {
+    padding-top: clamp(48px, 7vh, 96px);
+    padding-bottom: clamp(48px, 7vh, 96px);
+  }
+
+  .pflege .sec-head { margin-bottom: clamp(20px, 3vh, 40px); }
+
+  .pflege-intro { max-width: 56ch; }
+
+  .steps {
+    margin: clamp(24px, 4vh, 48px) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 2.5em minmax(9em, 14em) 1fr;
+    gap: 2px var(--gutter);
+    align-items: baseline;
+    padding: clamp(12px, 1.8vh, 20px) 0;
+    border-top: 2px solid var(--black);
+    max-width: 86ch;
+  }
+
+  .step-nr {
+    font-size: var(--fs-sub);
+    line-height: 0.9;
+  }
+
+  .step-name { font-weight: var(--fw-bold); text-transform: uppercase; }
+
+  .pflege-cta { margin: clamp(24px, 4vh, 48px) 0 0; }
+
+  /* ---------- Pate: Karte rechts ---------- */
+  .pate { margin-top: clamp(96px, 15vw, 220px); overflow-x: clip; }
+
+  .pate-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 42%);
+    gap: clamp(24px, 4vw, 72px);
+    align-items: start;
+  }
+
+  .pate-copy { max-width: 52ch; }
+
+  /* Patenkarte auf der Bereichsfarbe — komplett klickbar (Popup) */
+  .pate-karte {
+    background: var(--green);
+    padding: clamp(28px, 3.5vw, 48px) clamp(24px, 3vw, 40px);
+  }
+
+  .pate-open {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .pate-foto {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+    margin-bottom: clamp(16px, 2vw, 24px);
+  }
+
+  .pate-mehr {
+    display: inline-block;
+    margin-top: 4px;
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+  }
+
+  .pate-label {
+    display: inline-block;
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .pate-name {
+    margin: 0 0 0.35em;
+    font-size: var(--fs-sub);
+    font-weight: var(--fw-text);
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
+
+  .pate-karte p { max-width: 38ch; }
+
+  /* ---------- Zeit ---------- */
+  .zeit { margin-top: clamp(96px, 15vw, 220px); }
 
   .task-list { margin: 0; padding: 0; list-style: none; }
 
@@ -158,12 +499,80 @@ import Base from '../layouts/Base.astro';
 
   .task-name { font-weight: var(--fw-bold); text-transform: uppercase; }
 
-  .spenden { margin-top: clamp(96px, 15vw, 220px); }
+  /* ---------- Spenden ---------- */
+  .spenden { margin-top: clamp(96px, 15vw, 220px); overflow-x: clip; }
 
   .spenden-facts { display: flex; flex-wrap: wrap; gap: var(--gutter); }
   .spenden-facts p { max-width: 40ch; margin: 0; flex: 1 1 280px; }
 
-  @media (max-width: 560px) {
+  .spenden-actions { display: flex; flex-wrap: wrap; gap: 12px var(--gutter); }
+
+  /* Platzhalter-Buttons (PayPal/Gooding) sichtbar deaktiviert */
+  .spenden-actions a[aria-disabled='true'] {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  /* ---------- Ausklang ---------- */
+  .ausklang {
+    margin-top: clamp(96px, 15vw, 220px);
+    margin-bottom: clamp(48px, 8vw, 120px);
+  }
+
+  /* ---------- Animations-Startzustaende (html.motion = vor dem Paint) ---------- */
+  :global(html.motion) .kopf .display,
+  :global(html.motion) .kopf-cat {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  :global(html.motion) .kopf-flaeche { opacity: 0; }
+
+  :global(html.motion) .kopf-intro,
+  :global(html.motion) .hilf-liste li {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  :global(html.motion) .pate .sec-head,
+  :global(html.motion) .zeit .sec-head,
+  :global(html.motion) .spenden .sec-head {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  :global(html.motion) .pate-karte {
+    opacity: 0;
+    transform: translateX(80px);
+  }
+
+  :global(html.motion) .task-list li {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  :global(html.motion) .spenden .form-block {
+    transform: translateX(-110%);
+  }
+
+  /* Steps nur auf Desktop vorblenden (dort laeuft der Pin-Scrub);
+     auf Mobile stehen sie statisch */
+  @media (min-width: 720px) {
+    :global(html.motion) .step,
+    :global(html.motion) .pflege-cta {
+      opacity: 0;
+      transform: translateY(32px);
+    }
+  }
+
+  /* ---------- Mobile-Grundlagen (< 720px) ---------- */
+  @media (max-width: 719px) {
+    .kopf-unten { grid-template-columns: 1fr; }
+    .kopf-rechts { padding-left: var(--margin); padding-top: clamp(24px, 5vw, 40px); }
+    .kopf-flaeche { min-height: clamp(180px, 32svh, 300px); }
+    .pate-grid { grid-template-columns: 1fr; }
+    .step { grid-template-columns: 2em 1fr; }
+    .step-text { grid-column: 2; }
     .task-list li { grid-template-columns: 1fr; }
   }
 </style>
